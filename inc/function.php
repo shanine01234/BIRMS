@@ -120,24 +120,38 @@
         // OWNER REGISTER PROCESS
         public function registerOwner($fname, $mname, $lname, $email, $password, $cpassword, $restobar, $contact_num, $address, 
         $restoPhoto, $random_id, $gcash_num, $gcash_qr){
+        
+        // Check if the email already exists
+        $sql = mysqli_query($this->conn, "SELECT * FROM owner WHERE email='$email'");
+        if (mysqli_num_rows($sql) > 0) {
+            return 10; // Email already exists
+        } elseif ($password != $cpassword) {
+            return 20; // Passwords do not match
+        } elseif (!is_numeric($contact_num)) {
+            return 30; // Contact number is not numeric
+        } else {
+            // Hash the password
+            $hashpassword = password_hash($password, PASSWORD_DEFAULT);
             
-            $sql = mysqli_query($this->conn, "SELECT * FROM owner WHERE email='$email'");
-            $row = mysqli_fetch_assoc($sql);
-            if (mysqli_num_rows($sql) > 0) {
-                return 10;
-            }elseif ($password != $cpassword){
-                return 20;
-            }elseif (!is_numeric($contact_num)){
-                return 30;
-            }else{
-                $hashpassword = password_hash($password, PASSWORD_DEFAULT);
-                $query = "INSERT INTO owner (owner_id,firstname,middlename,lastname,email,password,contact_num,address,gcash_num,gcash_qr) VALUES ('$random_id','$fname','$mname','$lname','$email','$hashpassword','$contact_num','$address', '$gcash_num', '$gcash_qr')";
-                mysqli_query($this->conn, $query);
-                $querys = "INSERT INTO restobar (owner_id,resto_name,resto_photo) VALUES ('$random_id','$restobar','$restoPhoto')";
-                mysqli_query($this->conn, $querys);
-                return 1;
+            // Prepare the query
+            $query = "INSERT INTO owner (owner_id, firstname, middlename, lastname, email, password, contact_num, address, gcash_num, gcash_qr) 
+                      VALUES ('$random_id', '$fname', '$mname', '$lname', '$email', '$hashpassword', '$contact_num', '$address', '$gcash_num', '$gcash_qr')";
+            
+            // Execute the query and check for errors
+            if (!mysqli_query($this->conn, $query)) {
+                die('Error: ' . mysqli_error($this->conn)); // Display error message
             }
+    
+            // Insert into restobar table
+            $querys = "INSERT INTO restobar (owner_id, resto_name, resto_photo) VALUES ('$random_id', '$restobar', '$restoPhoto')";
+            if (!mysqli_query($this->conn, $querys)) {
+                die('Error: ' . mysqli_error($this->conn)); // Display error message
+            }
+            
+            return 1; // Success
         }
+    }
+    
 
         // DISPLAY OWNER DETAILS
         public function displayOwnerDets($id){
