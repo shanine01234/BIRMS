@@ -16,7 +16,7 @@ class Order {
     }
 
     public function displayOrders($owner_id, $limit, $offset) {
-        $sql = "SELECT * FROM orders LIMIT ? OFFSET ?";
+        $sql = "SELECT *, o.id AS order_id, o.status AS order_status FROM order_items i INNER JOIN orders o ON i.order_id = o.id INNER JOIN menu m ON i.menu_id = m.id  INNER JOIN owner w ON m.owner_id = w.owner_id WHERE w.owner_id = $owner_id GROUP BY o.id LIMIT ? OFFSET ?";
         $stmt = $this->conn->prepare($sql);
         $stmt->bind_param("ii", $limit, $offset);
         $stmt->execute();
@@ -46,7 +46,10 @@ $order = new Order($oop->conn); // Assuming $oop->conn is your database connecti
 
 // Handle the status update request
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $order_id = $_POST['order_id'];
+
+    if (isset($_POST['update_stat'])) {
+        
+    $order_id = (int)$_POST['order_id'];
     $status = $_POST['status'];
 
     if (is_numeric($order_id) && in_array($status, [1, 2, 3])) {
@@ -55,14 +58,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->bind_param("ii", $status, $order_id);
 
         if ($stmt->execute()) {
-            header('Location: orders.php'); // Redirect back to orders page
-            exit();
+            // header('Location: orders.php'); // Redirect back to orders page
+            // exit();
         } else {
             $error_message = "Error updating status: " . $stmt->error;
         }
     } else {
         $error_message = "Invalid data provided.";
     }
+    }
+
 }
 
 // Set up pagination
@@ -186,19 +191,19 @@ $confirmed_sales = $order->getConfirmedOrderSales();
 
                     <div class="row">
                         <?php foreach ($orders as $row) {
-                            $get_items = $oop->conn->query("SELECT m.*, o.quantity FROM order_items o INNER JOIN menu m ON o.menu_id = m.id WHERE order_id = '" . $row['id'] . "'");
+                            $get_items = $oop->conn->query("SELECT m.*, o.quantity FROM order_items o INNER JOIN menu m ON o.menu_id = m.id WHERE order_id = '" . $row['order_id'] . "'");
                         ?>
                         <div class="col-md-3 mb-4 d-flex align-items-stretch">
                             <div class="card menu-card">
                                 <div class="card-body" style="border: 4px solid #f6c23e;">
                                     <div class="float-end">
                                         <?php 
-                                        if ($row['status'] == 1) {
+                                        if ($row['order_status'] == 1) {
                                             echo '<span class="badge bg-warning text-dark">Pending</span>';
-                                        } else if ($row['status'] == 2) {
-                                            echo '<span class="badge bg-primary">Confirmed</span>';
-                                        } else if ($row['status'] == 3) {
-                                            echo '<span class="badge bg-success">Finished</span>';
+                                        } else if ($row['order_status'] == 2) {
+                                            echo '<span class="badge bg-primary text-light">Confirmed</span>';
+                                        } else if ($row['order_status'] == 3) {
+                                            echo '<span class="badge bg-success text-light">Finished</span>';
                                         }
                                         ?>
                                     </div>
@@ -208,15 +213,15 @@ $confirmed_sales = $order->getConfirmedOrderSales();
 
                                     <!-- Status Update Form -->
                                     <form method="post" action="">
-                                        <input type="hidden" name="order_id" value="<?= $row['id'] ?>">
+                                        <input type="hidden" name="order_id" value="<?= $row['order_id'] ?>">
                                         <div class="form-group">
                                             <select name="status" class="form-select">
-                                                <option value="1" <?= $row['status'] == 1 ? 'selected' : '' ?>>Pending</option>
-                                                <option value="2" <?= $row['status'] == 2 ? 'selected' : '' ?>>Confirmed</option>
-                                                <option value="3" <?= $row['status'] == 3 ? 'selected' : '' ?>>Finished</option>
+                                                <option value="1" <?= $row['order_status'] == 1 ? 'selected' : '' ?>>Pending</option>
+                                                <option value="2" <?= $row['order_status'] == 2 ? 'selected' : '' ?>>Confirmed</option>
+                                                <option value="3" <?= $row['order_status'] == 3 ? 'selected' : '' ?>>Finished</option>
                                             </select>
                                         </div>
-                                        <button type="submit" class="btn btn-primary mt-2">Update Status</button>
+                                        <button type="submit" name="update_stat" class="btn btn-primary mt-2">Update Status</button>
                                     </form>
                                 </div>
                             </div>
