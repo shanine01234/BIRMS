@@ -153,6 +153,32 @@ if (!isset($_SESSION['id'])) {
                             </div>
                         </li>
 
+                        <!-- Notification Bell -->
+                        <li class="nav-item dropdown no-arrow mx-1">
+    <a class="nav-link dropdown-toggle" href="#" id="notificationDropdown" role="button"
+        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <i class="fas fa-bell fa-fw"></i>
+        <span class="badge badge-danger badge-counter">
+            <?php
+            $notificationCount = $oop->displayPOCnt();
+            foreach($notificationCount as $count){
+                echo $count['pending'];
+            }
+            ?>
+        </span>
+    </a>
+    <!-- Dropdown - Notifications -->
+    <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="notificationDropdown">
+        <h6 class="dropdown-header">
+            Notifications
+        </h6>
+        <!-- Here you can loop through notifications and display them -->
+        <a class="dropdown-item" href="resto_pending.php">
+            <i class="fas fa-info-circle fa-sm fa-fw mr-2 text-gray-400"></i>
+            View Pending Registrations
+        </a>
+    </div>
+</li>
                     </ul>
 
                 </nav>
