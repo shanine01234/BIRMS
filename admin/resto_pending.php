@@ -28,7 +28,9 @@ if (!isset($_SESSION['id'])) {
     <!-- Custom styles for this template-->
     <link href="../css/sb-admin-2.min.css" rel="stylesheet">
     <link href="../css/datatables.min.css" rel="stylesheet">
-
+<style>
+    
+</style>
 </head>
 
 <body id="page-top">
@@ -153,6 +155,34 @@ if (!isset($_SESSION['id'])) {
                                 </a>
                             </div>
                         </li>
+
+                        <!-- Notification Bell -->
+<li class="nav-item dropdown no-arrow mx-1">
+    <a class="nav-link dropdown-toggle" href="#" id="notificationDropdown" role="button"
+        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <i class="fas fa-bell fa-fw"></i>
+        <span class="badge badge-danger badge-counter">
+            <?php
+            $notificationCount = $oop->displayPOCnt();
+            foreach($notificationCount as $count){
+                echo $count['pending'];
+            }
+            ?>
+        </span>
+    </a>
+    <!-- Dropdown - Notifications -->
+    <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="notificationDropdown">
+        <h6 class="dropdown-header">
+            Notifications
+        </h6>
+        <!-- Here you can loop through notifications and display them -->
+        <a class="dropdown-item" href="resto_pending.php">
+            <i class="fas fa-info-circle fa-sm fa-fw mr-2 text-gray-400"></i>
+            View Pending Registrations
+        </a>
+    </div>
+</li>
+
 
                     </ul>
 
@@ -335,7 +365,15 @@ if (!isset($_SESSION['id'])) {
     <!-- Page level custom scripts -->
     <script src="../js/demo/chart-area-demo.js"></script>
     <script src="../js/demo/chart-pie-demo.js"></script>
+<script>
+    $(document).ready(function() {
+    // Example: Handle notification click
+    $('#notificationDropdown').on('click', function() {
+        // Your logic to mark notifications as read or fetch more details
+    });
+});
 
+</script>
 </body>
 
 </html>
