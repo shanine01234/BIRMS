@@ -34,3 +34,4 @@ if (isset($_POST['deleteCustomer'])) {
          $msgAlert = $oop->alert('An error occured','danger','x-circle');
     }
 }
+?>
