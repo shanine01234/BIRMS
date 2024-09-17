@@ -58,7 +58,7 @@ require_once('inc/header.php');
             <ul class="navbar-nav ms-auto">
         <li class="nav-item">
             <a class="nav-link" href="index.php">
-                <i class="fas fa-home"></i> Home1
+                <i class="fas fa-home"></i> Home
             </a>
         </li>
         <li class="nav-item">
