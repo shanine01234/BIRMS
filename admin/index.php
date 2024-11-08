@@ -28,7 +28,88 @@ if (!isset($_SESSION['id'])) {
     <!-- Custom styles for this template-->
     <link href="../css/sb-admin-2.min.css" rel="stylesheet">
     <link href="../css/datatables.min.css" rel="stylesheet">
+<style>/* Global Card Styling */
+.card {
+    border-radius: 10px; /* Rounded corners */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
 
+/* Card Hover Effect */
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Primary Card (Resto Owners) */
+.border-left-primary {
+    border-left: 0;
+    background: linear-gradient(135deg, #4e73df 0%, #224abe 100%);
+    color: white;
+}
+
+.border-left-primary .text-primary,
+.border-left-primary .text-gray-800 {
+    color: white !important;
+}
+
+/* Success Card (Restobars) */
+.border-left-success {
+    border-left: 0;
+    background: linear-gradient(135deg, #1cc88a 0%, #198754 100%);
+    color: white;
+}
+
+.border-left-success .text-success,
+.border-left-success .text-gray-800 {
+    color: white !important;
+}
+
+/* Info Card (Menus) */
+.border-left-info {
+    border-left: 0;
+    background: linear-gradient(135deg, #36b9cc 0%, #258eab 100%);
+    color: white;
+}
+
+.border-left-info .text-info,
+.border-left-info .text-gray-800 {
+    color: white !important;
+}
+
+/* Warning Card (Pending Requests) */
+.border-left-warning {
+    border-left: 0;
+    background: linear-gradient(135deg, #f6c23e 0%, #c58a23 100%);
+    color: white;
+}
+
+.border-left-warning .text-warning,
+.border-left-warning .text-gray-800 {
+    color: white !important;
+}
+
+/* Icon Styling */
+.card .col-auto i {
+    color: rgba(255, 255, 255, 0.7);
+    transition: color 0.3s ease;
+}
+
+.card:hover .col-auto i {
+    color: white;
+}
+
+/* Font Sizes */
+.card-body .text-xs {
+    font-size: 0.8rem;
+    letter-spacing: 1px;
+}
+
+.card-body .h5 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: white;
+}
+</style>
 </head>
 
 <body id="page-top">
