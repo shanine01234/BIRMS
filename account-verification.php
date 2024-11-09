@@ -261,7 +261,7 @@ if (isset($_POST['submit'])) {
                 <input type="email" id="email" name="email" class="form-control my-2" required>
             </div>
             <div class="form-group">
-    <label for="password">Re-type Password</label>
+    <label for="password">Password</label>
     <div class="input-group">
         <input type="password" id="password" name="password" class="form-control my-2" required>
         <div class="input-group-append">
@@ -272,7 +272,7 @@ if (isset($_POST['submit'])) {
     </div>
 </div>
             <div class="form-group">
-    <label for="password"> Password</label>
+    <label for="password">Re-type  Password</label>
     <div class="input-group">
         <input type="password" id="password" name="password" class="form-control my-2" required>
         <div class="input-group-append">
