@@ -256,9 +256,28 @@ if (isset($_POST['signup'])) {
             <input type="email" id="email" name="email" class="form-control my-2" required>
         </div>
         <div class="form-group">
-            <label for="password">Password</label>
-            <input type="password" id="password" name="password" class="form-control my-2" required>
+    <label for="password">Password</label>
+    <div class="input-group">
+        <input type="password" id="password" name="password" class="form-control my-2" required>
+        <div class="input-group-append">
+            <span class="input-group-text" id="toggle-password" style="cursor: pointer;">
+                <i class="fas fa-eye"></i> <!-- Eye icon to toggle password visibility -->
+            </span>
         </div>
+    </div>
+</div>
+
+<div class="form-group">
+    <label for="retype-password">Re-type Password</label>
+    <div class="input-group">
+        <input type="password" id="retype-password" name="retype-password" class="form-control my-2" required>
+        <div class="input-group-append">
+            <span class="input-group-text" id="toggle-retype-password" style="cursor: pointer;">
+                <i class="fas fa-eye"></i> <!-- Eye icon to toggle re-type password visibility -->
+            </span>
+        </div>
+    </div>
+</div>
         <button type="submit" name="signup" class="btn btn-warning btn-block">Sign Up</button>
     </form>
 </div>
@@ -308,7 +327,39 @@ function validatePassword() {
     <!-- Page level custom scripts -->
     <script src="js/demo/chart-area-demo.js"></script>
     <script src="js/demo/chart-pie-demo.js"></script>
+<script>
+    // Toggle password visibility
+    document.getElementById('toggle-password').addEventListener('click', function () {
+        var passwordField = document.getElementById('password');
+        var icon = this.querySelector('i');
+        
+        if (passwordField.type === 'password') {
+            passwordField.type = 'text';  // Show password
+            icon.classList.remove('fa-eye');
+            icon.classList.add('fa-eye-slash');
+        } else {
+            passwordField.type = 'password';  // Hide password
+            icon.classList.remove('fa-eye-slash');
+            icon.classList.add('fa-eye');
+        }
+    });
 
+    // Toggle re-type password visibility
+    document.getElementById('toggle-retype-password').addEventListener('click', function () {
+        var retypePasswordField = document.getElementById('retype-password');
+        var icon = this.querySelector('i');
+        
+        if (retypePasswordField.type === 'password') {
+            retypePasswordField.type = 'text';  // Show re-type password
+            icon.classList.remove('fa-eye');
+            icon.classList.add('fa-eye-slash');
+        } else {
+            retypePasswordField.type = 'password';  // Hide re-type password
+            icon.classList.remove('fa-eye-slash');
+            icon.classList.add('fa-eye');
+        }
+    });
+</script>
 </body>
 
 </html>
