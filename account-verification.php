@@ -271,6 +271,17 @@ if (isset($_POST['submit'])) {
         </div>
     </div>
 </div>
+            <div class="form-group">
+    <label for="password"> Password</label>
+    <div class="input-group">
+        <input type="password" id="password" name="password" class="form-control my-2" required>
+        <div class="input-group-append">
+            <span class="input-group-text" id="toggle-password" style="cursor: pointer;">
+                <i class="fas fa-eye"></i> <!-- Eye icon to toggle password visibility -->
+            </span>
+        </div>
+    </div>
+</div>
             <button type="submit" name="submit" class="btn btn-warning btn-block">Verify</button>
         </form>
     </div>
