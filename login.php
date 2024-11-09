@@ -231,10 +231,17 @@ if (isset($_POST['login'])) {
             <label for="email">Email</label>
             <input type="email" id="email" name="email" class="form-control" required>
         </div>
-        <div class="form-group">
-            <label for="password">Password</label>
-            <input type="password" id="password" name="password" class="form-control" required>
+         <div class="form-group">
+    <label for="password">Password</label>
+    <div class="input-group">
+        <input type="password" id="password" name="password" class="form-control" required>
+        <div class="input-group-append">
+            <span class="input-group-text" id="toggle-password" style="cursor: pointer;">
+                <i class="fas fa-eye"></i> <!-- Eye icon to toggle password visibility -->
+            </span>
         </div>
+    </div>
+</div>
         <button type="submit" name="login" class="btn btn-warning btn-block">Login</button>
         <p class="text-center mt-3">Don't have an account? <a href="signup.php">Sign Up</a></p>
     </form>
@@ -249,6 +256,23 @@ if (isset($_POST['login'])) {
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/js/bootstrap.min.js"></script>
     <script src="js/sb-admin-2.min.js"></script>
     <script src="js/custom.js"></script>
+     <script>
+    // Toggle password visibility
+    document.getElementById('toggle-password').addEventListener('click', function () {
+        var passwordField = document.getElementById('password');
+        var icon = this.querySelector('i');
+        
+        if (passwordField.type === 'password') {
+            passwordField.type = 'text';  // Show password
+            icon.classList.remove('fa-eye');
+            icon.classList.add('fa-eye-slash');
+        } else {
+            passwordField.type = 'password';  // Hide password
+            icon.classList.remove('fa-eye-slash');
+            icon.classList.add('fa-eye');
+        }
+    });
+</script>
 </body>
 
 </html>
