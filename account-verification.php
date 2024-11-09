@@ -261,9 +261,16 @@ if (isset($_POST['submit'])) {
                 <input type="email" id="email" name="email" class="form-control my-2" required>
             </div>
             <div class="form-group">
-                <label for="password">Password</label>
-                <input type="password" id="password" name="password" class="form-control my-2" required>
-            </div>
+    <label for="password">Re-type Password</label>
+    <div class="input-group">
+        <input type="password" id="password" name="password" class="form-control my-2" required>
+        <div class="input-group-append">
+            <span class="input-group-text" id="toggle-password" style="cursor: pointer;">
+                <i class="fas fa-eye"></i> <!-- Eye icon to toggle password visibility -->
+            </span>
+        </div>
+    </div>
+</div>
             <button type="submit" name="submit" class="btn btn-warning btn-block">Verify</button>
         </form>
     </div>
@@ -292,7 +299,22 @@ if (isset($_POST['submit'])) {
     <!-- Page level custom scripts -->
     <script src="js/demo/chart-area-demo.js"></script>
     <script src="js/demo/chart-pie-demo.js"></script>
-
+<script>
+    document.getElementById('toggle-password').addEventListener('click', function () {
+        var passwordField = document.getElementById('password');
+        var icon = this.querySelector('i');
+        
+        if (passwordField.type === 'password') {
+            passwordField.type = 'text';  
+            icon.classList.remove('fa-eye');
+            icon.classList.add('fa-eye-slash');
+        } else {
+            passwordField.type = 'password';  
+            icon.classList.remove('fa-eye-slash');
+            icon.classList.add('fa-eye');
+        }
+    });
+</script>
 </body>
 
 </html>
