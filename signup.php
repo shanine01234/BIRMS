@@ -96,7 +96,6 @@ if (isset($_POST['signup'])) {
     <title>Bantayan Island Restobar</title>
 
     <!-- Custom fonts for this template-->
-     <link rel="shortcut icon" type="x-icon" href="./img/logo.jpg"
     <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
     <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
@@ -243,25 +242,46 @@ if (isset($_POST['signup'])) {
 
 <body style="background-color: #fff;">
     <!-- Signup Form -->
-    <div class="signup-container">
-        <a href="login.php" class="btn btn-warning btn-back">Back</a>
-        <h4 class="text-start my-3" style="font-size: 30px;">Sign Up</h4>
-        <form method="post">
-            <div class="form-group">
-                <label for="name">Name</label>
-                <input type="text" id="name" name="name" class="form-control my-2" required>
-            </div>
-            <div class="form-group">
-                <label for="email">Email</label>
-                <input type="email" id="email" name="email" class="form-control my-2" required>
-            </div>
-            <div class="form-group">
-                <label for="password">Password</label>
-                <input type="password" id="password" name="password" class="form-control my-2" required>
-            </div>
-            <button type="submit" name="signup" class="btn btn-warning btn-block">Sign Up</button>
-        </form>
-    </div>
+    <!-- Signup Form -->
+<div class="signup-container">
+    <a href="login.php" class="btn btn-warning btn-back">Back</a>
+    <h4 class="text-start my-3" style="font-size: 30px;">Sign Up</h4>
+    <form method="post" onsubmit="return validatePassword()">
+        <div class="form-group">
+            <label for="name">Name</label>
+            <input type="text" id="name" name="name" class="form-control my-2" required>
+        </div>
+        <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" class="form-control my-2" required>
+        </div>
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" class="form-control my-2" required>
+        </div>
+        <button type="submit" name="signup" class="btn btn-warning btn-block">Sign Up</button>
+    </form>
+</div>
+
+<script>
+function validatePassword() {
+    const password = document.getElementById("password").value;
+    const uppercase = /[A-Z]/;
+    const lowercase = /[a-z]/;
+    const number = /[0-9]/;
+
+    if (!uppercase.test(password) || !lowercase.test(password) || !number.test(password)) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Password Requirements',
+            text: 'Password must contain at least one uppercase letter, one lowercase letter, and one number.',
+            confirmButtonText: 'OK'
+        });
+        return false;  // Prevent form submission
+    }
+    return true;  // Allow form submission
+}
+</script>
 
     <!-- Footer -->
 
