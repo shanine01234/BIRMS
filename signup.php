@@ -269,17 +269,18 @@ function validatePassword() {
     const uppercase = /[A-Z]/;
     const lowercase = /[a-z]/;
     const number = /[0-9]/;
+    const specialCharacter = /[!@#$%^&*(),.?":{}|<>]/;  
 
-    if (!uppercase.test(password) || !lowercase.test(password) || !number.test(password)) {
+    if (!uppercase.test(password) || !lowercase.test(password) || !number.test(password) || !specialCharacter.test(password)) {
         Swal.fire({
             icon: 'error',
             title: 'Password Requirements',
-            text: 'Password must contain at least one uppercase letter, one lowercase letter, and one number.',
+            text: 'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character.',
             confirmButtonText: 'OK'
         });
-        return false;  // Prevent form submission
+        return false;  
     }
-    return true;  // Allow form submission
+    return true;  
 }
 </script>
 
