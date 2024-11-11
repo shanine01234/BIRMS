@@ -243,7 +243,7 @@ if (isset($_POST['signup'])) {
 <body style="background-color: #fff;">
     <!-- Signup Form -->
     <!-- Signup Form -->
-<div class="signup-container">
+    <div class="signup-container">
     <a href="login.php" class="btn btn-warning btn-back">Back</a>
     <h4 class="text-start my-3" style="font-size: 30px;">Sign Up</h4>
     <form method="post" onsubmit="return validatePassword()">
@@ -256,39 +256,40 @@ if (isset($_POST['signup'])) {
             <input type="email" id="email" name="email" class="form-control my-2" required>
         </div>
         <div class="form-group">
-    <label for="password">Password</label>
-    <div class="input-group">
-        <input type="password" id="password" name="password" class="form-control my-2" required>
-        <div class="input-group-append">
-            <span class="input-group-text" id="toggle-password" style="cursor: pointer;">
-                <i class="fas fa-eye"></i> <!-- Eye icon to toggle password visibility -->
-            </span>
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" class="form-control my-2" required>
+            <small id="password-strength" class="form-text"></small>
         </div>
-    </div>
-</div>
-
-<div class="form-group">
-    <label for="retype-password">Re-type Password</label>
-    <div class="input-group">
-        <input type="password" id="retype-password" name="retype-password" class="form-control my-2" required>
-        <div class="input-group-append">
-            <span class="input-group-text" id="toggle-retype-password" style="cursor: pointer;">
-                <i class="fas fa-eye"></i> <!-- Eye icon to toggle re-type password visibility -->
-            </span>
-        </div>
-    </div>
-</div>
         <button type="submit" name="signup" class="btn btn-warning btn-block">Sign Up</button>
     </form>
 </div>
-
 <script>
+document.getElementById("password").addEventListener("input", function() {
+    const password = this.value;
+    const strengthText = document.getElementById("password-strength");
+
+    // Check password strength criteria
+    if (password.length < 6) {
+        strengthText.textContent = "Weak Password";
+        strengthText.style.color = "red";
+    } else if (password.length < 10) {
+        strengthText.textContent = "Moderate Password";
+        strengthText.style.color = "orange";
+    } else if (/[A-Z]/.test(password) && /[0-9]/.test(password) && /[^a-zA-Z0-9]/.test(password)) {
+        strengthText.textContent = "Strong Password";
+        strengthText.style.color = "green";
+    } else {
+        strengthText.textContent = "Moderate Password";
+        strengthText.style.color = "orange";
+    }
+});
+
 function validatePassword() {
     const password = document.getElementById("password").value;
     const uppercase = /[A-Z]/;
     const lowercase = /[a-z]/;
     const number = /[0-9]/;
-    const specialCharacter = /[!@#$%^&*(),.?":{}|<>]/;  
+    const specialCharacter = /[!@#$%^&*(),.?":{}|<>]/;
 
     if (!uppercase.test(password) || !lowercase.test(password) || !number.test(password) || !specialCharacter.test(password)) {
         Swal.fire({
@@ -297,11 +298,12 @@ function validatePassword() {
             text: 'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character.',
             confirmButtonText: 'OK'
         });
-        return false;  
+        return false;
     }
-    return true;  
+    return true;
 }
 </script>
+
 
     <!-- Footer -->
 
@@ -327,39 +329,7 @@ function validatePassword() {
     <!-- Page level custom scripts -->
     <script src="js/demo/chart-area-demo.js"></script>
     <script src="js/demo/chart-pie-demo.js"></script>
-<script>
-    // Toggle password visibility
-    document.getElementById('toggle-password').addEventListener('click', function () {
-        var passwordField = document.getElementById('password');
-        var icon = this.querySelector('i');
-        
-        if (passwordField.type === 'password') {
-            passwordField.type = 'text';  // Show password
-            icon.classList.remove('fa-eye');
-            icon.classList.add('fa-eye-slash');
-        } else {
-            passwordField.type = 'password';  // Hide password
-            icon.classList.remove('fa-eye-slash');
-            icon.classList.add('fa-eye');
-        }
-    });
 
-    // Toggle re-type password visibility
-    document.getElementById('toggle-retype-password').addEventListener('click', function () {
-        var retypePasswordField = document.getElementById('retype-password');
-        var icon = this.querySelector('i');
-        
-        if (retypePasswordField.type === 'password') {
-            retypePasswordField.type = 'text';  // Show re-type password
-            icon.classList.remove('fa-eye');
-            icon.classList.add('fa-eye-slash');
-        } else {
-            retypePasswordField.type = 'password';  // Hide re-type password
-            icon.classList.remove('fa-eye-slash');
-            icon.classList.add('fa-eye');
-        }
-    });
-</script>
 </body>
 
 </html>
