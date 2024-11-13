@@ -230,7 +230,7 @@ if (isset($_POST['login'])) {
             <label for="email">Email</label>
             <input type="email" id="email" name="email" class="form-control" required>
         </div>
-         <div class="form-group">
+        <div class="form-group">
     <label for="password">Password</label>
     <div class="input-group">
         <input type="password" id="password" name="password" class="form-control" required>
@@ -241,6 +241,10 @@ if (isset($_POST['login'])) {
         </div>
     </div>
 </div>
+<p class="text-center mt-3">
+    <a href="forgot-password.php">Forgot your password?</a>
+</p>
+
         <button type="submit" name="login" class="btn btn-warning btn-block">Login</button>
         <p class="text-center mt-3">Don't have an account? <a href="signup.php">Sign Up</a></p>
     </form>
@@ -249,13 +253,13 @@ if (isset($_POST['login'])) {
 
    
     <!-- Bootstrap core JavaScript-->
-     <script src="vendor/jquery/jquery.min.js"></script>
+    <script src="vendor/jquery/jquery.min.js"></script>
     <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/js/bootstrap.min.js"></script>
     <script src="js/sb-admin-2.min.js"></script>
     <script src="js/custom.js"></script>
-     <script>
+    <script>
     // Toggle password visibility
     document.getElementById('toggle-password').addEventListener('click', function () {
         var passwordField = document.getElementById('password');
