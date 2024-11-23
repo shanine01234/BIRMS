@@ -16,72 +16,17 @@ class Order {
     }
 
     public function displayOrders($owner_id) {
-        $sql = "SELECT * FROM orders";
-        $stmt = $this->conn->prepare($sql);
-        $stmt->execute();
-        $result = $stmt->get_result();
-        return $result->fetch_all(MYSQLI_ASSOC);
-    }
-
-    public function getOrderCount() {
-        $sql = "SELECT COUNT(*) as total FROM orders";
-        $stmt = $this->conn->prepare($sql);
-        $stmt->execute();
-        $result = $stmt->get_result();
-        return $result->fetch_assoc()['total'];
-    }
-
-    public function getConfirmedOrderSales() {
-        $sql = "SELECT SUM(total_price) as total_sales FROM orders WHERE status = 2";
-        $stmt = $this->conn->prepare($sql);
-        $stmt->execute();
-        $result = $stmt->get_result();
-        return $result->fetch_assoc()['total_sales'];
-    }
-
-    public function getOrderStatusCounts() {
-        $counts = [];
-        $statuses = [1, 2, 3];
-        foreach ($statuses as $status) {
-            $sql = "SELECT COUNT(*) as count FROM orders WHERE status = ?";
-            $stmt = $this->conn->prepare($sql);
-            $stmt->bind_param("i", $status);
-            $stmt->execute();
-            $result = $stmt->get_result();
-            $counts[$status] = $result->fetch_assoc()['count'];
-        }
-        return $counts;
+        return []; // Temporarily return an empty array
     }
 }
 
-// Create an instance of the Order class
-$order = new Order($oop->conn); // Assuming $oop->conn is your database connection
+// Instantiate the Order class
+$order = new Order($oop->conn);
 
-// Handle the status update request
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $order_id = $_POST['order_id'];
-    $status = $_POST['status'];
-
-    if (is_numeric($order_id) && in_array($status, [1, 2, 3])) {
-        $sql = "UPDATE orders SET status = ? WHERE id = ?";
-        $stmt = $oop->conn->prepare($sql);
-        $stmt->bind_param("ii", $status, $order_id);
-
-        if ($stmt->execute()) {
-            header('Location: orders.php'); // Redirect back to orders page
-            exit();
-        } else {
-            $error_message = "Error updating status: " . $stmt->error;
-        }
-    } else {
-        $error_message = "Invalid data provided.";
-    }
-}
-
-// Get dashboard data
-$total_orders = $order->getOrderCount();
-$confirmed_sales = $order->getConfirmedOrderSales();
-$order_status_counts = $order->getOrderStatusCounts();
+// Temporarily override dashboard data with zero values
+$total_orders = 0; // Total orders set to zero
+$confirmed_sales = 0.00; // Confirmed sales set to zero
+$order_status_counts = [1 => 0, 2 => 0, 3 => 0]; // All order statuses set to zero
 ?>
 
 <!DOCTYPE html>
@@ -98,90 +43,6 @@ $order_status_counts = $order->getOrderStatusCounts();
     <link href="../css/sb-admin-2.min.css" rel="stylesheet">
     <link href="../css/datatables.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>/* Global Card Styling */
-.card {
-    border-radius: 10px; /* Rounded corners */
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-/* Card Hover Effect */
-.card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
-
-/* Primary Card (Resto Owners) */
-.border-left-primary {
-    border-left: 0;
-    background: linear-gradient(135deg, #4e73df 0%, #224abe 100%);
-    color: white;
-}
-
-.border-left-primary .text-primary,
-.border-left-primary .text-gray-800 {
-    color: white !important;
-}
-
-/* Success Card (Restobars) */
-.border-left-success {
-    border-left: 0;
-    background: linear-gradient(135deg, #1cc88a 0%, #198754 100%);
-    color: white;
-}
-
-.border-left-success .text-success,
-.border-left-success .text-gray-800 {
-    color: white !important;
-}
-
-/* Info Card (Menus) */
-.border-left-info {
-    border-left: 0;
-    background: linear-gradient(135deg, #36b9cc 0%, #258eab 100%);
-    color: white;
-}
-
-.border-left-info .text-info,
-.border-left-info .text-gray-800 {
-    color: white !important;
-}
-
-/* Warning Card (Pending Requests) */
-.border-left-warning {
-    border-left: 0;
-    background: linear-gradient(135deg, #f6c23e 0%, #c58a23 100%);
-    color: white;
-}
-
-.border-left-warning .text-warning,
-.border-left-warning .text-gray-800 {
-    color: white !important;
-}
-
-/* Icon Styling */
-.card .col-auto i {
-    color: rgba(255, 255, 255, 0.7);
-    transition: color 0.3s ease;
-}
-
-.card:hover .col-auto i {
-    color: white;
-}
-
-/* Font Sizes */
-.card-body .text-xs {
-    font-size: 0.8rem;
-    letter-spacing: 1px;
-}
-
-.card-body .h5 {
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: white;
-}
-
-
-</style>
 </head>
 <body id="page-top">
     <div id="wrapper">
@@ -200,10 +61,11 @@ $order_status_counts = $order->getOrderStatusCounts();
                 </a>
             </li>
             <li class="nav-item">
-    <a class="nav-link" href="sales.php">
-        <i class="fas fa-fw fa-tachometer-alt"></i>
-        <span> Sales Dashboard</span></a>
-</li>
+                <a class="nav-link" href="sales.php">
+                    <i class="fas fa-fw fa-tachometer-alt"></i>
+                    <span> Sales Dashboard</span>
+                </a>
+            </li>
             <hr class="sidebar-divider">
             <div class="sidebar-heading">Pages</div>
             <li class="nav-item">
@@ -309,7 +171,6 @@ $order_status_counts = $order->getOrderStatusCounts();
                             </div>
                         </div>
                     </div>
-
                     <!-- Sales Chart -->
                     <div class="row">
                         <div class="col-md-12">
@@ -325,7 +186,6 @@ $order_status_counts = $order->getOrderStatusCounts();
                     </div>
                 </div>
             </div>
-
             <!-- Logout Modal -->
             <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="logoutModalLabel" aria-hidden="true">
                 <div class="modal-dialog" role="document">
@@ -350,35 +210,26 @@ $order_status_counts = $order->getOrderStatusCounts();
         <script src="../vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
         <script src="../vendor/jquery-easing/jquery.easing.min.js"></script>
         <script src="../js/sb-admin-2.min.js"></script>
-        <script src="../js/datatables.min.js"></script>
-
         <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            var ctx = document.getElementById('salesChart').getContext('2d');
-            var salesChart = new Chart(ctx, {
-                type: 'bar', // You can change this to 'line', 'pie', etc.
-                data: {
-                    labels: ['Pending', 'Confirmed', 'Finished'], // Labels for the chart
-                    datasets: [{
-                        label: 'Order Status Count',
-                        data: [
-                            <?php echo $order_status_counts[1]; ?>, 
-                            <?php echo $order_status_counts[2]; ?>, 
-                            <?php echo $order_status_counts[3]; ?>
-                        ],
-                        backgroundColor: ['rgba(255, 206, 86, 0.2)', 'rgba(54, 162, 235, 0.2)', 'rgba(75, 192, 192, 0.2)'],
-                        borderColor: ['rgba(255, 206, 86, 1)', 'rgba(54, 162, 235, 1)', 'rgba(75, 192, 192, 1)'],
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    scales: {
-                        y: {
-                            beginAtZero: true
-                        }
+        const ctx = document.getElementById('salesChart');
+        const salesChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Pending', 'Confirmed', 'Finished'],
+                datasets: [{
+                    label: 'Order Status',
+                    data: [<?= $order_status_counts[1] ?>, <?= $order_status_counts[2] ?>, <?= $order_status_counts[3] ?>],
+                    backgroundColor: ['#f6c23e', '#1cc88a', '#36b9cc'],
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true
                     }
                 }
-            });
+            }
         });
         </script>
     </div>
