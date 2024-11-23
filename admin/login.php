@@ -1,21 +1,19 @@
 <?php 
 require_once('../inc/function.php');
-require_once('process/loginAdmin.php');
-
+require_once('process/loginOwner.php');
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
-
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>BIRMS | Admin Login</title>
+    <title>BIRMS | Owner Login</title>
 
     <!-- Custom fonts for this template-->
     <link href="../vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
@@ -25,6 +23,21 @@ require_once('process/loginAdmin.php');
 
     <!-- Custom styles for this template-->
     <link href="../css/sb-admin-2.min.css" rel="stylesheet">
+
+    <!-- Custom CSS for password visibility -->
+    <style>
+        .password-container {
+            position: relative;
+        }
+
+        .password-container .far.fa-eye {
+            position: absolute;
+            top: 50%;
+            right: 20px;
+            transform: translateY(-50%);
+            cursor: pointer;
+        }
+    </style>
 
 </head>
 
@@ -44,25 +57,28 @@ require_once('process/loginAdmin.php');
                             <div class="col-lg-12">
                                 <div class="p-5">
                                     <div class="text-center">
-                                        <h1 class="h4 text-gray-900 mb-4">Welcome Back Admin!</h1>
+                                        <h1 class="h4 text-gray-900 mb-4">Hello Resto Owner!</h1>
                                         <?=$msgAlert?>
                                     </div>
                                     <form class="user" method="POST">
                                         <div class="form-group">
-                                            <input type="text" name="username" class="form-control form-control-user"
+                                            <input type="text" name="owner_email" class="form-control form-control-user"
                                                 id="exampleInputEmail" aria-describedby="emailHelp"
-                                                placeholder="Enter Username..." required>
-                                        </div>
-                                        <div class="form-group">
-                                            <input type="password" name="password" class="form-control form-control-user"
-                                                id="exampleInputPassword" placeholder="Password" required>
+                                                placeholder="Enter Email..." required>
                                         </div>
 
-                                        <button type="submit" name="loginAdmin" class="btn btn-primary btn-user btn-block">Login</button>
-                                        
+                                        <div class="form-group password-container">
+                                            <input type="password" name="password" class="form-control form-control-user"
+                                                id="exampleInputPassword" placeholder="Password" required>
+                                            <i class="far fa-eye" id="togglePassword"></i>
+                                        </div>
+
+                                        <button type="submit" name="loginOwner" class="btn btn-primary btn-user btn-block">Login</button>
                                     </form>
                                     <hr>
-                                    
+                                    <div class="text-center">
+                                        <a class="small" href="register.php">Create an Account!</a>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -84,6 +100,17 @@ require_once('process/loginAdmin.php');
 
     <!-- Custom scripts for all pages-->
     <script src="../js/sb-admin-2.min.js"></script>
+
+    <!-- Show Password Script -->
+    <script>
+        // Toggle password visibility
+        document.getElementById("togglePassword").addEventListener("click", function () {
+            var passwordField = document.getElementById("exampleInputPassword");
+            var type = passwordField.type === "password" ? "text" : "password";
+            passwordField.type = type;
+            this.classList.toggle("fa-eye-slash");
+        });
+    </script>
 
 </body>
 
