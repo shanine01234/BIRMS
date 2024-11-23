@@ -25,6 +25,22 @@ require_once('process/registerOwner.php');
     <!-- Custom styles for this template-->
     <link href="../css/sb-admin-2.min.css" rel="stylesheet">
 
+    <!-- Custom CSS to adjust icon margins -->
+    <style>
+        /* Adjusting the position of the eye icons */
+        .password-container {
+            position: relative;
+        }
+
+        .password-container .far.fa-eye {
+            position: absolute;
+            top: 50%; /* Vertically center the icon */
+            right: 20px; /* Adjust right margin */
+            transform: translateY(-50%); /* Ensure vertical centering */
+            cursor: pointer;
+        }
+    </style>
+
 </head>
 
 <body class="bg-gradient-primary">
@@ -47,7 +63,7 @@ require_once('process/registerOwner.php');
                                     </div>
                                     <div class="col-sm-4">
                                         <input type="text" name="middlename" class="form-control form-control-user" id="exampleLastName"
-                                            placeholder="Middl Name (Optional)">
+                                            placeholder="Middle Name (Optional)">
                                     </div>
                                     <div class="col-sm-4">
                                         <input type="text" name="lastname" class="form-control form-control-user" id="exampleLastName"
@@ -78,13 +94,15 @@ require_once('process/registerOwner.php');
                                         placeholder="Email Address" required>
                                 </div>
                                 <div class="form-group row">
-                                    <div class="col-sm-6 mb-3 mb-sm-0">
-                                        <input type="password"  name="password" class="form-control form-control-user"
+                                    <div class="col-sm-6 mb-3 mb-sm-0 password-container">
+                                        <input type="password" name="password" class="form-control form-control-user"
                                             id="exampleInputPassword" placeholder="Password" required>
+                                        <i class="far fa-eye" id="togglePassword"></i>
                                     </div>
-                                    <div class="col-sm-6">
+                                    <div class="col-sm-6 password-container">
                                         <input type="password" name="cpassword" class="form-control form-control-user"
                                             id="exampleRepeatPassword" placeholder="Repeat Password" required>
+                                        <i class="far fa-eye" id="toggleRepeatPassword"></i>
                                     </div>
                                 </div>
                                 <div class="form-group">
@@ -120,7 +138,23 @@ require_once('process/registerOwner.php');
     <script src="../vendor/jquery-easing/jquery.easing.min.js"></script>
 
     <!-- Custom scripts for all pages-->
+    <script>
+        // Toggle password visibility for the first password field
+        document.getElementById("togglePassword").addEventListener("click", function () {
+            var password = document.getElementById("exampleInputPassword");
+            var type = password.type === "password" ? "text" : "password";
+            password.type = type;
+            this.classList.toggle("fa-eye-slash");
+        });
 
+        // Toggle password visibility for the repeat password field
+        document.getElementById("toggleRepeatPassword").addEventListener("click", function () {
+            var password = document.getElementById("exampleRepeatPassword");
+            var type = password.type === "password" ? "text" : "password";
+            password.type = type;
+            this.classList.toggle("fa-eye-slash");
+        });
+    </script>
 </body>
 
 </html>
