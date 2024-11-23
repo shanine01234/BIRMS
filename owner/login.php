@@ -1,14 +1,12 @@
 <?php 
 require_once('../inc/function.php');
 require_once('process/loginOwner.php');
-
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
-
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -25,6 +23,21 @@ require_once('process/loginOwner.php');
 
     <!-- Custom styles for this template-->
     <link href="../css/sb-admin-2.min.css" rel="stylesheet">
+
+    <!-- Custom CSS for password visibility -->
+    <style>
+        .password-container {
+            position: relative;
+        }
+
+        .password-container .far.fa-eye {
+            position: absolute;
+            top: 50%;
+            right: 20px;
+            transform: translateY(-50%);
+            cursor: pointer;
+        }
+    </style>
 
 </head>
 
@@ -53,13 +66,14 @@ require_once('process/loginOwner.php');
                                                 id="exampleInputEmail" aria-describedby="emailHelp"
                                                 placeholder="Enter Email..." required>
                                         </div>
-                                        <div class="form-group">
+
+                                        <div class="form-group password-container">
                                             <input type="password" name="password" class="form-control form-control-user"
                                                 id="exampleInputPassword" placeholder="Password" required>
+                                            <i class="far fa-eye" id="togglePassword"></i>
                                         </div>
 
                                         <button type="submit" name="loginOwner" class="btn btn-primary btn-user btn-block">Login</button>
-                                        
                                     </form>
                                     <hr>
                                     <div class="text-center">
@@ -86,6 +100,17 @@ require_once('process/loginOwner.php');
 
     <!-- Custom scripts for all pages-->
     <script src="../js/sb-admin-2.min.js"></script>
+
+    <!-- Show Password Script -->
+    <script>
+        // Toggle password visibility
+        document.getElementById("togglePassword").addEventListener("click", function () {
+            var passwordField = document.getElementById("exampleInputPassword");
+            var type = passwordField.type === "password" ? "text" : "password";
+            passwordField.type = type;
+            this.classList.toggle("fa-eye-slash");
+        });
+    </script>
 
 </body>
 
