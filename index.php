@@ -151,8 +151,8 @@ require_once('inc/header.php');
     </div>
 
     <style>
-        body{
-            background-image: url('img/photos/bantayan island.jpg');
+       body{
+            background-image: url('img/55.webp');
             background-size:cover;
             height: 100%;
             width: 100%;
