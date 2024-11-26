@@ -140,7 +140,9 @@ require_once('inc/header.php');
     <div class="container-fluid">
         <div class="row d-flex align-items-center justify-content-center" style="height: 100vh; width: 100%;">
             <div class="col-md-6 text-center">
-                <h1>Welcome to Bantayan Island Restobar Management System</h1>
+                   <h1 style="font-family: 'Arial', sans-serif; color: #fff; font-size: 50px;">
+  Restobars in Bantayan <span style="color: ;">Island Ordering System</span>
+</h1>
                 <a href="restobar.php" class="btn btn-warning mt-2">Visit our RESTOBARS</a>
             </div>
         </div>
