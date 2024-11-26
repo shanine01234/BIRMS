@@ -41,6 +41,15 @@ require_once('inc/header.php');
         .navbar-toggler-icon {
         background-color: black; /* Sets the background color of the toggler icon */
     }
+        body{
+            background-image: url('img/55.webp');
+            background-size:cover;
+            height: 100%;
+            width: 100%;
+            h1{
+  color: white;
+}
+        }
     </style>
 </head>
 
