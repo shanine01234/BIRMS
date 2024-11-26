@@ -181,7 +181,7 @@ if (isset($_POST['login'])) {
             background-color: #343a40;
         }
         .login-container {
-           border: 2px solid yellow; 
+           border: 3px solid black; 
            padding: 20px;
            border-radius: 5px; 
            max-width: 400px;
