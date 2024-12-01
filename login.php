@@ -181,14 +181,15 @@ if (isset($_POST['login'])) {
             background-color: #343a40;
         }
         .login-container {
-           border: 3px solid black; 
-           padding: 20px;
-           border-radius: 5px; 
-           max-width: 400px;
-           margin: 0 auto;
-            background-color: #f9f9f9; 
-            margin-top:100px;
-        }
+    border: 2px solid black; /* Add a border */
+    border-radius: 8px; /* Round the corners */
+    padding: 20px; /* Add spacing inside */
+    max-width: 400px;
+    margin: 0 auto;
+    margin-top: 100px; /* Center the container */
+    background-color: #f9f9f9; /* Light background color */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
+}
 
        .btn-back {
            display: inline-block;
