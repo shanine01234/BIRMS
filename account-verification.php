@@ -261,88 +261,54 @@ if (isset($_POST['submit'])) {
                 <input type="email" id="email" name="email" class="form-control my-2" required>
             </div>
             <div class="form-group">
-    <label for="password">Password</label>
-    <div class="input-group">
-        <input type="password" id="password" name="password" class="form-control my-2" required>
-        <div class="input-group-append">
-            <span class="input-group-text" id="toggle-password" style="cursor: pointer;">
-                <i class="fas fa-eye"></i> <!-- Eye icon to toggle password visibility -->
-            </span>
-        </div>
-    </div>
-</div>
-           <div class="form-group">
-    <label for="retype-password">Re-type Password</label>
-    <div class="input-group">
-        <input type="password" id="retype-password" name="retype-password" class="form-control my-2" required>
-        <div class="input-group-append">
-            <span class="input-group-text" id="toggle-retype-password" style="cursor: pointer;">
-                <i class="fas fa-eye"></i> <!-- Eye icon to toggle password visibility -->
-            </span>
-        </div>
-    </div>
-</div>
-            <button type="submit" name="submit" class="btn btn-warning btn-block">Verify</button>
+                <label for="password">Password</label>
+                <div class="input-group">
+                    <input type="password" id="password" name="password" class="form-control my-2" required>
+                    <div class="input-group-append">
+                        <label class="input-group-text" id="toggle-password" style="cursor: pointer;">
+                            <input type="checkbox" id="password-checkbox"> Show Password
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="retype-password">Re-type Password</label>
+                <div class="input-group">
+                    <input type="password" id="retype-password" name="retype-password" class="form-control my-2" required>
+                    <div class="input-group-append">
+                        <label class="input-group-text" id="toggle-retype-password" style="cursor: pointer;">
+                            <input type="checkbox" id="retype-password-checkbox"> Show Password
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <button type="submit" name="submit" class="btn btn-primary btn-block">Verify</button>
         </form>
     </div>
 
-    <!-- Footer -->
+    <script>
+        // Toggle password visibility with a checkbox
+        document.getElementById('password-checkbox').addEventListener('change', function () {
+            var passwordField = document.getElementById('password');
+            
+            if (this.checked) {
+                passwordField.type = 'text';  // Show password
+            } else {
+                passwordField.type = 'password';  // Hide password
+            }
+        });
 
-    <!-- Bootstrap core JavaScript-->
-    <script src="vendor/jquery/jquery.min.js"></script>
-    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-
-    <!-- Core plugin JavaScript-->
-    <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
-
-    <!-- Custom scripts for all pages-->
-    <script src="js/sb-admin-2.min.js"></script>
-    <script src="js/custom.js"></script>
-    <script src="js/datatables.min.js"></script>
-
-    <!-- Bootstrap 5 JavaScript -->
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/js/bootstrap.min.js"></script>
-
-    <!-- Page level plugins -->
-    <script src="vendor/chart.js/Chart.min.js"></script>
-
-    <!-- Page level custom scripts -->
-    <script src="js/demo/chart-area-demo.js"></script>
-    <script src="js/demo/chart-pie-demo.js"></script>
-<script>
-    // Toggle password visibility
-    document.getElementById('toggle-password').addEventListener('click', function () {
-        var passwordField = document.getElementById('password');
-        var icon = this.querySelector('i');
-        
-        if (passwordField.type === 'password') {
-            passwordField.type = 'text';  // Show password
-            icon.classList.remove('fa-eye');
-            icon.classList.add('fa-eye-slash');
-        } else {
-            passwordField.type = 'password';  // Hide password
-            icon.classList.remove('fa-eye-slash');
-            icon.classList.add('fa-eye');
-        }
-    });
-
-    // Toggle re-type password visibility
-    document.getElementById('toggle-retype-password').addEventListener('click', function () {
-        var retypePasswordField = document.getElementById('retype-password');
-        var icon = this.querySelector('i');
-        
-        if (retypePasswordField.type === 'password') {
-            retypePasswordField.type = 'text';  // Show re-type password
-            icon.classList.remove('fa-eye');
-            icon.classList.add('fa-eye-slash');
-        } else {
-            retypePasswordField.type = 'password';  // Hide re-type password
-            icon.classList.remove('fa-eye-slash');
-            icon.classList.add('fa-eye');
-        }
-    });
-</script>
+        // Toggle re-type password visibility with a checkbox
+        document.getElementById('retype-password-checkbox').addEventListener('change', function () {
+            var retypePasswordField = document.getElementById('retype-password');
+            
+            if (this.checked) {
+                retypePasswordField.type = 'text';  // Show password
+            } else {
+                retypePasswordField.type = 'password';  // Hide password
+            }
+        });
+    </script>
 </body>
 
 </html>
