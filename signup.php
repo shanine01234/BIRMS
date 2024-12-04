@@ -13,70 +13,80 @@ if (isset($_POST['signup'])) {
     $name = $_POST['name'];
     $email = $_POST['email'];
     $password = $_POST['password'];
-    $verification_code = uniqid();
+    $password_confirm = $_POST['password-confirm'];
 
-    $stmt = $conn->query("SELECT * FROM users WHERE email = '$email'");
-    if ($stmt->num_rows) {
-       ?>
-        <script>
-           document.addEventListener('DOMContentLoaded', function(){
-            Swal.fire({
-                    position: "middle",
-                    icon: "error",
-                    title: "Account already exists",
-                    showConfirmButton: false,
-                    timer: 1500
-            }).then(() => {
-                window.location.href = "signup.php"
-            });
-           })
-        </script>
-       <?php 
+    if ($password !== $password_confirm) {
+        echo "<script>alert('Passwords do not match');</script>";
     } else {
-        $hashed = password_hash($password, PASSWORD_DEFAULT);
-        $query = $conn->query("INSERT INTO users SET username = '$name', email ='$email', password= '$hashed', verification_code = '$verification_code'");
-        if ($query) {
-
-            $mail = new PHPMailer(true);
-            $mail->SMTPDebug = 0;
-            $mail->isSMTP();
-            $mail->Host = 'smtp.gmail.com';
-            $mail->SMTPAuth = true;
-            $mail->Username = 'shaninezaspa179@gmail.com';
-            $mail->Password = 'hglesxkasgmryjxq';
-            $mail->Port = 587;
-
-            $mail->SMTPOptions = array(
-                'ssl' => array(
-                    'verify_peer' => false,
-                    'verify_peer_name' => false,
-                    'allow_self_signed' => true
-                )
-            );
-
-            $mail->setFrom('bantayanrestobar@gmail.com', 'Bantayan Restobar');
-
-            $mail->addAddress($email);
-            $mail->Subject = "Account Verification Code";
-            $mail->Body = "This is your verification code: " . $verification_code;
-
-            $mail->send();
-
+        $verification_code = uniqid();
+        
+        // Using prepared statement to prevent SQL injection
+        $stmt = $conn->prepare("SELECT * FROM users WHERE email = ?");
+        $stmt->bind_param("s", $email);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        
+        if ($result->num_rows) {
             ?>
             <script>
-            document.addEventListener('DOMContentLoaded', function(){
-                Swal.fire({
+                document.addEventListener('DOMContentLoaded', function(){
+                    Swal.fire({
                         position: "middle",
-                        icon: "success",
-                        title: "Account created successfully",
+                        icon: "error",
+                        title: "Account already exists",
                         showConfirmButton: false,
                         timer: 1500
-                }).then(() => {
-                    window.location.href = "account-verification.php"
+                    }).then(() => {
+                        window.location.href = "signup.php"
+                    });
                 });
-            })
             </script>
-        <?php 
+            <?php
+        } else {
+            $hashed = password_hash($password, PASSWORD_DEFAULT);
+            $query = $conn->prepare("INSERT INTO users (username, email, password, verification_code) VALUES (?, ?, ?, ?)");
+            $query->bind_param("ssss", $name, $email, $hashed, $verification_code);
+            if ($query->execute()) {
+                // Send verification email
+                $mail = new PHPMailer(true);
+                $mail->SMTPDebug = 0;
+                $mail->isSMTP();
+                $mail->Host = 'smtp.gmail.com';
+                $mail->SMTPAuth = true;
+                $mail->Username = 'shaninezaspa179@gmail.com';
+                $mail->Password = 'hglesxkasgmryjxq';
+                $mail->Port = 587;
+
+                $mail->SMTPOptions = array(
+                    'ssl' => array(
+                        'verify_peer' => false,
+                        'verify_peer_name' => false,
+                        'allow_self_signed' => true
+                    )
+                );
+
+                $mail->setFrom('bantayanrestobar@gmail.com', 'Bantayan Restobar');
+                $mail->addAddress($email);
+                $mail->Subject = "Account Verification Code";
+                $mail->Body = "This is your verification code: " . $verification_code;
+                $mail->send();
+
+                ?>
+                <script>
+                    document.addEventListener('DOMContentLoaded', function(){
+                        Swal.fire({
+                            position: "middle",
+                            icon: "success",
+                            title: "Account created successfully",
+                            showConfirmButton: false,
+                            timer: 1500
+                        }).then(() => {
+                            window.location.href = "account-verification.php"
+                        });
+                    });
+                </script>
+                <?php 
+            }
         }
     }
 }
@@ -212,39 +222,35 @@ if (isset($_POST['signup'])) {
             const strengthBar = document.getElementById('password-strength').children[0];
             const strengthText = document.getElementById('password-strength');
             const capsLockWarning = document.getElementById('caps-lock-warning');
+            let strength = "weak";
 
-            let strength = 0;
-            if (password.length >= 8) strength += 1;
-            if (/[A-Z]/.test(password)) strength += 1;
-            if (/\d/.test(password)) strength += 1;
-            if (/[!@#$%^&*(),.?":{}|<>]/.test(password)) strength += 1;
-
-            switch (strength) {
-                case 0:
-                    strengthBar.className = 'strength-weak';
-                    break;
-                case 1:
-                    strengthBar.className = 'strength-weak';
-                    break;
-                case 2:
-                    strengthBar.className = 'strength-medium';
-                    break;
-                case 3:
-                case 4:
-                    strengthBar.className = 'strength-strong';
-                    break;
+            if (password.length > 8) {
+                if (/[A-Z]/.test(password) && /[0-9]/.test(password)) {
+                    strength = "strong";
+                } else {
+                    strength = "medium";
+                }
             }
+
+            if (strength === "weak") {
+                strengthBar.classList = ['strength-weak'];
+            } else if (strength === "medium") {
+                strengthBar.classList = ['strength-medium'];
+            } else {
+                strengthBar.classList = ['strength-strong'];
+            }
+
+            strengthBar.style.width = `${(strength === "weak" ? 30 : strength === "medium" ? 60 : 100)}%`;
         }
 
-        function checkCapsLock(e) {
+        function checkCapsLock(event) {
             const capsLockWarning = document.getElementById('caps-lock-warning');
-            const keyCode = e.keyCode || e.which;
-            const isShift = e.shiftKey || ((keyCode >= 65 && keyCode <= 90) && !e.altKey);
-            
-            capsLockWarning.style.display = isShift ? 'none' : 'block';
+            if (event.getModifierState('CapsLock')) {
+                capsLockWarning.style.display = 'block';
+            } else {
+                capsLockWarning.style.display = 'none';
+            }
         }
     </script>
 </body>
-
 </html>
-
