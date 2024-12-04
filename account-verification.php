@@ -194,7 +194,7 @@ if (isset($_POST['submit'])) {
             </div>
             
             <!-- Submit Button -->
-            <button type="submit" name="submit" class="btn btn-primary btn-block">Verify</button>
+            <button type="submit" name="submit" class="btn btn-warning btn-block">Verify</button>
         </form>
     </div>
 
