@@ -1,84 +1,83 @@
 <?php 
 require_once('inc/header.php');
 
-if (isset($_POST['submit'])) {
-    $verification_code = $_POST['verification_code'];
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+use PHPMailer\PHPMailer\SMTP;
+
+require "./phpmailer/src/Exception.php";
+require "./phpmailer/src/PHPMailer.php";
+require "./phpmailer/src/SMTP.php";
+
+if (isset($_POST['signup'])) {
+    $name = $_POST['name'];
     $email = $_POST['email'];
     $password = $_POST['password'];
+    $verification_code = uniqid();
 
     $stmt = $conn->query("SELECT * FROM users WHERE email = '$email'");
     if ($stmt->num_rows) {
-        $row = $stmt->fetch_assoc();
-
-        if (password_verify($password, $row['password'])) {
-            if ($row['verification_code'] === $verification_code) {
-                $update = $conn->query("UPDATE users SET status = 2 WHERE verification_code = '$verification_code' AND email = '$email'");
-
-                ?>
-                <script>
-                    document.addEventListener('DOMContentLoaded', function() {
-                        Swal.fire({
-                            position: "middle",
-                            icon: "success",
-                            title: "Account verified successfully",
-                            showConfirmButton: false,
-                            timer: 1500
-                        }).then(() => {
-                            window.location.href = "login.php";
-                        });
-                    });
-                </script>
-                <?php 
-            } else {
-                ?>
-                <script>
-                    document.addEventListener('DOMContentLoaded', function() {
-                        Swal.fire({
-                            position: "middle",
-                            icon: "error",
-                            title: "Incorrect verification code",
-                            showConfirmButton: false,
-                            timer: 1500
-                        }).then(() => {
-                            window.location.href = "account-verification.php";
-                        });
-                    });
-                </script>
-                <?php 
-            }    
-        } else {
-            ?>
-            <script>
-                document.addEventListener('DOMContentLoaded', function() {
-                    Swal.fire({
-                        position: "middle",
-                        icon: "error",
-                        title: "Incorrect email or password",
-                        showConfirmButton: false,
-                        timer: 1500
-                    }).then(() => {
-                        window.location.href = "account-verification.php";
-                    });
-                });
-            </script>
-            <?php 
-        }
-    } else {
-        ?>
+       ?>
         <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                Swal.fire({
+           document.addEventListener('DOMContentLoaded', function(){
+            Swal.fire({
                     position: "middle",
                     icon: "error",
-                    title: "Incorrect email or password",
+                    title: "Account already exists",
                     showConfirmButton: false,
                     timer: 1500
-                }).then(() => {
-                    window.location.href = "account-verification.php";
-                });
+            }).then(() => {
+                window.location.href = "signup.php"
             });
+           })
         </script>
+       <?php 
+    } else {
+        $hashed = password_hash($password, PASSWORD_DEFAULT);
+        $query = $conn->query("INSERT INTO users SET username = '$name', email ='$email', password= '$hashed', verification_code = '$verification_code'");
+        if ($query) {
+
+            $mail = new PHPMailer(true);
+            $mail->SMTPDebug = 0;
+            $mail->isSMTP();
+            $mail->Host = 'smtp.gmail.com';
+            $mail->SMTPAuth = true;
+            $mail->Username = 'shaninezaspa179@gmail.com';
+            $mail->Password = 'hglesxkasgmryjxq';
+            $mail->Port = 587;
+
+            $mail->SMTPOptions = array(
+                'ssl' => array(
+                    'verify_peer' => false,
+                    'verify_peer_name' => false,
+                    'allow_self_signed' => true
+                )
+            );
+
+            $mail->setFrom('bantayanrestobar@gmail.com', 'Bantayan Restobar');
+
+            $mail->addAddress($email);
+            $mail->Subject = "Account Verification Code";
+            $mail->Body = "This is your verification code: " . $verification_code;
+
+            $mail->send();
+
+            ?>
+            <script>
+            document.addEventListener('DOMContentLoaded', function(){
+                Swal.fire({
+                        position: "middle",
+                        icon: "success",
+                        title: "Account created successfully",
+                        showConfirmButton: false,
+                        timer: 1500
+                }).then(() => {
+                    window.location.href = "account-verification.php"
+                });
+            })
+            </script>
         <?php 
+        }
     }
 }
 ?>
@@ -92,6 +91,7 @@ if (isset($_POST['submit'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
     <meta name="author" content="">
+
     <title>Bantayan Island Restobar</title>
 
     <!-- Custom fonts for this template-->
@@ -99,7 +99,6 @@ if (isset($_POST['submit'])) {
     <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@200..900&display=swap" rel="stylesheet">
-
     <!-- Custom styles for this template-->
     <link href="css/sb-admin-2.min.css" rel="stylesheet">
     <link href="css/datatables.min.css" rel="stylesheet">
@@ -107,6 +106,13 @@ if (isset($_POST['submit'])) {
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <style>
+        body {
+            font-family: "Inconsolata", monospace;
+            font-optical-sizing: auto;
+            font-weight: <weight>;
+            font-style: normal;
+            font-variation-settings: "wdth" 100;
+        }
         .signup-container {
             border: 2px solid #ddd; 
             padding: 20px;
@@ -116,25 +122,36 @@ if (isset($_POST['submit'])) {
             background-color: white; 
             margin-top:100px;
         }
-        .form-group {
-            margin-bottom: 15px;
+        .strength-bar {
+            width: 100%;
+            height: 5px;
+            background-color: lightgray;
+            margin-top: 10px;
         }
-        .input-group-text {
-            cursor: pointer;
+        .strength-bar span {
+            height: 100%;
+            display: block;
+        }
+        .strength-weak { background-color: red; }
+        .strength-medium { background-color: orange; }
+        .strength-strong { background-color: green; }
+        .caps-lock-warning {
+            color: red;
+            font-size: 12px;
+            display: none;
         }
     </style>
 </head>
 
 <body style="background-color: #fff;">
-    <!-- Account Verification Form -->
+    <!-- Signup Form -->
     <div class="signup-container">
         <a href="login.php" class="btn btn-warning btn-back">Back</a>
-        <h4 class="text-start my-3" style="font-size: 30px;">Account Verification</h4>
-        <p>Please check your email account. We sent a code to your email account.</p>
+        <h4 class="text-start my-3" style="font-size: 30px;">Sign Up</h4>
         <form method="post">
             <div class="form-group">
-                <label for="verification_code">Verification Code</label>
-                <input type="text" id="verification_code" name="verification_code" class="form-control my-2" required>
+                <label for="name">Name</label>
+                <input type="text" id="name" name="name" class="form-control my-2" required>
             </div>
             <div class="form-group">
                 <label for="email">Email</label>
@@ -142,67 +159,90 @@ if (isset($_POST['submit'])) {
             </div>
             <div class="form-group">
                 <label for="password">Password</label>
-                <div class="input-group">
-                    <input type="password" id="password" name="password" class="form-control my-2" required>
-                    <div class="input-group-append">
-                        <span class="input-group-text" id="toggle-password">
-                            <i class="fas fa-eye"></i>
-                        </span>
-                    </div>
-                </div>
+                <input type="password" id="password" name="password" class="form-control my-2" required onkeyup="checkPasswordStrength(); checkCapsLock(event)">
+                <div id="password-strength" class="strength-bar"><span></span></div>
+                <small id="caps-lock-warning" class="caps-lock-warning">Caps Lock is on!</small>
             </div>
             <div class="form-group">
-                <label for="retype-password">Re-type Password</label>
-                <div class="input-group">
-                    <input type="password" id="retype-password" name="retype-password" class="form-control my-2" required>
-                    <div class="input-group-append">
-                        <span class="input-group-text" id="toggle-retype-password">
-                            <i class="fas fa-eye"></i>
-                        </span>
-                    </div>
-                </div>
+                <label for="password-confirm">Re-type Password</label>
+                <input type="password" id="password-confirm" name="password-confirm" class="form-control my-2" required>
             </div>
-            <button type="submit" name="submit" class="btn btn-warning btn-block">Verify</button>
+            <div class="form-group form-check">
+                <input type="checkbox" class="form-check-input" id="show-password">
+                <label class="form-check-label" for="show-password">Show Password</label>
+            </div>
+            <button type="submit" name="signup" class="btn btn-warning btn-block">Sign Up</button>
         </form>
     </div>
 
-    <!-- Scripts -->
+    <!-- Footer -->
+
+    <!-- Bootstrap core JavaScript-->
     <script src="vendor/jquery/jquery.min.js"></script>
     <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Core plugin JavaScript-->
+    <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+
+    <!-- Custom scripts for all pages-->
     <script src="js/sb-admin-2.min.js"></script>
-    
+    <script src="js/custom.js"></script>
+    <script src="js/datatables.min.js"></script>
+
+    <!-- Bootstrap 5 JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/js/bootstrap.min.js"></script>
+
+    <!-- Password Strength Checker -->
     <script>
-        // Toggle password visibility
-        document.getElementById('toggle-password').addEventListener('click', function () {
-            var passwordField = document.getElementById('password');
-            var icon = this.querySelector('i');
-            
-            if (passwordField.type === 'password') {
-                passwordField.type = 'text';  // Show password
-                icon.classList.remove('fa-eye');
-                icon.classList.add('fa-eye-slash');
+        document.getElementById('show-password').addEventListener('change', function() {
+            const passwordField = document.getElementById('password');
+            const confirmField = document.getElementById('password-confirm');
+            if (this.checked) {
+                passwordField.type = 'text';
+                confirmField.type = 'text';
             } else {
-                passwordField.type = 'password';  // Hide password
-                icon.classList.remove('fa-eye-slash');
-                icon.classList.add('fa-eye');
+                passwordField.type = 'password';
+                confirmField.type = 'password';
             }
         });
 
-        // Toggle re-type password visibility
-        document.getElementById('toggle-retype-password').addEventListener('click', function () {
-            var retypePasswordField = document.getElementById('retype-password');
-            var icon = this.querySelector('i');
-            
-            if (retypePasswordField.type === 'password') {
-                retypePasswordField.type = 'text';  // Show re-type password
-                icon.classList.remove('fa-eye');
-                icon.classList.add('fa-eye-slash');
-            } else {
-                retypePasswordField.type = 'password';  // Hide re-type password
-                icon.classList.remove('fa-eye-slash');
-                icon.classList.add('fa-eye');
+        function checkPasswordStrength() {
+            const password = document.getElementById('password').value;
+            const strengthBar = document.getElementById('password-strength').children[0];
+            const strengthText = document.getElementById('password-strength');
+            const capsLockWarning = document.getElementById('caps-lock-warning');
+
+            let strength = 0;
+            if (password.length >= 8) strength += 1;
+            if (/[A-Z]/.test(password)) strength += 1;
+            if (/\d/.test(password)) strength += 1;
+            if (/[!@#$%^&*(),.?":{}|<>]/.test(password)) strength += 1;
+
+            switch (strength) {
+                case 0:
+                    strengthBar.className = 'strength-weak';
+                    break;
+                case 1:
+                    strengthBar.className = 'strength-weak';
+                    break;
+                case 2:
+                    strengthBar.className = 'strength-medium';
+                    break;
+                case 3:
+                case 4:
+                    strengthBar.className = 'strength-strong';
+                    break;
             }
-        });
+        }
+
+        function checkCapsLock(e) {
+            const capsLockWarning = document.getElementById('caps-lock-warning');
+            const keyCode = e.keyCode || e.which;
+            const isShift = e.shiftKey || ((keyCode >= 65 && keyCode <= 90) && !e.altKey);
+            
+            capsLockWarning.style.display = isShift ? 'none' : 'block';
+        }
     </script>
 </body>
 
