@@ -23,7 +23,7 @@ if (isset($_POST['signup'])) {
             Swal.fire({
                     position: "middle",
                     icon: "error",
-                    title: "Account already exist",
+                    title: "Account already exists",
                     showConfirmButton: false,
                     timer: 1500
             }).then(() => {
@@ -32,7 +32,7 @@ if (isset($_POST['signup'])) {
            })
         </script>
        <?php 
-    }else{
+    } else {
         $hashed = password_hash($password, PASSWORD_DEFAULT);
         $query = $conn->query("INSERT INTO users SET username = '$name', email ='$email', password= '$hashed', verification_code = '$verification_code'");
         if ($query) {
@@ -79,7 +79,6 @@ if (isset($_POST['signup'])) {
         <?php 
         }
     }
-
 }
 ?>
 
@@ -113,108 +112,6 @@ if (isset($_POST['signup'])) {
             font-weight: <weight>;
             font-style: normal;
             font-variation-settings: "wdth" 100;
-          
-        }
-        .cover-container {
-            position: relative;
-            width: 100%;
-            height: 400px;
-        }
-        .cover-image {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        .cover-text {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            color: black;
-            text-align: center;
-            width: 70%;
-        }
-        .card {
-            display: flex;
-            flex-direction: row;
-            width: 100%;
-            max-width: 700px;
-            margin: auto; 
-            border: 2px solid black;
-        }
-        .card img {
-            width: 50%;
-            height: auto;
-        }
-        .card-body {
-            width: 50%;
-            padding: 10px;
-        }
-        .image-container {
-            position: relative;
-            overflow: hidden;
-            width: 300px; 
-            height: 400px; 
-        }
-        .image-container img {
-            display: block;
-            width: 100%; 
-            height: 100%; 
-            object-fit: cover; 
-            transition: opacity 0.3s ease;
-        }
-        .image-container:hover img {
-            opacity: 0.3; 
-        }
-        .overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.7); 
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            text-align: center;
-            padding: 10px;
-        }
-        .image-container:hover .overlay {
-            opacity: 1;
-        }
-        .overlay-text {
-            font-size: 16px; 
-            line-height: 1.5;
-        }
-        footer {
-            background-color: #343a40;
-            color: white;
-            padding: 20px 0;
-            text-align: center;
-        }
-        footer .social-icons a {
-            color: white;
-            margin: 0 10px;
-            font-size: 20px;
-        }
-        .navbar-nav {
-            display: flex;
-            justify-content: center;
-            width: 100%;
-        }
-        .nav-item {
-            text-align: center;
-            color: black !important;
-            margin: 0 15px;
-        }
-        .nav-link, .nav-link i {
-            color: black !important;
-        }
-        .navbar-toggler-icon {
-            background-color: black; 
         }
         .signup-container {
             border: 2px solid #ddd; 
@@ -225,17 +122,23 @@ if (isset($_POST['signup'])) {
             background-color: white; 
             margin-top:100px;
         }
-        .btn-back {
-            display: inline-block;
-            margin-bottom: 20px;
+        .strength-bar {
+            width: 100%;
+            height: 5px;
+            background-color: lightgray;
+            margin-top: 10px;
         }
-        .btn-secondary {
-            background-color: #6c757d;
-            color: white;
-            border: none;
+        .strength-bar span {
+            height: 100%;
+            display: block;
         }
-        .btn-secondary:hover {
-            background-color: #5a6268; 
+        .strength-weak { background-color: red; }
+        .strength-medium { background-color: orange; }
+        .strength-strong { background-color: green; }
+        .caps-lock-warning {
+            color: red;
+            font-size: 12px;
+            display: none;
         }
     </style>
 </head>
@@ -256,7 +159,17 @@ if (isset($_POST['signup'])) {
             </div>
             <div class="form-group">
                 <label for="password">Password</label>
-                <input type="password" id="password" name="password" class="form-control my-2" required>
+                <input type="password" id="password" name="password" class="form-control my-2" required onkeyup="checkPasswordStrength(); checkCapsLock(event)">
+                <div id="password-strength" class="strength-bar"><span></span></div>
+                <small id="caps-lock-warning" class="caps-lock-warning">Caps Lock is on!</small>
+            </div>
+            <div class="form-group">
+                <label for="password-confirm">Re-type Password</label>
+                <input type="password" id="password-confirm" name="password-confirm" class="form-control my-2" required>
+            </div>
+            <div class="form-group form-check">
+                <input type="checkbox" class="form-check-input" id="show-password">
+                <label class="form-check-label" for="show-password">Show Password</label>
             </div>
             <button type="submit" name="signup" class="btn btn-warning btn-block">Sign Up</button>
         </form>
@@ -280,13 +193,58 @@ if (isset($_POST['signup'])) {
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/js/bootstrap.min.js"></script>
 
-    <!-- Page level plugins -->
-    <script src="vendor/chart.js/Chart.min.js"></script>
+    <!-- Password Strength Checker -->
+    <script>
+        document.getElementById('show-password').addEventListener('change', function() {
+            const passwordField = document.getElementById('password');
+            const confirmField = document.getElementById('password-confirm');
+            if (this.checked) {
+                passwordField.type = 'text';
+                confirmField.type = 'text';
+            } else {
+                passwordField.type = 'password';
+                confirmField.type = 'password';
+            }
+        });
 
-    <!-- Page level custom scripts -->
-    <script src="js/demo/chart-area-demo.js"></script>
-    <script src="js/demo/chart-pie-demo.js"></script>
+        function checkPasswordStrength() {
+            const password = document.getElementById('password').value;
+            const strengthBar = document.getElementById('password-strength').children[0];
+            const strengthText = document.getElementById('password-strength');
+            const capsLockWarning = document.getElementById('caps-lock-warning');
 
+            let strength = 0;
+            if (password.length >= 8) strength += 1;
+            if (/[A-Z]/.test(password)) strength += 1;
+            if (/\d/.test(password)) strength += 1;
+            if (/[!@#$%^&*(),.?":{}|<>]/.test(password)) strength += 1;
+
+            switch (strength) {
+                case 0:
+                    strengthBar.className = 'strength-weak';
+                    break;
+                case 1:
+                    strengthBar.className = 'strength-weak';
+                    break;
+                case 2:
+                    strengthBar.className = 'strength-medium';
+                    break;
+                case 3:
+                case 4:
+                    strengthBar.className = 'strength-strong';
+                    break;
+            }
+        }
+
+        function checkCapsLock(e) {
+            const capsLockWarning = document.getElementById('caps-lock-warning');
+            const keyCode = e.keyCode || e.which;
+            const isShift = e.shiftKey || ((keyCode >= 65 && keyCode <= 90) && !e.altKey);
+            
+            capsLockWarning.style.display = isShift ? 'none' : 'block';
+        }
+    </script>
 </body>
 
 </html>
+
