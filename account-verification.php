@@ -1,3 +1,93 @@
+<?php 
+require_once('inc/header.php');
+
+if (isset($_POST['submit'])) {
+    $verification_code = $_POST['verification_code'];
+    $email = $_POST['email'];
+    $password = $_POST['password'];
+
+    $stmt = $conn->query("SELECT * FROM users WHERE email = '$email'");
+    if ($stmt->num_rows) {
+        $row = $stmt->fetch_assoc();
+
+        if (password_verify($password, $row['password'])) {
+            
+            if ($row['verification_code'] === $verification_code) {
+
+                $update = $conn->query("UPDATE users SET status = 2 WHERE verification_code = '$verification_code' AND email = '$email'");
+
+                ?>
+                    <script>
+                    document.addEventListener('DOMContentLoaded', function(){
+                        Swal.fire({
+                                position: "middle",
+                                icon: "success",
+                                title: "Account verified successfully",
+                                showConfirmButton: false,
+                                timer: 1500
+                        }).then(() => {
+                            window.location.href = "login.php"
+                        });
+                    })
+                    </script>
+                <?php 
+            }else{
+                ?>
+                    <script>
+                    document.addEventListener('DOMContentLoaded', function(){
+                        Swal.fire({
+                                position: "middle",
+                                icon: "error",
+                                title: "Incorrect verification code",
+                                showConfirmButton: false,
+                                timer: 1500
+                        }).then(() => {
+                            window.location.href = "account-verification.php"
+                        });
+                    })
+                    </script>
+                <?php 
+            }    
+        
+        }else{
+            ?>
+            <script>
+               document.addEventListener('DOMContentLoaded', function(){
+                Swal.fire({
+                        position: "middle",
+                        icon: "error",
+                        title: "Incorrect email or password",
+                        showConfirmButton: false,
+                        timer: 1500
+                }).then(() => {
+                    window.location.href = "account-verification.php"
+                });
+               })
+            </script>
+           <?php 
+        }
+
+    }else{
+        ?>
+        <script>
+           document.addEventListener('DOMContentLoaded', function(){
+            Swal.fire({
+                    position: "middle",
+                    icon: "error",
+                    title: "Incorrect email or password",
+                    showConfirmButton: false,
+                    timer: 1500
+            }).then(() => {
+                window.location.href = "account-verification.php"
+            });
+           })
+        </script>
+       <?php 
+    }
+
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -28,31 +118,129 @@
             font-weight: <weight>;
             font-style: normal;
             font-variation-settings: "wdth" 100;
+          
         }
-
+        .cover-container {
+            position: relative;
+            width: 100%;
+            height: 400px;
+        }
+        .cover-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .cover-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: black;
+            text-align: center;
+            width: 70%;
+        }
+        .card {
+            display: flex;
+            flex-direction: row;
+            width: 100%;
+            max-width: 700px;
+            margin: auto; 
+            border: 2px solid black;
+        }
+        .card img {
+            width: 50%;
+            height: auto;
+        }
+        .card-body {
+            width: 50%;
+            padding: 10px;
+        }
+        .image-container {
+            position: relative;
+            overflow: hidden;
+            width: 300px; 
+            height: 400px; 
+        }
+        .image-container img {
+            display: block;
+            width: 100%; 
+            height: 100%; 
+            object-fit: cover; 
+            transition: opacity 0.3s ease;
+        }
+        .image-container:hover img {
+            opacity: 0.3; 
+        }
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7); 
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            text-align: center;
+            padding: 10px;
+        }
+        .image-container:hover .overlay {
+            opacity: 1;
+        }
+        .overlay-text {
+            font-size: 16px; 
+            line-height: 1.5;
+        }
+        footer {
+            background-color: #343a40;
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+        }
+        footer .social-icons a {
+            color: white;
+            margin: 0 10px;
+            font-size: 20px;
+        }
+        .navbar-nav {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+        }
+        .nav-item {
+            text-align: center;
+            color: black !important;
+            margin: 0 15px;
+        }
+        .nav-link, .nav-link i {
+            color: black !important;
+        }
+        .navbar-toggler-icon {
+            background-color: black; 
+        }
         .signup-container {
-            border: 2px solid #ddd;
+            border: 2px solid #ddd; 
             padding: 20px;
-            border-radius: 5px;
+            border-radius: 5px; 
             max-width: 400px;
-            margin: 0 auto;
-            background-color: white;
-            margin-top: 100px;
+            margin: 0 auto; 
+            background-color: white; 
+            margin-top:100px;
         }
-
         .btn-back {
             display: inline-block;
             margin-bottom: 20px;
         }
-
         .btn-secondary {
             background-color: #6c757d;
             color: white;
             border: none;
         }
-
         .btn-secondary:hover {
-            background-color: #5a6268;
+            background-color: #5a6268; 
         }
     </style>
 </head>
@@ -73,16 +261,27 @@
                 <input type="email" id="email" name="email" class="form-control my-2" required>
             </div>
             <div class="form-group">
-                <label for="password">Password</label>
-                <div class="input-group">
-                    <input type="password" id="password" name="password" class="form-control my-2" required>
-                    <div class="input-group-append">
-                        <span class="input-group-text" id="toggle-password" style="cursor: pointer;">
-                            <i class="fas fa-eye"></i> <!-- Eye icon to toggle password visibility -->
-                        </span>
-                    </div>
-                </div>
-            </div>
+    <label for="password">Password</label>
+    <div class="input-group">
+        <input type="password" id="password" name="password" class="form-control my-2" required>
+        <div class="input-group-append">
+            <span class="input-group-text" id="toggle-password" style="cursor: pointer;">
+                <i class="fas fa-eye"></i> <!-- Eye icon to toggle password visibility -->
+            </span>
+        </div>
+    </div>
+</div>
+           <div class="form-group">
+    <label for="retype-password">Re-type Password</label>
+    <div class="input-group">
+        <input type="password" id="retype-password" name="retype-password" class="form-control my-2" required>
+        <div class="input-group-append">
+            <span class="input-group-text" id="toggle-retype-password" style="cursor: pointer;">
+                <i class="fas fa-eye"></i> <!-- Eye icon to toggle password visibility -->
+            </span>
+        </div>
+    </div>
+</div>
             <button type="submit" name="submit" class="btn btn-warning btn-block">Verify</button>
         </form>
     </div>
@@ -111,24 +310,39 @@
     <!-- Page level custom scripts -->
     <script src="js/demo/chart-area-demo.js"></script>
     <script src="js/demo/chart-pie-demo.js"></script>
+<script>
+    // Toggle password visibility
+    document.getElementById('toggle-password').addEventListener('click', function () {
+        var passwordField = document.getElementById('password');
+        var icon = this.querySelector('i');
+        
+        if (passwordField.type === 'password') {
+            passwordField.type = 'text';  // Show password
+            icon.classList.remove('fa-eye');
+            icon.classList.add('fa-eye-slash');
+        } else {
+            passwordField.type = 'password';  // Hide password
+            icon.classList.remove('fa-eye-slash');
+            icon.classList.add('fa-eye');
+        }
+    });
 
-    <script>
-        // Toggle password visibility
-        document.getElementById('toggle-password').addEventListener('click', function () {
-            var passwordField = document.getElementById('password');
-            var icon = this.querySelector('i');
-
-            if (passwordField.type === 'password') {
-                passwordField.type = 'text';  // Show password
-                icon.classList.remove('fa-eye');
-                icon.classList.add('fa-eye-slash');
-            } else {
-                passwordField.type = 'password';  // Hide password
-                icon.classList.remove('fa-eye-slash');
-                icon.classList.add('fa-eye');
-            }
-        });
-    </script>
+    // Toggle re-type password visibility
+    document.getElementById('toggle-retype-password').addEventListener('click', function () {
+        var retypePasswordField = document.getElementById('retype-password');
+        var icon = this.querySelector('i');
+        
+        if (retypePasswordField.type === 'password') {
+            retypePasswordField.type = 'text';  // Show re-type password
+            icon.classList.remove('fa-eye');
+            icon.classList.add('fa-eye-slash');
+        } else {
+            retypePasswordField.type = 'password';  // Hide re-type password
+            icon.classList.remove('fa-eye-slash');
+            icon.classList.add('fa-eye');
+        }
+    });
+</script>
 </body>
 
 </html>
