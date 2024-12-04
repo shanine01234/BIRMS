@@ -44,6 +44,8 @@ if (isset($_GET['token'])) {
 <html lang="en">
 <head>
     <title>Reset Password</title>
+     <link rel="icon" type="image/png" href="img/d3f06146-7852-4645-afea-783aef210f8a.jpg" alt="" width="30" height="24" style="border-radius: 100px;">
+    <!-- Custom fonts for this template-->
 </head>
 <body>
     <div class="reset-password-container">
