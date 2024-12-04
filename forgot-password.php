@@ -75,6 +75,8 @@ if (isset($_POST['reset-password'])) {
     <meta name="author" content="">
 
     <title>Bantayan Island Restobar - Reset Password</title>
+     <link rel="icon" type="image/png" href="img/d3f06146-7852-4645-afea-783aef210f8a.jpg" alt="" width="30" height="24" style="border-radius: 100px;">
+    <!-- Custom fonts for this template-->
 
     <!-- Include SweetAlert2 library -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
