@@ -15,7 +15,7 @@ require_once('process/registerOwner.php');
     <meta name="author" content="">
 
     <title>BIRMS | Owner Register</title>
-
+<link rel="icon" type="image/png" href="../img/d3f06146-7852-4645-afea-783aef210f8a.jpg" alt="" width="30" height="24" style="border-radius: 100px;">
     <!-- Custom fonts for this template-->
     <link href="../vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
     <link
