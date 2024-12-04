@@ -109,10 +109,12 @@ if (!isset($_SESSION['id'])) {
     font-weight: 700;
     color: white;
 }
+
+
 </style>
 </head>
 
-<body id="page-top">
+<body id="page-top" >
 
     <!-- Page Wrapper -->
     <div id="wrapper">
@@ -234,32 +236,6 @@ if (!isset($_SESSION['id'])) {
                             </div>
                         </li>
 
-                        <!-- Notification Bell -->
-                        <li class="nav-item dropdown no-arrow mx-1">
-    <a class="nav-link dropdown-toggle" href="#" id="notificationDropdown" role="button"
-        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-        <i class="fas fa-bell fa-fw"></i>
-        <span class="badge badge-danger badge-counter">
-            <?php
-            $notificationCount = $oop->displayPOCnt();
-            foreach($notificationCount as $count){
-                echo $count['pending'];
-            }
-            ?>
-        </span>
-    </a>
-    <!-- Dropdown - Notifications -->
-    <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="notificationDropdown">
-        <h6 class="dropdown-header">
-            Notifications
-        </h6>
-        <!-- Here you can loop through notifications and display them -->
-        <a class="dropdown-item" href="resto_pending.php">
-            <i class="fas fa-info-circle fa-sm fa-fw mr-2 text-gray-400"></i>
-            View Pending Registrations
-        </a>
-    </div>
-</li>
                     </ul>
 
                 </nav>
@@ -277,55 +253,61 @@ if (!isset($_SESSION['id'])) {
                     <!-- Content Row -->
                     <div class="row">
 
-                        <!-- Earnings (Monthly) Card Example -->
-                        <div class="col-xl-3 col-md-6 mb-4">
-                            <div class="card border-left-primary shadow h-100 py-2">
-                                <div class="card-body">
-                                    <div class="row no-gutters align-items-center">
-                                        <div class="col mr-2">
-                                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                                Resto Owners</div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                            <?php	
-                                            $myrow = $oop->displayVOCnt();
-                                            foreach($myrow as $row){
-                                                echo $row['owner'];
-                                            }
-                                            ?>
-                                            </div>
-                                        </div>
-                                        <div class="col-auto">
-                                            <i class="fas fa-flag fa-2x text-gray-300"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                       <!-- Earnings (Monthly) Card Example -->
+<div class="col-xl-3 col-md-6 mb-4">
+    <a href="resto_owner.php" class="text-decoration-none"> <!-- Add the link here -->
+        <div class="card border-left-primary shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                            Resto Owners
                         </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">
+                            <?php  
+                            $myrow = $oop->displayVOCnt();
+                            foreach($myrow as $row){
+                                echo $row['owner'];
+                            }
+                            ?>
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-flag fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </a>
+</div>
 
-                        <!-- Earnings (Monthly) Card Example -->
-                        <div class="col-xl-3 col-md-6 mb-4">
-                            <div class="card border-left-success shadow h-100 py-2">
-                                <div class="card-body">
-                                    <div class="row no-gutters align-items-center">
-                                        <div class="col mr-2">
-                                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                                                Restobars</div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                            <?php	
-                                            $myrow = $oop->displayResCnt();
-                                            foreach($myrow as $row){
-                                                echo $row['resto'];
-                                            }
-                                            ?>
-                                            </div>
-                                        </div>
-                                        <div class="col-auto">
-                                            <i class="fas fa-user fa-2x text-gray-300"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+<!-- Earnings (Monthly) Card Example -->
+<div class="col-xl-3 col-md-6 mb-4">
+    <a href="restobar.php" class="text-decoration-none"> <!-- Add the link here -->
+        <div class="card border-left-success shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                            Restobars
                         </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">
+                            <?php  
+                            $myrow = $oop->displayResCnt();
+                            foreach($myrow as $row){
+                                echo $row['resto'];
+                            }
+                            ?>
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-user fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </a>
+</div>
 
                         <!-- Earnings (Monthly) Card Example -->
                         <div class="col-xl-3 col-md-6 mb-4">
@@ -358,6 +340,7 @@ if (!isset($_SESSION['id'])) {
 
                         <!-- Pending Requests Card Example -->
                         <div class="col-xl-3 col-md-6 mb-4">
+                        <a href="resto_pending.php" class="text-decoration-none"> <!-- Add the link here -->
                             <div class="card border-left-warning shadow h-100 py-2">
                                 <div class="card-body">
                                     <div class="row no-gutters align-items-center">
