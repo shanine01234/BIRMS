@@ -51,7 +51,7 @@ require_once('inc/header.php');
 <nav class="navbar navbar-expand-lg navbar-dark bg-light">
         <div class="container-fluid" style="background-color: transparent;"> 
             <a class="navbar-brand" href="#">
-            <img src="./img/d3f06146-7852-4645-afea-783aef210f8a.jpg" alt="" width="30" height="24">
+            <img src="./img/d3f06146-7852-4645-afea-783aef210f8a.jpg" alt="" width="30" height="24" border-radius: 50px;>
                 <span style="color: black;   ">Bantayan Island Restobar</span>
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
