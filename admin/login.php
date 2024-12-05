@@ -36,10 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['loginAdmin'])) {
                     $msgAlert = "Invalid credentials. Attempt " . $_SESSION['attempt_count'] . " of 3.";
                 }
             }
-        } else {
-            $msgAlert = "reCAPTCHA verification failed. Please try again.";
-        }
-    }
+        } 
 }
 ?>
 
