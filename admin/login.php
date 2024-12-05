@@ -10,6 +10,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['loginAdmin'])) {
     // Make a POST request to Google's reCAPTCHA verification API
     $response = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret={$recaptchaSecret}&response={$recaptchaResponse}");
 }
+    $request = $_SERVER['REQUEST_URI'];
+if (substr($request, -4) == '.php') {
+    $new_url = substr($request, 0, -4);
+    header("Location: $new_url", true, 301);
+    exit();
+}
 ?>
 
 <!DOCTYPE html>
