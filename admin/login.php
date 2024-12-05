@@ -20,11 +20,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['loginAdmin'])) {
         }
 
         $recaptchaSecret = '6Ldz7JIqAAAAAIp9MiVvQepNEFe9o0GywFAnBH95'; // Replace with your reCAPTCHA secret key
-       
-        $response = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret={$recaptchaSecret}&response={$recaptchaResponse}");
-        
-
-       
 
             if ($isAuthenticated) {
                 $_SESSION['attempt_count'] = 0; // Reset attempts on success
