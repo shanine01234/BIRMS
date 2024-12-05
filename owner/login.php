@@ -14,7 +14,7 @@ require_once('process/loginOwner.php');
     <meta name="author" content="">
 
     <title>BIRMS | Owner Login</title>
-<link rel="icon" type="image/png" href="../img/d3f06146-7852-4645-afea-783aef210f8a.jpg" alt="" width="30" height="24" style="border-radius: 100px;">
+
     <!-- Custom fonts for this template-->
     <link href="../vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
     <link
@@ -30,7 +30,7 @@ require_once('process/loginOwner.php');
             position: relative;
         }
 
-        .password-container .far.fa-eye {
+        .password-container .far.fa-eye, .password-container .far.fa-eye-slash {
             position: absolute;
             top: 50%;
             right: 20px;
@@ -70,7 +70,7 @@ require_once('process/loginOwner.php');
                                         <div class="form-group password-container">
                                             <input type="password" name="password" class="form-control form-control-user"
                                                 id="exampleInputPassword" placeholder="Password" required>
-                                            <i class="far fa-eye" id="togglePassword"></i>
+                                            <i class="far fa-eye-slash" id="togglePassword"></i>
                                         </div>
 
                                         <button type="submit" name="loginOwner" class="btn btn-primary btn-user btn-block">Login</button>
@@ -108,7 +108,10 @@ require_once('process/loginOwner.php');
             var passwordField = document.getElementById("exampleInputPassword");
             var type = passwordField.type === "password" ? "text" : "password";
             passwordField.type = type;
-            this.classList.toggle("fa-eye-slash");
+            
+            // Toggle the icon class based on the password field type
+            this.classList.toggle("fa-eye-slash", passwordField.type === "password");
+            this.classList.toggle("fa-eye", passwordField.type === "text");
         });
     </script>
 
