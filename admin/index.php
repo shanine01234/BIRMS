@@ -128,7 +128,7 @@ if (!isset($_SESSION['id'])) {
                 <div class="sidebar-brand-icon rotate-n-15">
                     <i class="fas fa-laugh-wink"></i>
                 </div>
-                <div class="sidebar-brand-text mx-3">BIRMS</div>
+                <div class="sidebar-brand-text mx-3">BIMS</div>
             </a>
 
             <!-- Divider -->
