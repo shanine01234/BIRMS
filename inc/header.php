@@ -1,6 +1,17 @@
 <?php 
 require_once('inc/function.php');
 
+header('Strict-Transport-Security: max-age=31536000; includeSubDomains; preload');
+header("Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; object-src 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; frame-ancestors 'none';");
+header('X-Content-Type-Options: nosniff');
+header('X-Frame-Options: DENY');
+header('X-XSS-Protection: 1; mode=block');
+header('Referrer-Policy: no-referrer-when-downgrade');
+header('Permissions-Policy: geolocation=(self), microphone=(), camera=()');
+header('Cache-Control: no-store, no-cache, must-revalidate, proxy-revalidate');
+header('Pragma: no-cache');
+header('Expires: 0');
+header('Expect-CT: max-age=86400, enforce, report-uri="https://example.com/report"');
 
 $connection = new Connection();
 $conn = $connection->conn;
