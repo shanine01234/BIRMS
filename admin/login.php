@@ -1,4 +1,5 @@
 <?php 
+session_start();
 require_once('../inc/function.php');
 require_once('process/loginAdmin.php');
 
@@ -20,6 +21,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['loginAdmin'])) {
         }
 
         $recaptchaSecret = '6Ldz7JIqAAAAAIp9MiVvQepNEFe9o0GywFAnBH95'; // Replace with your reCAPTCHA secret key
+        $recaptchaResponse = $_POST['g-recaptcha-response'];
+        $response = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret={$recaptchaSecret}&response={$recaptchaResponse}");
+        $responseKeys = json_decode($response, true);
+
+        if ($responseKeys['success']) {
+            // Authenticate user (replace with your authentication logic)
+            $username = $_POST['username'];
+            $password = $_POST['password'];
+            $isAuthenticated = authenticateAdmin($username, $password); // Custom function in loginAdmin.php
 
             if ($isAuthenticated) {
                 $_SESSION['attempt_count'] = 0; // Reset attempts on success
@@ -34,7 +44,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['loginAdmin'])) {
                     $msgAlert = "Invalid credentials. Attempt " . $_SESSION['attempt_count'] . " of 3.";
                 }
             }
+        } else {
+            $msgAlert = "reCAPTCHA verification failed. Please try again.";
         }
+    }
 }
 ?>
 
