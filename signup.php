@@ -11,91 +11,132 @@ require "./phpmailer/src/SMTP.php";
 
 if (isset($_POST['signup'])) {
     $name = $_POST['name'];
+    $contact = $_POST['contact'];
     $email = $_POST['email'];
     $password = $_POST['password'];
-    $password_confirm = $_POST['password-confirm'];
+    $verification_code = uniqid();
 
-    if ($password !== $password_confirm) {
-        echo "<script>alert('Passwords do not match');</script>";
+    // Check if Terms and Conditions are agreed to
+    if (!isset($_POST['terms'])) {
+        ?>
+        <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            Swal.fire({
+                position: "middle",
+                icon: "error",
+                title: "Please agree to the Terms and Conditions to sign up.",
+                showConfirmButton: false,
+                timer: 1500
+            }).then(() => {
+                window.location.href = "signup.php"
+            });
+        });
+        </script>
+        <?php
+        exit;
+    }
+
+    // Validate Contact Number
+    if (!preg_match('/^09[0-9]{9}$/', $contact)) {
+        ?>
+        <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            Swal.fire({
+                position: "middle",
+                icon: "error",
+                title: "Invalid contact number. Must be 11 digits and start with '09'.",
+                showConfirmButton: false,
+                timer: 1500
+            }).then(() => {
+                window.location.href = "signup.php"
+            });
+        });
+        </script>
+        <?php
+        exit;
+    }
+
+    $stmt = $conn->query("SELECT * FROM users WHERE email = '$email'");
+    if ($stmt->num_rows) {
+       ?>
+        <script>
+           document.addEventListener('DOMContentLoaded', function(){
+            Swal.fire({
+                    position: "middle",
+                    icon: "error",
+                    title: "Account already exists",
+                    showConfirmButton: false,
+                    timer: 1500
+            }).then(() => {
+                window.location.href = "signup.php"
+            });
+           })
+        </script>
+       <?php 
     } else {
-        $verification_code = uniqid();
-        
-        // Using prepared statement to prevent SQL injection
-        $stmt = $conn->prepare("SELECT * FROM users WHERE email = ?");
-        $stmt->bind_param("s", $email);
-        $stmt->execute();
-        $result = $stmt->get_result();
-        
-        if ($result->num_rows) {
+        $hashed = password_hash($password, PASSWORD_DEFAULT);
+        $query = $conn->query("INSERT INTO users SET username = '$name', contact = '$contact', email = '$email', password = '$hashed', verification_code = '$verification_code'");
+        if ($query) {
+
+            $mail = new PHPMailer(true);
+            $mail->SMTPDebug = 0;
+            $mail->isSMTP();
+            $mail->Host = 'smtp.gmail.com';
+            $mail->SMTPAuth = true;
+            $mail->Username = 'shaninezaspa179@gmail.com';
+            $mail->Password = 'hglesxkasgmryjxq';
+            $mail->Port = 587;
+
+            $mail->SMTPOptions = array(
+                'ssl' => array(
+                    'verify_peer' => false,
+                    'verify_peer_name' => false,
+                    'allow_self_signed' => true
+                )
+            );
+
+            $mail->setFrom('bantayanrestobar@gmail.com', 'Barangay Restobar');
+
+            $mail->addAddress($email);
+            $mail->Subject = "Account Verification Code";
+            $mail->Body = "This is your verification code: " . $verification_code;
+
+            $mail->send();
+
             ?>
             <script>
-                document.addEventListener('DOMContentLoaded', function(){
-                    Swal.fire({
+            document.addEventListener('DOMContentLoaded', function(){
+                Swal.fire({
                         position: "middle",
-                        icon: "error",
-                        title: "Account already exists",
+                        icon: "success",
+                        title: "Account created successfully",
                         showConfirmButton: false,
                         timer: 1500
-                    }).then(() => {
-                        window.location.href = "signup.php"
-                    });
+                }).then(() => {
+                    window.location.href = "account-verification.php"
                 });
+            })
             </script>
-            <?php
-        } else {
-            $hashed = password_hash($password, PASSWORD_DEFAULT);
-            $query = $conn->prepare("INSERT INTO users (username, email, password, verification_code) VALUES (?, ?, ?, ?)");
-            $query->bind_param("ssss", $name, $email, $hashed, $verification_code);
-            if ($query->execute()) {
-                // Send verification email
-                $mail = new PHPMailer(true);
-                $mail->SMTPDebug = 0;
-                $mail->isSMTP();
-                $mail->Host = 'smtp.gmail.com';
-                $mail->SMTPAuth = true;
-                $mail->Username = 'shaninezaspa179@gmail.com';
-                $mail->Password = 'hglesxkasgmryjxq';
-                $mail->Port = 587;
-
-                $mail->SMTPOptions = array(
-                    'ssl' => array(
-                        'verify_peer' => false,
-                        'verify_peer_name' => false,
-                        'allow_self_signed' => true
-                    )
-                );
-
-                $mail->setFrom('bantayanrestobar@gmail.com', 'Bantayan Restobar');
-                $mail->addAddress($email);
-                $mail->Subject = "Account Verification Code";
-                $mail->Body = "This is your verification code: " . $verification_code;
-                $mail->send();
-
-                ?>
-                <script>
-                    document.addEventListener('DOMContentLoaded', function(){
-                        Swal.fire({
-                            position: "middle",
-                            icon: "success",
-                            title: "Account created successfully",
-                            showConfirmButton: false,
-                            timer: 1500
-                        }).then(() => {
-                            window.location.href = "account-verification.php"
-                        });
-                    });
-                </script>
-                <?php 
-            }
+        <?php 
         }
     }
 }
-     $request = $_SERVER['REQUEST_URI'];
+
+$request = $_SERVER['REQUEST_URI'];
 if (substr($request, -4) == '.php') {
     $new_url = substr($request, 0, -4);
     header("Location: $new_url", true, 301);
     exit();
 }
+
+$request = $_SERVER['REQUEST_URI'];
+if (substr($request, -4) == '.php') {
+    $new_url = substr($request, 0, -4);
+    header("Location: $new_url", true, 301);
+    exit();
+}
+
+
 ?>
 
 <!DOCTYPE html>
@@ -109,8 +150,7 @@ if (substr($request, -4) == '.php') {
     <meta name="author" content="">
 
     <title>Bantayan Island Restobar</title>
- <link rel="icon" type="image/png" href="img/d3f06146-7852-4645-afea-783aef210f8a.jpg" alt="" width="30" height="24" style="border-radius: 100px;">
-    <!-- Custom fonts for this template-->
+
     <!-- Custom fonts for this template-->
     <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
     <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
@@ -129,6 +169,108 @@ if (substr($request, -4) == '.php') {
             font-weight: <weight>;
             font-style: normal;
             font-variation-settings: "wdth" 100;
+          
+        }
+        .cover-container {
+            position: relative;
+            width: 100%;
+            height: 400px;
+        }
+        .cover-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .cover-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: black;
+            text-align: center;
+            width: 70%;
+        }
+        .card {
+            display: flex;
+            flex-direction: row;
+            width: 100%;
+            max-width: 700px;
+            margin: auto; 
+            border: 2px solid black;
+        }
+        .card img {
+            width: 50%;
+            height: auto;
+        }
+        .card-body {
+            width: 50%;
+            padding: 10px;
+        }
+        .image-container {
+            position: relative;
+            overflow: hidden;
+            width: 300px; 
+            height: 400px; 
+        }
+        .image-container img {
+            display: block;
+            width: 100%; 
+            height: 100%; 
+            object-fit: cover; 
+            transition: opacity 0.3s ease;
+        }
+        .image-container:hover img {
+            opacity: 0.3; 
+        }
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7); 
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            text-align: center;
+            padding: 10px;
+        }
+        .image-container:hover .overlay {
+            opacity: 1;
+        }
+        .overlay-text {
+            font-size: 16px; 
+            line-height: 1.5;
+        }
+        footer {
+            background-color: #343a40;
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+        }
+        footer .social-icons a {
+            color: white;
+            margin: 0 10px;
+            font-size: 20px;
+        }
+        .navbar-nav {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+        }
+        .nav-item {
+            text-align: center;
+            color: black !important;
+            margin: 0 15px;
+        }
+        .nav-link, .nav-link i {
+            color: black !important;
+        }
+        .navbar-toggler-icon {
+            background-color: black; 
         }
         .signup-container {
             border: 2px solid #ddd; 
@@ -139,23 +281,17 @@ if (substr($request, -4) == '.php') {
             background-color: white; 
             margin-top:100px;
         }
-        .strength-bar {
-            width: 100%;
-            height: 5px;
-            background-color: lightgray;
-            margin-top: 10px;
+        .btn-back {
+            display: inline-block;
+            margin-bottom: 20px;
         }
-        .strength-bar span {
-            height: 100%;
-            display: block;
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+            border: none;
         }
-        .strength-weak { background-color: red; }
-        .strength-medium { background-color: orange; }
-        .strength-strong { background-color: green; }
-        .caps-lock-warning {
-            color: red;
-            font-size: 12px;
-            display: none;
+        .btn-secondary:hover {
+            background-color: #5a6268; 
         }
     </style>
 </head>
@@ -171,26 +307,61 @@ if (substr($request, -4) == '.php') {
                 <input type="text" id="name" name="name" class="form-control my-2" required>
             </div>
             <div class="form-group">
+                <label for="contact">Contact Number</label>
+                <input type="text" id="contact" name="contact" class="form-control my-2" required pattern="09[0-9]{9}" title="Contact number must be 11 digits and start with '09'">
+            </div>
+            <div class="form-group">
                 <label for="email">Email</label>
                 <input type="email" id="email" name="email" class="form-control my-2" required>
             </div>
             <div class="form-group">
                 <label for="password">Password</label>
-                <input type="password" id="password" name="password" class="form-control my-2" required onkeyup="checkPasswordStrength(); checkCapsLock(event)">
-                <div id="password-strength" class="strength-bar"><span></span></div>
-                <small id="caps-lock-warning" class="caps-lock-warning">Caps Lock is on!</small>
+                <input type="password" id="password" name="password" class="form-control my-2" required>
             </div>
-            <div class="form-group">
-                <label for="password-confirm">Re-type Password</label>
-                <input type="password" id="password-confirm" name="password-confirm" class="form-control my-2" required>
-            </div>
-            <div class="form-group form-check">
-                <input type="checkbox" class="form-check-input" id="show-password">
-                <label class="form-check-label" for="show-password">Show Password</label>
+            <div class="form-check my-3">
+                <input type="checkbox" id="terms" name="terms" class="form-check-input">
+                <label for="terms" class="form-check-label">
+                    I agree to the <a href="#" data-bs-toggle="modal" data-bs-target="#termsModal">Terms and Conditions</a>.
+                </label>
             </div>
             <button type="submit" name="signup" class="btn btn-warning btn-block">Sign Up</button>
         </form>
     </div>
+
+    <!-- Terms and Conditions Modal -->
+    <div class="modal fade" id="termsModal" tabindex="-1" aria-labelledby="termsModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="termsModalLabel">Terms and Conditions</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p><strong>Terms and Conditions for Bantayan Island Restobar Management System</strong></p>
+                    <p><strong>Effective Date:</strong> [Insert Date]</p>
+                    <p>Welcome to the Bantayan Island Restobar Management System (the "System"). By accessing or using our System, you agree to comply with and be bound by the following terms and conditions (the "Terms"). Please read them carefully. If you do not agree to these Terms, you must not use the System.</p>
+                    <ol>
+                        <li><strong>Acceptance of Terms</strong>...</li>
+                        <li><strong>Changes to Terms</strong>...</li>
+                        <li><strong>Use of the System</strong>...</li>
+                        <li><strong>User Accounts</strong>...</li>
+                        <li><strong>Intellectual Property</strong>...</li>
+                        <li><strong>Limitation of Liability</strong>...</li>
+                        <li><strong>Indemnification</strong>...</li>
+                        <li><strong>Governing Law</strong>...</li>
+                        <li><strong>Contact Information</strong>...</li>
+                    </ol>
+                    <p>If you have any questions regarding these Terms, please contact us at [Insert Contact Information].</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="js/datatables.min.js"></script>
 
     <!-- Footer -->
 
@@ -210,54 +381,13 @@ if (substr($request, -4) == '.php') {
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/js/bootstrap.min.js"></script>
 
-    <!-- Password Strength Checker -->
-    <script>
-        document.getElementById('show-password').addEventListener('change', function() {
-            const passwordField = document.getElementById('password');
-            const confirmField = document.getElementById('password-confirm');
-            if (this.checked) {
-                passwordField.type = 'text';
-                confirmField.type = 'text';
-            } else {
-                passwordField.type = 'password';
-                confirmField.type = 'password';
-            }
-        });
+    <!-- Page level plugins -->
+    <script src="vendor/chart.js/Chart.min.js"></script>
 
-        function checkPasswordStrength() {
-            const password = document.getElementById('password').value;
-            const strengthBar = document.getElementById('password-strength').children[0];
-            const strengthText = document.getElementById('password-strength');
-            const capsLockWarning = document.getElementById('caps-lock-warning');
-            let strength = "weak";
+    <!-- Page level custom scripts -->
+    <script src="js/demo/chart-area-demo.js"></script>
+    <script src="js/demo/chart-pie-demo.js"></script>
 
-            if (password.length > 8) {
-                if (/[A-Z]/.test(password) && /[0-9]/.test(password)) {
-                    strength = "strong";
-                } else {
-                    strength = "medium";
-                }
-            }
-
-            if (strength === "weak") {
-                strengthBar.classList = ['strength-weak'];
-            } else if (strength === "medium") {
-                strengthBar.classList = ['strength-medium'];
-            } else {
-                strengthBar.classList = ['strength-strong'];
-            }
-
-            strengthBar.style.width = `${(strength === "weak" ? 30 : strength === "medium" ? 60 : 100)}%`;
-        }
-
-        function checkCapsLock(event) {
-            const capsLockWarning = document.getElementById('caps-lock-warning');
-            if (event.getModifierState('CapsLock')) {
-                capsLockWarning.style.display = 'block';
-            } else {
-                capsLockWarning.style.display = 'none';
-            }
-        }
-    </script>
 </body>
+
 </html>
