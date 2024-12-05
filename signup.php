@@ -338,21 +338,27 @@ if (substr($request, -4) == '.php') {
                 </div>
                 <div class="modal-body">
                     <p><strong>Terms and Conditions for Bantayan Island Restobar Management System</strong></p>
-                    <p><strong>Effective Date:</strong> [Insert Date]</p>
-                    <p>Welcome to the Bantayan Island Restobar Management System (the "System"). By accessing or using our System, you agree to comply with and be bound by the following terms and conditions (the "Terms"). Please read them carefully. If you do not agree to these Terms, you must not use the System.</p>
+                    <p>Welcome to Bantayan Retobars! We appreciate your visit. By accessing or using our services, you agree to comply with the following terms and conditions.</p>
                     <ol>
-                        <li><strong>Acceptance of Terms</strong>...</li>
-                        <li><strong>Changes to Terms</strong>...</li>
-                        <li><strong>Use of the System</strong>...</li>
-                        <li><strong>User Accounts</strong>...</li>
-                        <li><strong>Intellectual Property</strong>...</li>
-                        <li><strong>Limitation of Liability</strong>...</li>
-                        <li><strong>Indemnification</strong>...</li>
-                        <li><strong>Governing Law</strong>...</li>
-                        <li><strong>Contact Information</strong>...</li>
+                        <li><strong>Age Restrictions</li>
+                            <p>• Guests must be 18 years or older to enter and consume alcoholic beverages.</p>
+                            <p>• Valid identification is required upon request.</p>
+                        <li><strong>Responsible Consumption</li>
+                            <p>• We encourage responsible drinking. We reserve the right to refuse service to anyone appearing intoxicated or behaving inappropriately.</p>
+                            <p>• No outside food or drinks are allowed.</p>
+                        <li><strong>Reservation Policy/strong></li>
+                            <p>• Reservations are recommended for large groups.</p>
+                            <p>• Please notify us at least 24 hours in advance for cancellations or changes.</p>
+                        <li><strong>Payment</strong></li>.
+                            <p>• We accept cash and major credit cards.</p>
+                            <p>• All sales are final. No refunds or exchanges.</p>
+                        <li><strong>Liability</strong></li>
+                            <p>• Bantayan Retobars is not responsible for lost or stolen items. Please keep your belongings secure.</p>
+                            <p>• Guests assume all risks related to their visit, including injury resulting from accidents or incidents within the premises.</p>
+                        <li><strong>Changes to Terms</strong></li>
+                            <p>• Bantayan Retobars reserves the right to update these Terms and Conditions at any time. Changes will be effective immediately upon posting.</p>
                     </ol>
-                    <p>If you have any questions regarding these Terms, please contact us at [Insert Contact Information].</p>
-                </div>
+                   </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 </div>
