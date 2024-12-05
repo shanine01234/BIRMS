@@ -1,95 +1,159 @@
 <?php 
 require_once('inc/header.php');
 
-if (isset($_POST['login'])) {
+// reCAPTCHA secret key (replace with your own)
+$recaptchaSecret = '6LeLJZIqAAAAAHC-kdtS8KKyK3sjvibhmI5CgMuq';
+
+if (!isset($_SESSION['login_attempts'])) {
+    $_SESSION['login_attempts'] = 0;
+    $_SESSION['lock_time'] = null;
+}
+
+if ($_SESSION['login_attempts'] >= 3 && $_SESSION['lock_time'] === null) {
+    $_SESSION['lock_time'] = time();
+}
+
+if ($_SESSION['login_attempts'] >= 3) {
+    $lock_duration = 180; // 3 minutes
+    $elapsed_time = time() - $_SESSION['lock_time'];
+
+    if ($elapsed_time >= $lock_duration) {
+        $_SESSION['login_attempts'] = 0;
+        $_SESSION['lock_time'] = null;
+    }
+}
+
+if (isset($_POST['login']) && $_SESSION['login_attempts'] < 3) {
     $email = $_POST['email'];
     $password = $_POST['password'];
+    //$recaptchaResponse = $_POST['g-recaptcha-response'];
+
+     // Verify reCAPTCHA
+     $url = 'https://www.google.com/recaptcha/api/siteverify';
+     $data = [
+         'secret' => $recaptchaSecret,
+         //'response' => $recaptchaResponse
+     ];
+     
+     $options = [
+         'http' => [
+             'header'  => "Content-type: application/x-www-form-urlencoded\r\n",
+             'method'  => 'POST',
+             'content' => http_build_query($data)
+         ]
+     ];
+     
+     $context  = stream_context_create($options);
+     $verify = file_get_contents($url, false, $context);
+     $captchaSuccess = json_decode($verify);
 
     $stmt = $conn->query("SELECT * FROM users WHERE email = '$email'");
     if ($stmt->num_rows) {
         $row = $stmt->fetch_assoc();
 
         if (password_verify($password, $row['password'])) {
+            $_SESSION['login_attempts'] = 0; // Reset the attempts after successful login
             if ($row['status'] == 1) {
                 ?>
-                    <script>
-                    document.addEventListener('DOMContentLoaded', function(){
+                <script>
+                    document.addEventListener('DOMContentLoaded', function() {
                         Swal.fire({
-                                position: "middle",
-                                icon: "warning",
-                                title: "Account not verified, Please verify your account first",
-                                showConfirmButton: false,
-                                timer: 2000
+                            position: "middle",
+                            icon: "warning",
+                            title: "Account not verified, Please verify your account first",
+                            showConfirmButton: false,
+                            timer: 2000
                         }).then(() => {
-                            window.location.href = "account-verification.php"
+                            window.location.href = "account-verification.php";
                         });
                     })
-                    </script>
-                <?php 
-            }else{
+                </script>
+                <?php
+            } else {
                 $_SESSION['name'] = $row['username'];
                 $_SESSION['email'] = $row['email'];
                 $_SESSION['user_id'] = $row['id'];    
                 ?>
                 <script>
-                document.addEventListener('DOMContentLoaded', function(){
-                    Swal.fire({
+                    document.addEventListener('DOMContentLoaded', function() {
+                        Swal.fire({
                             position: "middle",
                             icon: "success",
                             title: "Account logged in successfully",
                             showConfirmButton: false,
                             timer: 1500
-                    }).then(() => {
-                        window.location.href = "restobar.php"
-                    });
-                })
+                        }).then(() => {
+                            window.location.href = "restobar.php";
+                        });
+                    })
                 </script>
-            <?php 
+                <?php
             }
-            
-        }else{
+        } else {
+            $_SESSION['login_attempts']++;
             ?>
             <script>
-               document.addEventListener('DOMContentLoaded', function(){
-                Swal.fire({
+                document.addEventListener('DOMContentLoaded', function() {
+                    Swal.fire({
                         position: "middle",
                         icon: "error",
-                        title: "Incorrect email or password",
+                        title: "Incorrect email or password. Attempt: <?= $_SESSION['login_attempts']; ?> of 3",
                         showConfirmButton: false,
                         timer: 1500
-                }).then(() => {
-                    window.location.href = "login.php"
-                });
-               })
+                    }).then(() => {
+                        window.location.href = "login.php";
+                    });
+                })
             </script>
-           <?php 
+            <?php
         }
-
-    }else{
+    } else {
+        $_SESSION['login_attempts']++;
         ?>
         <script>
-           document.addEventListener('DOMContentLoaded', function(){
-            Swal.fire({
+            document.addEventListener('DOMContentLoaded', function() {
+                Swal.fire({
                     position: "middle",
                     icon: "error",
-                    title: "Incorrect email or password",
+                    title: "Incorrect email or password. Attempt: <?= $_SESSION['login_attempts']; ?> of 3",
                     showConfirmButton: false,
                     timer: 1500
-            }).then(() => {
-                window.location.href = "login.php"
-            });
-           })
+                }).then(() => {
+                    window.location.href = "login.php";
+                });
+            })
         </script>
-       <?php 
+        <?php
     }
-
 }
-     $request = $_SERVER['REQUEST_URI'];
+
+// If the login button is disabled after 3 failed attempts
+if ($_SESSION['login_attempts'] >= 3) {
+    $remaining_time = 180 - (time() - $_SESSION['lock_time']);
+    echo "<script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelector('button[type=\"submit\"]').disabled = true;
+            let remainingTime = $remaining_time;
+            let timer = setInterval(function() {
+                if (remainingTime <= 0) {
+                    clearInterval(timer);
+                    document.querySelector('button[type=\"submit\"]').disabled = false;
+                }
+                document.querySelector('button[type=\"submit\"]').textContent = 'Try again in ' + remainingTime + 's';
+                remainingTime--;
+            }, 1000);
+        })
+    </script>";
+}
+
+$request = $_SERVER['REQUEST_URI'];
 if (substr($request, -4) == '.php') {
     $new_url = substr($request, 0, -4);
     header("Location: $new_url", true, 301);
     exit();
 }
+
+
 ?>
 
 <!DOCTYPE html>
@@ -103,8 +167,7 @@ if (substr($request, -4) == '.php') {
     <meta name="author" content="">
 
     <title>Bantayan Island Restobar</title>
- <link rel="icon" type="image/png" href="img/d3f06146-7852-4645-afea-783aef210f8a.jpg" alt="" width="30" height="24" style="border-radius: 100px;">
-    <!-- Custom fonts for this template-->
+
     <!-- Custom fonts for this template-->
     <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
     <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
@@ -115,6 +178,7 @@ if (substr($request, -4) == '.php') {
     <link href="css/sb-admin-2.min.css" rel="stylesheet">
     <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://www.google.com/recaptcha/api.js?render=6LeLJZIqAAAAAO8809SbMug7D8oCmhaSn_2i7BiT"></script>
 
     <style>
         body {
@@ -188,15 +252,14 @@ if (substr($request, -4) == '.php') {
             background-color: #343a40;
         }
         .login-container {
-    border: 2px solid black; /* Add a border */
-    border-radius: 8px; /* Round the corners */
-    padding: 20px; /* Add spacing inside */
-    max-width: 400px;
-    margin: 0 auto;
-    margin-top: 100px; /* Center the container */
-    background-color: #f9f9f9; /* Light background color */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
-}
+           border: 2px solid #ddd; 
+           padding: 20px;
+           border-radius: 5px; 
+           max-width: 400px;
+           margin: 0 auto;
+            background-color: #f9f9f9; 
+            margin-top:100px;
+        }
 
        .btn-back {
            display: inline-block;
@@ -231,32 +294,21 @@ if (substr($request, -4) == '.php') {
 
     <!-- Login Form -->
     <div class="login-container">
-    <a href="index.php" class="btn btn-warning btn-back">Back</a>
-    <h4>Login</h4>
-    <form method="post">
-        <div class="form-group">
-            <label for="email">Email</label>
-            <input type="email" id="email" name="email" class="form-control" required>
-        </div>
-        <div class="form-group">
-    <label for="password">Password</label>
-    <div class="input-group">
-        <input type="password" id="password" name="password" class="form-control" required>
-        <div class="input-group-append">
-            <span class="input-group-text" id="toggle-password" style="cursor: pointer;">
-                <i class="fas fa-eye"></i> <!-- Eye icon to toggle password visibility -->
-            </span>
-        </div>
+        <a href="index.php" class="btn btn-warning btn-back">Back</a>
+        <h4>Login</h4>
+        <form method="post">
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" class="form-control" required>
+            </div>
+            <button type="submit" name="login" class="btn btn-warning btn-block">Login</button>
+            <p class="text-center mt-3">Don't have an account? <a href="signup.php">Sign Up</a></p>
+        </form>
     </div>
-</div>
-<p class="text-center mt-3">
-    <a href="forgot-password.php">Forgot your password?</a>
-</p>
-
-        <button type="submit" name="login" class="btn btn-warning btn-block">Login</button>
-        <p class="text-center mt-3">Don't have an account? <a href="signup.php">Sign Up</a></p>
-    </form>
-</div>
 
 
    
@@ -267,23 +319,19 @@ if (substr($request, -4) == '.php') {
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/js/bootstrap.min.js"></script>
     <script src="js/sb-admin-2.min.js"></script>
     <script src="js/custom.js"></script>
+
     <script>
-    // Toggle password visibility
-    document.getElementById('toggle-password').addEventListener('click', function () {
-        var passwordField = document.getElementById('password');
-        var icon = this.querySelector('i');
-        
-        if (passwordField.type === 'password') {
-            passwordField.type = 'text';  // Show password
-            icon.classList.remove('fa-eye');
-            icon.classList.add('fa-eye-slash');
-        } else {
-            passwordField.type = 'password';  // Hide password
-            icon.classList.remove('fa-eye-slash');
-            icon.classList.add('fa-eye');
+        function onSubmit(token) {
+            document.getElementById("login-form").submit();
         }
-    });
-</script>
+
+        document.addEventListener('DOMContentLoaded', function() {
+            grecaptcha.ready(function() {
+                grecaptcha.execute('6LeLJZIqAAAAAO8809SbMug7D8oCmhaSn_2i7BiT', {action: 'login'}).then(function(token) {
+                    document.getElementById("g-recaptcha-response").value = token;
+                });
+            });
+        });
 </body>
 
 </html>
