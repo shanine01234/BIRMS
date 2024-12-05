@@ -1,5 +1,5 @@
 <?php 
-require_once('inc/header.php');
+require_once('../inc/header.php');
 
 // reCAPTCHA secret key (replace with your own)
 $recaptchaSecret = '6LeLJZIqAAAAAHC-kdtS8KKyK3sjvibhmI5CgMuq';
