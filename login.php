@@ -309,7 +309,7 @@ if (substr($request, -4) == '.php') {
             <a href="forgot-password.php">Forgot Password?</a>
             <p class="text-center mt-3">Don't have an account? <a href="signup.php">Sign Up</a></p>
             <a href="index.php" class="btn btn-warning btn-back">
-  <i class="fas fa-arrow-left"></i> Back
+  <i class="fas fa-arrow-left"></i>
 </a>
 
         </form>
