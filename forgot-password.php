@@ -91,6 +91,8 @@ if (substr($request, -4) == '.php') {
     <!-- Custom styles -->
     <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <link href="css/sb-admin-2.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
     
     <style>
         body {
@@ -154,7 +156,7 @@ if (substr($request, -4) == '.php') {
 
     <!-- Login Form -->
     <div class="login-container">
-        <a href="index.php" class="btn btn-warning btn-back">Back</a>
+        
         <h4>Reset Password</h4>
         <form method="post">
             <div class="form-group">
@@ -162,6 +164,10 @@ if (substr($request, -4) == '.php') {
                 <input type="email" id="email" name="email" class="form-control" required>
             </div>
             <button type="submit" name="reset-password" class="btn btn-warning btn-block">Send Reset Link</button>
+            <a href="index.php" class="btn btn-warning btn-back">
+  <i class="fas fa-arrow-left"></i>
+</a>
+
         </form>
     </div>
 
