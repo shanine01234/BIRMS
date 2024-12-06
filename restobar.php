@@ -159,7 +159,7 @@ if (substr($request, -4) == '.php') {
         <div class="container-fluid" style="background-color: transparent;"> 
             <a class="navbar-brand" href="#">
            
-                <span style="color: black;   ">Bantayan Island Restobar Ordering System</span>
+                <span style="color: black;   ">Bantayan Island Restobar</span>
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
