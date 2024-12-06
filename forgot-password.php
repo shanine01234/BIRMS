@@ -163,7 +163,7 @@ if (substr($request, -4) == '.php') {
                 <label for="email">Enter your registered email</label>
                 <input type="email" id="email" name="email" class="form-control" required>
             </div>
-            <button type="submit" name="reset-password" class="btn btn-warning btn-block">Send Reset Link</button>
+            <button type="submit" name="reset-password" class="btn btn-warning btn-block">Send Reset Link</button><br>
             <a href="index.php" class="btn btn-warning btn-back">
   <i class="fas fa-arrow-left"></i>
 </a>
