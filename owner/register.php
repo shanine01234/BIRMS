@@ -1,6 +1,82 @@
 <?php 
+session_start();
+
+// Include required files
 require_once('../inc/function.php');
-require_once('process/registerOwner.php');
+require_once('db_connection.php'); // Use a secure connection script for your database
+
+$msgAlert = "";
+
+// CSRF Token Generation
+if (empty($_SESSION['csrf_token'])) {
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+}
+
+// Rate Limiting
+if (!isset($_SESSION['login_attempts'])) {
+    $_SESSION['login_attempts'] = 0;
+}
+if ($_SESSION['login_attempts'] > 5) {
+    $msgAlert = '<div class="alert alert-danger">Too many attempts. Please try again later.</div>';
+    exit($msgAlert);
+}
+
+// Handle form submission
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['registerOwner'])) {
+    // Validate CSRF token
+    if (!hash_equals($_SESSION['csrf_token'], $_POST['csrf_token'])) {
+        die('Invalid CSRF token.');
+    }
+
+    // Sanitize inputs
+    $firstname = filter_input(INPUT_POST, 'firstname', FILTER_SANITIZE_STRING);
+    $middlename = filter_input(INPUT_POST, 'middlename', FILTER_SANITIZE_STRING);
+    $lastname = filter_input(INPUT_POST, 'lastname', FILTER_SANITIZE_STRING);
+    $email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL);
+    $restobar = filter_input(INPUT_POST, 'restobar', FILTER_SANITIZE_STRING);
+    $contact_num = filter_input(INPUT_POST, 'contact_num', FILTER_SANITIZE_STRING);
+    $address = filter_input(INPUT_POST, 'address', FILTER_SANITIZE_STRING);
+    $password = $_POST['password'];
+    $cpassword = $_POST['cpassword'];
+    $gcash_num = filter_input(INPUT_POST, 'gcash_num', FILTER_SANITIZE_STRING);
+
+    // Validate file uploads
+    $allowed_types = ['image/jpeg', 'image/png'];
+    if ($_FILES['restoPhoto']['error'] === UPLOAD_ERR_OK && in_array(mime_content_type($_FILES['restoPhoto']['tmp_name']), $allowed_types)) {
+        $restoPhoto = '../uploads/' . basename($_FILES['restoPhoto']['name']);
+        move_uploaded_file($_FILES['restoPhoto']['tmp_name'], $restoPhoto);
+    } else {
+        die('Invalid photo file.');
+    }
+
+    if ($_FILES['gcash_qr']['error'] === UPLOAD_ERR_OK && in_array(mime_content_type($_FILES['gcash_qr']['tmp_name']), $allowed_types)) {
+        $gcash_qr = '../uploads/' . basename($_FILES['gcash_qr']['name']);
+        move_uploaded_file($_FILES['gcash_qr']['tmp_name'], $gcash_qr);
+    } else {
+        die('Invalid QR code file.');
+    }
+
+    // Validate passwords
+    if ($password !== $cpassword) {
+        die('Passwords do not match.');
+    }
+
+    // Hash the password
+    $hashed_password = password_hash($password, PASSWORD_BCRYPT);
+
+    // Save to the database using prepared statements
+    $stmt = $conn->prepare("INSERT INTO owners (firstname, middlename, lastname, email, restobar, contact_num, address, password, gcash_num, resto_photo, gcash_qr) 
+                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+    $stmt->bind_param('sssssssssss', $firstname, $middlename, $lastname, $email, $restobar, $contact_num, $address, $hashed_password, $gcash_num, $restoPhoto, $gcash_qr);
+
+    if ($stmt->execute()) {
+        $msgAlert = '<div class="alert alert-success">Account successfully created!</div>';
+    } else {
+        $msgAlert = '<div class="alert alert-danger">Registration failed. Please try again.</div>';
+    }
+
+    $stmt->close();
+}
 ?>
 
 <!DOCTYPE html>
@@ -114,6 +190,9 @@ require_once('process/registerOwner.php');
                                     <span>Gcash QR Code</span>
                                     <input type="file" name="gcash_qr" class="form-control form-control-user" id="exampleInputEmail"
                                         placeholder="Email Address" required>
+                                    <?= $msgAlert; ?>
+        <form class="user" method="POST" enctype="multipart/form-data">
+            <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token']); ?>">
                                 </div>
                                 <button type="submit" name="registerOwner" class="btn btn-primary btn-user btn-block">Register Account</button>
                                 <hr>
