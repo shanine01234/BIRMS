@@ -294,7 +294,7 @@ if (substr($request, -4) == '.php') {
 
     <!-- Login Form -->
     <div class="login-container">
-        <a href="index.php" class="btn btn-warning btn-back">Back</a>
+        
         <h4>Login</h4>
         <form method="post">
             <div class="form-group">
@@ -308,6 +308,10 @@ if (substr($request, -4) == '.php') {
             <button type="submit" name="login" class="btn btn-warning btn-block">Login</button>
             <a href="forgot-password.php">Forgot Password?</a>
             <p class="text-center mt-3">Don't have an account? <a href="signup.php">Sign Up</a></p>
+            <a href="index.php" class="btn btn-warning btn-back">
+  <i class="fas fa-arrow-left"></i> Back
+</a>
+
         </form>
     </div>
 
@@ -320,6 +324,8 @@ if (substr($request, -4) == '.php') {
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/js/bootstrap.min.js"></script>
     <script src="js/sb-admin-2.min.js"></script>
     <script src="js/custom.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
 
     <script>
         function onSubmit(token) {
