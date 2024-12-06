@@ -353,7 +353,6 @@ if (substr($request, -4) == '.php') {
     <nav class="navbar navbar-expand-lg navbar-dark bg-light">
         <div class="container-fluid" style="background-color: transparent;">
             <a class="navbar-brand" href="#">
-                <img src="./img/logo.jpg" alt="" width="30" height="24">
                 <span style="color: black;   ">Bantayan Island Restobar</span>
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
