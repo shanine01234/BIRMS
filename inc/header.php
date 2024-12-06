@@ -41,15 +41,16 @@ if (isset($_GET['logout'])) {
     <script>
        document.addEventListener('DOMContentLoaded', function(){
         Swal.fire({
-                position: "top-end",
+                position: "center",  // Center the popup
                 icon: "success",
                 title: "Account logged out successfully",
                 showConfirmButton: false,
                 timer: 1500
         }).then(() => {
-            window.location.href = "index.php"
+            window.location.href = "index.php";
         });
        })
     </script>
     <?php 
 }
+?>
