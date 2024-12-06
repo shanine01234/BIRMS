@@ -306,6 +306,7 @@ if (substr($request, -4) == '.php') {
                 <input type="password" id="password" name="password" class="form-control" required>
             </div>
             <button type="submit" name="login" class="btn btn-warning btn-block">Login</button>
+            <a href="forgot-password.php">Forgot Password?</a>
             <p class="text-center mt-3">Don't have an account? <a href="signup.php">Sign Up</a></p>
         </form>
     </div>
