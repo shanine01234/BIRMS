@@ -133,7 +133,7 @@ if (substr($request, -4) == '.php') {
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="https://instagram.com" target="_blank">
+            <a class="nav-link" href="https://www.instagram.com/shanine_zaspa/?utm_source=ig_web_button_share_sheet" target="_blank">
                 <i class="fab fa-instagram"></i>
             </a>
         </li>
