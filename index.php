@@ -128,7 +128,7 @@ if (substr($request, -4) == '.php') {
     </ul>
     <ul class="navbar-nav">
         <li class="nav-item">
-            <a class="nav-link" href="https://facebook.com" target="_blank">
+            <a class="nav-link" href="https://www.facebook.com/shanine.zaspa.9" target="_blank">
                 <i class="fab fa-facebook"></i>
             </a>
         </li>
