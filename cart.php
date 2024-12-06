@@ -15,7 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <script>
                 document.addEventListener('DOMContentLoaded', function() {
                     Swal.fire({
-                        position: "top-end",
+                        position: "center",
                         icon: "success",
                         title: "Cart item updated",
                         showConfirmButton: false,
@@ -36,7 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <script>
                 document.addEventListener('DOMContentLoaded', function() {
                     Swal.fire({
-                        position: "top-end",
+                        position: "center",
                         icon: "success",
                         title: "Cart item removed successfully",
                         showConfirmButton: false,
@@ -69,7 +69,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <script>
                     document.addEventListener('DOMContentLoaded', function() {
                         Swal.fire({
-                            position: "top-end",
+                            position: "center",
                             icon: "success",
                             title: "Order placed successfully",
                             showConfirmButton: false,
