@@ -70,9 +70,19 @@ if (substr($request, -4) == '.php') {
             margin: 0 20px; /* Adjust the spacing here */
           
         }
+        .nav-link {
+            display: flex;
+            align-items: center; /* Center the icon and text vertically */
+            gap: 5px; /* Add spacing between the icon and text */
+            color: black; /* Ensure consistent text color */
+        }
              .nav-link i {
             color: blue !important;
             transition: color 0.3s ease;
+        }
+                .nav-link.position-relative {
+            display: inline-flex; /* Inline-flex for relative positioning */
+            align-items: center; /* Align content vertically */
         }
             .nav-link:hover i {
             color: #01070d;
