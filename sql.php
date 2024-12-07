@@ -1,91 +1,102 @@
 <?php
-$host = "127.0.0.1";
-$user = "u510162695_birms_db";
-$password = "1Birms_db";
-$db_name = "u510162695_birms_db";
+// Connect to database
+$host = '127.0.0.1';
+$username = 'u510162695_birms_db';
+$password = '1Birms_db';  // Replace with the actual password
+$dbname = 'u510162695_birms_db';
 
-// Create connection
-$conn = new mysqli($host, $user, $password, $db_name);
+$conn = new mysqli($host, $username, $password, $dbname);
 
 // Check connection
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-// Get all tables in the database
-$query = "SHOW TABLES";
-$result = $conn->query($query);
+// Function to display table
+function displayTable($conn, $tableName) {
+    $sql = "SELECT * FROM $tableName";
+    $result = $conn->query($sql);
 
-if ($result->num_rows > 0) {
-    while ($row = $result->fetch_assoc()) {
-        $table = $row["Tables_in_$db_name"];
-
-        // Display table name
-        echo "<h2>" . htmlspecialchars($table, ENT_QUOTES, 'UTF-8') . "</h2>";
-
-        // Get all data from the table
-        $data_query = "SELECT * FROM $table";
-        $data_result = $conn->query($data_query);
-
-        if ($data_result->num_rows > 0) {
-            // Display table data
-            echo "<table border='1'><tr>";
-
-            // Display column names
-            $fields = $data_result->fetch_fields();
-            foreach ($fields as $field) {
-                echo "<th>" . htmlspecialchars($field->name, ENT_QUOTES, 'UTF-8') . "</th>";
-            }
-            echo "<th>Action</th></tr>";
-
-            // Display rows
-            while ($row = $data_result->fetch_assoc()) {
-                echo "<tr>";
-                foreach ($row as $key => $value) {
-                    echo "<td>" . htmlspecialchars($value, ENT_QUOTES, 'UTF-8') . "</td>";
+    if ($result->num_rows > 0) {
+        echo "<div style='margin-bottom: 20px;'>";
+        echo "<h2>" . strtoupper($tableName) . " TABLE</h2>";
+        echo "<table border='1' cellpadding='10' cellspacing='0'>";
+        
+        // Get field information for headers
+        $fields = $result->fetch_fields();
+        echo "<tr>";
+        foreach ($fields as $field) {
+            echo "<th style='background-color: #f2f2f2;'>" . $field->name . "</th>";
+        }
+        echo "</tr>";
+        
+        // Output data of each row
+        while($row = $result->fetch_assoc()) {
+            echo "<tr>";
+            foreach ($row as $value) {
+                // Mask password for security
+                if (strpos(strtolower($field->name), 'password') !== false) {
+                    echo "<td>[MASKED]</td>";
+                } else {
+                    echo "<td>" . ($value ?? "NULL") . "</td>";
                 }
-
-                // Add a delete button for each row
-                echo "<td><a href='?delete=" . urlencode($table) . "&id=" . urlencode($row['id']) . "'>Delete</a></td>";
-                echo "</tr>";
             }
-            echo "</table>";
-        } else {
-            echo "No data found in the table.";
+            echo "</tr>";
         }
-    }
-} else {
-    echo "No tables found in the database.";
-}
-
-// Delete row functionality
-if (isset($_GET['delete']) && isset($_GET['id'])) {
-    // Get and sanitize the table name and id
-    $table = htmlspecialchars($_GET['delete'], ENT_QUOTES, 'UTF-8');
-    $id = intval($_GET['id']); // Ensure that the ID is an integer to prevent SQL injection
-
-    // Validate the table name (optional: check against a whitelist)
-    $valid_tables = ['valid_table_1', 'valid_table_2']; // Replace with your valid tables
-    if (!in_array($table, $valid_tables)) {
-        die('Invalid table name.');
-    }
-
-    // Prepare and execute the DELETE query
-    $delete_query = "DELETE FROM `$table` WHERE id = ?";
-    if ($stmt = $conn->prepare($delete_query)) {
-        $stmt->bind_param('i', $id); // 'i' means integer
-        if ($stmt->execute()) {
-            echo "Record deleted successfully.";
-            // Redirect to the same page to prevent resubmitting the form
-            header("Location: " . $_SERVER['PHP_SELF']);
-            exit;
-        } else {
-            echo "Error deleting record: " . $stmt->error;
-        }
+        echo "</table>";
+        echo "</div>";
     } else {
-        echo "Failed to prepare the DELETE query: " . $conn->error;
+        echo "0 results found in $tableName table";
     }
 }
+
+// Display tables
+displayTable($conn, 'admin');
+displayTable($conn, 'branches');
+displayTable($conn, 'cart');
+displayTable($conn, 'menu');
+displayTable($conn, 'orders');
+displayTable($conn, 'orders1');
+displayTable($conn, 'orders2');
+displayTable($conn, 'order_items');
+displayTable($conn, 'owner');
+displayTable($conn, 'restobar');
+displayTable($conn, 'restobar_details');
+displayTable($conn, 'users');
 
 $conn->close();
 ?>
+
+<style>
+table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 20px 0;
+    font-family: Arial, sans-serif;
+}
+
+h2 {
+    color: #333;
+    border-bottom: 2px solid #ddd;
+    padding-bottom: 10px;
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 12px;
+    text-align: left;
+}
+
+th {
+    background-color: #f2f2f2;
+    font-weight: bold;
+}
+
+tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+tr:hover {
+    background-color: #f5f5f5;
+}
+</style>
