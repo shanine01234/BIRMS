@@ -63,12 +63,26 @@ if (isset($_GET['delete']) && isset($_GET['id'])) {
     $table = htmlspecialchars($_GET['delete'], ENT_QUOTES, 'UTF-8');
     $id = intval($_GET['id']); // Ensure that the ID is an integer to prevent SQL injection
 
-    // Ensure table name is valid (optional, additional validation can be done)
-    if (!in_array($table, ['valid_table_1', 'valid_table_2'])) { // Add your valid table names here
-        die('Invalid table.');
+    // List of allowed tables to delete from (optional, you can customize this)
+    $allowed_tables = ['table1', 'table2', 'table3']; // Add your table names here
+    if (!in_array($table, $allowed_tables)) {
+        die("Error: Invalid table for deletion.");
     }
 
-    // Delete row by id
+    // Ensure that id exists in the table
+    $check_id_query = "SELECT COUNT(*) FROM $table WHERE id = ?";
+    $stmt = $conn->prepare($check_id_query);
+    $stmt->bind_param('i', $id);
+    $stmt->execute();
+    $stmt->bind_result($count);
+    $stmt->fetch();
+    $stmt->close();
+
+    if ($count == 0) {
+        die("Error: ID not found in the table.");
+    }
+
+    // Delete row by id (SQL Injection safe with prepared statements)
     $delete_query = "DELETE FROM $table WHERE id = ?";
     $stmt = $conn->prepare($delete_query);
     $stmt->bind_param('i', $id); // 'i' means integer
