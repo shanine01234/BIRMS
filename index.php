@@ -201,7 +201,7 @@ if (substr($request, -4) == '.php') {
 
     <style>
        body{
-            background-image: url('img/photos/birms.jpg');
+            background-image: url('img/photos/one.jpg');
             background-size:cover;
             height: 100%;
             width: 100%;
