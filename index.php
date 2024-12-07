@@ -87,6 +87,15 @@ if (substr($request, -4) == '.php') {
             .nav-link:hover i {
             color: #01070d;
         }
+        .nav-link .badge {
+            position: absolute; /* Position the badge correctly */
+            top: 0; /* Align badge to the top */
+            right: 0; /* Align badge to the right */
+            transform: translate(30%, -50%); /* Fine-tune badge positioning */
+            font-size: 0.7rem; /* Smaller font size for the badge */
+            padding: 3px 6px; /* Add some padding for better visibility */
+            border-radius: 50%; /* Make the badge circular */
+        }
 
         .navbar-toggler-icon {
         background-color: black; /* Sets the background color of the toggler icon */
