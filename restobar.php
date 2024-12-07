@@ -239,7 +239,9 @@ if (substr($request, -4) == '.php') {
                     <li class="nav-item">
             <a class="nav-link position-relative" href="orders.php" style="margin-left: -6px;">
                 <i class="fas fa-file"></i> <span style="color: black">Orders</span>
-                <span class="badge bg-danger position-absolute top-0 end-0"><?= $order_count->num_rows ?? 0 ?></span>
+                <span class="badge bg-danger position-absolute top-0 end-0" style="
+    transform: translate(27px, -7px);
+"><?= $order_count->num_rows ?? 0 ?></span>
             </a>
         </li>
 
