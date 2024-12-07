@@ -173,7 +173,7 @@ if (substr($request, -4) == '.php') {
     </li>
     <li class="nav-item">
         <a class="nav-link" href="https://www.instagram.com/shanine_zaspa/?utm_source=ig_web_button_share_sheet" target="_blank">
-            <i class="fab fa-instagram instagram-icon"></i>
+            <img src="https://img.icons8.com/?size=100&id=BrU2BBoRXiWq&format=png&color=000000" alt="Instagram" width="30" height="30">
         </a>
     </li>
     <li class="nav-item">
@@ -182,6 +182,7 @@ if (substr($request, -4) == '.php') {
         </a>
     </li>
 </ul>
+
 
 </div>
 
