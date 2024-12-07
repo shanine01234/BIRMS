@@ -40,7 +40,7 @@ if (substr($request, -4) == '.php') {
         .nav-item {
             text-align: center;
             color: black !important;
-            margin: 0 15px; /* Adjust the spacing here */
+            margin: 0 20px; /* Adjust the spacing here */
           
         }
         .nav-link, .nav-link i {
