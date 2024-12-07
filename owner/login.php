@@ -40,12 +40,28 @@ require_once('process/loginOwner.php');
 
         /* Gradient Background */
         body {
-            background: linear-gradient(45deg, #14d9c2, #2575fc); /* Blue to purple gradient */
+            background: linear-gradient(45deg, #6a11cb, #2575fc); /* Blue to purple gradient */
             height: 100vh;
             margin: 0;
         }
-    </style>
 
+        /* Resize form */
+        .user-form {
+            max-width: 400px; /* Maximum width for form */
+            margin: 0 auto; /* Center the form */
+            padding: 30px; /* Add some padding */
+        }
+
+        .form-group input {
+            padding: 10px;
+            font-size: 16px; /* Resize input text */
+        }
+
+        .btn-user {
+            padding: 10px 20px; /* Resize the button */
+            font-size: 16px; /* Resize the button text */
+        }
+    </style>
 </head>
 
 <body>
