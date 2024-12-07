@@ -182,57 +182,58 @@ if (substr($request, -4) == '.php') {
 
     <style>
         body {
-            font-family: "Roboto", sans-serif;
-            background-color: #f8f9fa;
-            color: #495057;
-        }
+    font-family: "Roboto", sans-serif;
+    background: linear-gradient(to bottom, #ff7e5f, #feb47b); /* Gradient background */
+    color: #495057;
+    min-height: 100vh;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 
-        .login-container {
-            max-width: 400px;
-            margin: 50px auto;
-            padding: 20px;
-            background: #ffffff;
-            border-radius: 8px;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-        }
+.login-container {
+    max-width: 400px;
+    margin: 50px auto;
+    padding: 20px;
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+}
 
-        .login-container h4 {
-            margin-bottom: 20px;
-            font-size: 24px;
-            font-weight: 700;
-            text-align: center;
-        }
+.login-container h4 {
+    margin-bottom: 20px;
+    font-size: 24px;
+    font-weight: 700;
+    text-align: center;
+}
 
-        .form-control {
-            border-radius: 8px;
-            box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.075);
-        }
+.btn-warning {
+    background-color: #f0ad4e;
+    border-color: #f0ad4e;
+    color: #ffffff;
+    border-radius: 8px;
+    font-weight: 600;
+}
 
-        .btn-warning {
-            background-color: #f0ad4e;
-            border-color: #f0ad4e;
-            color: #ffffff;
-            border-radius: 8px;
-            font-weight: 600;
-        }
+.btn-warning:hover {
+    background-color: #ec971f;
+    border-color: #d58512;
+}
 
-        .btn-warning:hover {
-            background-color: #ec971f;
-            border-color: #d58512;
-        }
+footer {
+    background-color: #343a40;
+    color: #ffffff;
+    padding: 20px 0;
+    text-align: center;
+}
 
-        footer {
-            background-color: #343a40;
-            color: #ffffff;
-            padding: 20px 0;
-            text-align: center;
-        }
+footer .social-icons a {
+    color: #ffffff;
+    margin: 0 10px;
+    font-size: 20px;
+}
 
-        footer .social-icons a {
-            color: #ffffff;
-            margin: 0 10px;
-            font-size: 20px;
-        }
 
         .navbar-nav {
             display: flex;
