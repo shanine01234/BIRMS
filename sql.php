@@ -26,19 +26,20 @@ function displayTable($conn, $tableName) {
         $fields = $result->fetch_fields();
         echo "<tr>";
         foreach ($fields as $field) {
-            echo "<th style='background-color: #f2f2f2;'>" . $field->name . "</th>";
+            echo "<th style='background-color: #f2f2f2;'>" . htmlspecialchars($field->name) . "</th>";
         }
         echo "</tr>";
         
         // Output data of each row
         while($row = $result->fetch_assoc()) {
             echo "<tr>";
-            foreach ($row as $value) {
+            foreach ($row as $key => $value) {
                 // Mask password for security
-                if (strpos(strtolower($field->name), 'password') !== false) {
+                if (strpos(strtolower($key), 'password') !== false) {
                     echo "<td>[MASKED]</td>";
                 } else {
-                    echo "<td>" . ($value ?? "NULL") . "</td>";
+                    // Sanitize the value to prevent XSS
+                    echo "<td>" . htmlspecialchars($value ?? "NULL") . "</td>";
                 }
             }
             echo "</tr>";
