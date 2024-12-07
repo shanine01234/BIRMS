@@ -157,7 +157,7 @@ if (substr($request, -4) == '.php') {
                 ?>
                  <li class="nav-item">
     <a class="nav-link" href="login.php">
-        <img src="https://img.icons8.com/?size=100&id=szz75vJoS2OI&format=png&color=000000" alt="Login" width="20" height="20">
+        <img src="https://img.icons8.com/?size=100&id=6850&format=png&color=000000" alt="Login" width="20" height="20">
         <span style="color: black">Login</span>
     </a>
 </li>
