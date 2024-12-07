@@ -117,10 +117,11 @@ if (substr($request, -4) == '.php') {
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="about.php">
-                <i class="fas fa-info-circle"></i><span style="color: black"> About</span>
-            </a>
-        </li>
+    <a class="nav-link" href="about.php">
+        <img src="https://img.icons8.com/?size=100&id=85139&format=png&color=000000" alt="About" width="20" height="20">
+        <span style="color: black">About</span>
+    </a>
+</li>
         <li class="nav-item">
     <a class="nav-link position-relative" href="cart.php">
         <img src="https://img.icons8.com/?size=100&id=8chNl15hy6jY&format=png&color=000000" alt="Cart" width="20" height="20">
