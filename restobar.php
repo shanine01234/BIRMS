@@ -232,7 +232,7 @@ if (substr($request, -4) == '.php') {
         <li class="nav-item">
                         <a class="nav-link position-relative" href="cart.php" style="margin-left: -23px;">
                             <i class="fas fa-shopping-cart"></i> <span style="color: black">Cart</span>
-                            <span class="badge bg-danger position-absolute top-0 end-0"  style="transform: translate(27px, -7px);"><?= $count_cart->num_rows ?? 0 ?></span
+                            <span class="badge bg-danger position-absolute top-0 end-0"  style="transform: translate(25px, -5px);"><?= $count_cart->num_rows ?? 0 ?></span
                         </a>
                     </li>
 
