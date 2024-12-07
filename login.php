@@ -301,7 +301,7 @@ footer .social-icons a {
             <a href="forgot-password.php">Forgot Password?</a>
             <p class="text-center mt-3">Don't have an account? <a href="signup.php">Sign Up</a></p>
             <a href="index.php" class="btn btn-warning btn-back">
-  <i class="fas fa-arrow-left"></i>
+  <img src="https://img.icons8.com/?size=100&id=EX0c5vXvAejm&format=png&color=000000" alt="Back" width="24" height="24">
 </a>
 
         </form>
