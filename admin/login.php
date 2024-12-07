@@ -20,15 +20,7 @@ if (substr($request, -4) == '.php') {
 
 <!DOCTYPE html>
 <html lang="en">
-<style>
-        /* Gradient background */
-        body {
-            background: linear-gradient(to right, #4facfe, #00f2fe); /* Customize your gradient colors */
-            height: 100vh;
-            margin: 0;
-            font-family: 'Nunito', sans-serif;
-        }
-    </style>
+
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -57,9 +49,19 @@ if (substr($request, -4) == '.php') {
             });
         });
     </script>
+
+    <style>
+        /* Gradient background */
+        body {
+            background: linear-gradient(to right, #4facfe, #00f2fe); /* Customize your gradient colors */
+            height: 100vh;
+            margin: 0;
+            font-family: 'Nunito', sans-serif;
+        }
+    </style>
 </head>
 
-<body class="bg-gradient-primary">
+<body>
 
     <div class="container">
         <!-- Outer Row -->
