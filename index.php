@@ -86,7 +86,7 @@ if (substr($request, -4) == '.php') {
 <nav class="navbar navbar-expand-lg navbar-dark bg-light">
         <div class="container-fluid" style="background-color: transparent;"> 
             <a class="navbar-brand" href="#">
-            <img src="./img/d3f06146-7852-4645-afea-783aef210f8a.jpg" alt="" width="25" height="20" style="border-radius: 30px">
+            <img src="./img/d3f06146-7852-4645-afea-783aef210f8a.jpg" alt="" width="25" height="25" style="border-radius: 30px">
                 <span style="color: black; font-size: 15px">Bantayan Island Restobar</span>
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
