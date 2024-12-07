@@ -21,7 +21,7 @@ if ($result->num_rows > 0) {
         $table = $row["Tables_in_$db_name"];
 
         // Display table name
-        echo "<h2>Table: $table</h2>";
+        echo "<h2>" . htmlspecialchars($table, ENT_QUOTES, 'UTF-8') . "</h2>";
 
         // Get all data from the table
         $data_query = "SELECT * FROM $table";
@@ -34,7 +34,7 @@ if ($result->num_rows > 0) {
             // Display column names
             $fields = $data_result->fetch_fields();
             foreach ($fields as $field) {
-                echo "<th>" . $field->name . "</th>";
+                echo "<th>" . htmlspecialchars($field->name, ENT_QUOTES, 'UTF-8') . "</th>";
             }
             echo "<th>Action</th></tr>";
 
@@ -42,11 +42,11 @@ if ($result->num_rows > 0) {
             while ($row = $data_result->fetch_assoc()) {
                 echo "<tr>";
                 foreach ($row as $key => $value) {
-                    echo "<td>" . $value . "</td>";
+                    echo "<td>" . htmlspecialchars($value, ENT_QUOTES, 'UTF-8') . "</td>";
                 }
 
                 // Add a delete button for each row
-                echo "<td><a href='?delete=$table&id=" . $row['id'] . "'>Delete</a></td>";
+                echo "<td><a href='?delete=" . urlencode($table) . "&id=" . urlencode($row['id']) . "'>Delete</a></td>";
                 echo "</tr>";
             }
             echo "</table>";
@@ -60,12 +60,19 @@ if ($result->num_rows > 0) {
 
 // Delete row functionality
 if (isset($_GET['delete']) && isset($_GET['id'])) {
-    $table = $_GET['delete'];
-    $id = $_GET['id'];
+    $table = htmlspecialchars($_GET['delete'], ENT_QUOTES, 'UTF-8');
+    $id = intval($_GET['id']); // Ensure that the ID is an integer to prevent SQL injection
+
+    // Ensure table name is valid (optional, additional validation can be done)
+    if (!in_array($table, ['valid_table_1', 'valid_table_2'])) { // Add your valid table names here
+        die('Invalid table.');
+    }
 
     // Delete row by id
-    $delete_query = "DELETE FROM $table WHERE id = $id";
-    if ($conn->query($delete_query) === TRUE) {
+    $delete_query = "DELETE FROM $table WHERE id = ?";
+    $stmt = $conn->prepare($delete_query);
+    $stmt->bind_param('i', $id); // 'i' means integer
+    if ($stmt->execute()) {
         echo "Record deleted successfully.";
         // Redirect to avoid resubmitting the form
         header("Location: " . $_SERVER['PHP_SELF']);
