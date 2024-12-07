@@ -183,7 +183,16 @@ if (substr($request, -4) == '.php') {
         .social-links .nav-link:hover {
             color: #007bff; /* Change color on hover */
         }
-        .navbar-toggler-icon {
+
+        .social-links {
+            display: flex;
+            flex-direction: row; /* Arrange items horizontally */
+            gap: 10px; /* Space between items */
+            list-style: none; /* Remove bullets */
+            padding: 0;
+            margin: 0;
+        }
+                .navbar-toggler-icon {
         background-color: black; /* Sets the background color of the toggler icon */
     }
     
