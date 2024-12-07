@@ -60,39 +60,30 @@ if ($result->num_rows > 0) {
 
 // Delete row functionality
 if (isset($_GET['delete']) && isset($_GET['id'])) {
+    // Get and sanitize the table name and id
     $table = htmlspecialchars($_GET['delete'], ENT_QUOTES, 'UTF-8');
     $id = intval($_GET['id']); // Ensure that the ID is an integer to prevent SQL injection
 
-    // List of allowed tables to delete from (optional, you can customize this)
-    $allowed_tables = ['table1', 'table2', 'table3']; // Add your table names here
-    if (!in_array($table, $allowed_tables)) {
-        die("Error: Invalid table for deletion.");
+    // Validate the table name (optional: check against a whitelist)
+    $valid_tables = ['valid_table_1', 'valid_table_2']; // Replace with your valid tables
+    if (!in_array($table, $valid_tables)) {
+        die('Invalid table name.');
     }
 
-    // Ensure that id exists in the table
-    $check_id_query = "SELECT COUNT(*) FROM $table WHERE id = ?";
-    $stmt = $conn->prepare($check_id_query);
-    $stmt->bind_param('i', $id);
-    $stmt->execute();
-    $stmt->bind_result($count);
-    $stmt->fetch();
-    $stmt->close();
-
-    if ($count == 0) {
-        die("Error: ID not found in the table.");
-    }
-
-    // Delete row by id (SQL Injection safe with prepared statements)
-    $delete_query = "DELETE FROM $table WHERE id = ?";
-    $stmt = $conn->prepare($delete_query);
-    $stmt->bind_param('i', $id); // 'i' means integer
-    if ($stmt->execute()) {
-        echo "Record deleted successfully.";
-        // Redirect to avoid resubmitting the form
-        header("Location: " . $_SERVER['PHP_SELF']);
-        exit;
+    // Prepare and execute the DELETE query
+    $delete_query = "DELETE FROM `$table` WHERE id = ?";
+    if ($stmt = $conn->prepare($delete_query)) {
+        $stmt->bind_param('i', $id); // 'i' means integer
+        if ($stmt->execute()) {
+            echo "Record deleted successfully.";
+            // Redirect to the same page to prevent resubmitting the form
+            header("Location: " . $_SERVER['PHP_SELF']);
+            exit;
+        } else {
+            echo "Error deleting record: " . $stmt->error;
+        }
     } else {
-        echo "Error deleting record: " . $conn->error;
+        echo "Failed to prepare the DELETE query: " . $conn->error;
     }
 }
 
