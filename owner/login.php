@@ -40,7 +40,7 @@ require_once('process/loginOwner.php');
 
         /* Gradient Background */
         body {
-            background: linear-gradient(45deg, #6a11cb, #2575fc); /* Blue to purple gradient */
+            background: linear-gradient(45deg, #14d9c2, #2575fc); /* Blue to purple gradient */
             height: 100vh;
             margin: 0;
         }
