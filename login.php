@@ -277,6 +277,45 @@ footer .social-icons a {
         .btn-secondary:hover {
           background-color: #5a6268; 
         }
+
+        .btn-warning {
+    background-color: #f0ad4e;
+    border-color: #f0ad4e;
+    color: #ffffff;
+    border-radius: 8px;
+    font-weight: 600;
+    position: relative;
+    padding: 12px 20px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.btn-warning::before {
+    content: '';
+    position: absolute;
+    top: -5px;
+    left: -5px;
+    right: -5px;
+    bottom: -5px;
+    background: linear-gradient(45deg, #ffeb3b, #f0ad4e, #ffeb3b);
+    z-index: -1;
+    opacity: 0;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.6), 0 0 20px rgba(255, 255, 255, 0.5), 0 0 30px rgba(255, 255, 255, 0.4), 0 0 40px rgba(255, 255, 255, 0.3);
+    border-radius: 12px;
+    transition: opacity 0.3s ease-in-out;
+}
+
+.btn-warning:hover::before {
+    opacity: 1;
+}
+
+.btn-warning:hover {
+    background-color: #ec971f;
+    border-color: #d58512;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.8), 0 0 20px rgba(255, 255, 255, 0.7), 0 0 30px rgba(255, 255, 255, 0.6), 0 0 40px rgba(255, 255, 255, 0.5);
+}
+
+        
     </style>
 </head>
 
