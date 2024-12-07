@@ -37,11 +37,18 @@ require_once('process/loginOwner.php');
             transform: translateY(-50%);
             cursor: pointer;
         }
+
+        /* Gradient Background */
+        body {
+            background: linear-gradient(45deg, #6a11cb, #2575fc); /* Blue to purple gradient */
+            height: 100vh;
+            margin: 0;
+        }
     </style>
 
 </head>
 
-<body class="bg-gradient-primary">
+<body>
 
     <div class="container">
 
