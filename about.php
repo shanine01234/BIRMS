@@ -184,10 +184,11 @@ if (substr($request, -4) == '.php') {
     <span class="navbar-toggler-icon"></span>
 </button>
             <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav ms-auto">
+            ul class="navbar-nav ms-auto">
         <li class="nav-item">
     <a class="nav-link" href="index.php">
-        <i class="fas fa-home"></i> <span style="color: black">Home</span>
+        <img src="https://img.icons8.com/?size=100&id=72&format=png&color=000000" alt="Home" width="20" height="20">
+        <span style="color: black">Home</span>
     </a>
 </li>
 
@@ -198,16 +199,18 @@ if (substr($request, -4) == '.php') {
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="about.php">
-                <i class="fas fa-info-circle"></i><span style="color: black"> About</span>
-            </a>
-        </li>
+    <a class="nav-link" href="about.php">
+        <img src="https://img.icons8.com/?size=100&id=11808&format=png&color=000000" alt="About" width="20" height="20">
+        <span style="color: black">About</span>
+    </a>
+</li>
         <li class="nav-item">
-                        <a class="nav-link position-relative" href="cart.php">
-                            <i class="fas fa-shopping-cart"></i> <span style="color: black">Cart</span>
-                            <span class="badge bg-danger position-absolute top-0 end-0"><?= $count_cart->num_rows ?? 0 ?></span>
-                        </a>
-                    </li>
+    <a class="nav-link position-relative" href="cart.php">
+        <img src="https://img.icons8.com/?size=100&id=8chNl15hy6jY&format=png&color=000000" alt="Cart" width="20" height="20">
+        <span style="color: black">Cart</span>
+        <span class="badge bg-danger position-absolute top-0 end-0"><?= $count_cart->num_rows ?? 0 ?></span>
+    </a>
+</li>
 
                     <li class="nav-item">
             <a class="nav-link position-relative" href="orders.php">
@@ -236,11 +239,12 @@ if (substr($request, -4) == '.php') {
                 <?php 
             }else{
                 ?>
-                  <li class="nav-item">
-            <a class="nav-link" href="login.php"">
-                <i class="fas fa-user"></i><span style="color: black">Login</span>
-            </a>
-        </li>
+                 <li class="nav-item">
+    <a class="nav-link" href="login.php">
+        <img src="https://img.icons8.com/?size=100&id=6850&format=png&color=000000" alt="Login" width="20" height="20">
+        <span style="color: black">Login</span>
+    </a>
+</li>
 
                 <?php 
             }
@@ -254,12 +258,12 @@ if (substr($request, -4) == '.php') {
     </li>
     <li class="nav-item">
         <a class="nav-link" href="https://www.instagram.com/shanine_zaspa/?utm_source=ig_web_button_share_sheet" target="_blank">
-            <i class="fab fa-instagram"></i>
+            <img src="https://img.icons8.com/?size=100&id=BrU2BBoRXiWq&format=png&color=000000" alt="Instagram" width="30" height="30">
         </a>
     </li>
     <li class="nav-item">
         <a class="nav-link" href="https://twitter.com" target="_blank">
-            <i class="fab fa-twitter"></i>
+            <img src="https://img.icons8.com/?size=100&id=phOKFKYpe00C&format=png&color=000000" alt="Twitter" width="30" height="30">
         </a>
     </li>
 </ul>
