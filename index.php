@@ -95,10 +95,11 @@ if (substr($request, -4) == '.php') {
             <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ms-auto">
         <li class="nav-item">
-            <a class="nav-link" href="index.php">
-                <i class="fas fa-home"></i> Home
-            </a>
-        </li>
+    <a class="nav-link" href="index.php">
+        <i class="fas fa-home" style="color: blue;"></i> Home
+    </a>
+</li>
+
         <li class="nav-item">
             <a class="nav-link active" aria-current="page" href="restobar.php">
                 <i class="fas fa-utensils"></i> Restobar
