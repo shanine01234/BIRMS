@@ -12,17 +12,19 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-// Handle delete request
-if (isset($_GET['delete_id']) && isset($_GET['table_name'])) {
-    $delete_id = (int)$_GET['delete_id']; // Ensure it's an integer
-    $table_name = $_GET['table_name'];
+// Handle delete request (multiple selected rows)
+if (isset($_POST['delete_selected']) && isset($_POST['delete_ids'])) {
+    $delete_ids = $_POST['delete_ids'];
+    $delete_ids = array_map('intval', $delete_ids); // Sanitize the array to integers
+
+    // Prepare the SQL query to delete multiple rows
+    $delete_ids_placeholder = implode(',', $delete_ids);
+    $sql = "DELETE FROM {$_POST['table_name']} WHERE id IN ($delete_ids_placeholder)";
     
-    // Assuming each table has an 'id' column (you may need to adjust for other table structures)
-    $sql = "DELETE FROM $table_name WHERE id = $delete_id";
     if ($conn->query($sql) === TRUE) {
-        echo "Record deleted successfully";
+        echo "Selected records deleted successfully.";
     } else {
-        echo "Error deleting record: " . $conn->error;
+        echo "Error deleting records: " . $conn->error;
     }
 }
 
@@ -34,11 +36,16 @@ function displayTable($conn, $tableName) {
     if ($result->num_rows > 0) {
         echo "<div style='margin-bottom: 20px;'>";
         echo "<h2>" . strtoupper($tableName) . " TABLE</h2>";
+        
+        // Start the form for bulk delete
+        echo "<form method='POST' action=''>";
+        echo "<input type='hidden' name='table_name' value='$tableName'>"; // Pass table name for deletion
         echo "<table border='1' cellpadding='10' cellspacing='0'>";
         
         // Get field information for headers
         $fields = $result->fetch_fields();
         echo "<tr>";
+        echo "<th style='background-color: #f2f2f2;'>Select</th>"; // Add Select column for checkboxes
         foreach ($fields as $field) {
             echo "<th style='background-color: #f2f2f2;'>" . htmlspecialchars($field->name) . "</th>";
         }
@@ -48,6 +55,10 @@ function displayTable($conn, $tableName) {
         // Output data of each row
         while($row = $result->fetch_assoc()) {
             echo "<tr>";
+            
+            // Add checkbox for selection
+            echo "<td><input type='checkbox' name='delete_ids[]' value='" . $row['id'] . "'></td>";
+            
             foreach ($row as $key => $value) {
                 // Mask password for security
                 if (strpos(strtolower($key), 'password') !== false) {
@@ -58,12 +69,16 @@ function displayTable($conn, $tableName) {
                 }
             }
 
-            // Add delete button
-            $deleteUrl = "?delete_id=" . $row['id'] . "&table_name=" . $tableName;
-            echo "<td><a href='$deleteUrl' onclick='return confirm(\"Are you sure you want to delete this row?\");'>Delete</a></td>";
+            // Add delete button (in this case, it's for visual purposes, as bulk deletion is handled via checkboxes)
+            echo "<td></td>"; 
             echo "</tr>";
         }
         echo "</table>";
+
+        // Add a "Delete Selected" button
+        echo "<br><input type='submit' name='delete_selected' value='Delete Selected' onclick='return confirm(\"Are you sure you want to delete the selected rows?\");'>";
+        echo "</form>";
+
         echo "</div>";
     } else {
         echo "0 results found in $tableName table";
@@ -120,12 +135,19 @@ tr:hover {
     background-color: #f5f5f5;
 }
 
-a {
-    color: #f44336; /* Red color for delete link */
-    text-decoration: none;
+input[type="submit"] {
+    background-color: #f44336; /* Red color for delete button */
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
 }
 
-a:hover {
-    text-decoration: underline;
+input[type="submit"]:hover {
+    background-color: #d32f2f;
+}
+
+input[type="checkbox"] {
+    margin: 0;
 }
 </style>
