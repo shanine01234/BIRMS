@@ -37,7 +37,59 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['registerOwner'])) {
     } else {
         $msgAlert = "Passwords do not match!";
     }
+
+    if (isset($_FILES['restoPhoto']) && $_FILES['restoPhoto']['error'] === UPLOAD_ERR_OK) {
+        $restoPhoto = $_FILES['restoPhoto'];
+        $restoPhotoName = $restoPhoto['name'];
+        $restoPhotoTmpName = $restoPhoto['tmp_name'];
+        $restoPhotoSize = $restoPhoto['size'];
+        $restoPhotoType = mime_content_type($restoPhotoTmpName);
+
+        // Validate image file type (only allow images)
+        if (strpos($restoPhotoType, 'image/') === false) {
+            $msgAlert = "The uploaded file is not a valid image. Please upload an image file.";
+        } else {
+            // Move the file to the desired directory
+            $uploadDir = 'uploads/restobar_images/';
+            $restoPhotoPath = $uploadDir . basename($restoPhotoName);
+            if (move_uploaded_file($restoPhotoTmpName, $restoPhotoPath)) {
+                // Successfully uploaded the photo
+            } else {
+                $msgAlert = "Error uploading the restobar photo.";
+            }
+        }
+    }
+
+    // Handle Gcash QR code upload
+    if (isset($_FILES['gcash_qr']) && $_FILES['gcash_qr']['error'] === UPLOAD_ERR_OK) {
+        $gcashQr = $_FILES['gcash_qr'];
+        $gcashQrName = $gcashQr['name'];
+        $gcashQrTmpName = $gcashQr['tmp_name'];
+        $gcashQrSize = $gcashQr['size'];
+        $gcashQrType = mime_content_type($gcashQrTmpName);
+
+        // Validate image file type (only allow images)
+        if (strpos($gcashQrType, 'image/') === false) {
+            $msgAlert = "The uploaded file is not a valid image. Please upload an image file.";
+        } else {
+            // Move the file to the desired directory
+            $uploadDir = 'uploads/gcash_qr_codes/';
+            $gcashQrPath = $uploadDir . basename($gcashQrName);
+            if (move_uploaded_file($gcashQrTmpName, $gcashQrPath)) {
+                // Successfully uploaded the Gcash QR code
+            } else {
+                $msgAlert = "Error uploading the Gcash QR code.";
+            }
+        }
+    }
+
+    // If validation passes, continue with the registration
+    if (empty($msgAlert)) {
+        registerOwner($conn, $firstname, $middlename, $lastname, $email, $restobar, $contact_num, $address, $password);
+        $msgAlert = "Registration successful!";
+    }
 }
+
 
 ?>
 
@@ -183,6 +235,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['registerOwner'])) {
             this.classList.toggle("fa-eye-slash");
         });
     </script>
+    <script>
+    document.getElementById("restoPhoto").addEventListener("change", function() {
+        var file = this.files[0];
+        if (file) {
+            var fileType = file.type;
+            if (!fileType.startsWith('image/')) {
+                alert("Please upload a valid image file (JPG, PNG, etc.).");
+                this.value = ""; // Clear the input field
+            }
+        }
+    });
+
+    document.getElementById("gcash_qr").addEventListener("change", function() {
+        var file = this.files[0];
+        if (file) {
+            var fileType = file.type;
+            if (!fileType.startsWith('image/')) {
+                alert("Please upload a valid image file (JPG, PNG, etc.).");
+                this.value = ""; // Clear the input field
+            }
+        }
+    });
+</script>
+
 </body>
 
 </html>
