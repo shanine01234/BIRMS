@@ -152,7 +152,7 @@ if (substr($request, -4) == '.php') {
                 ?>
                   <li class="nav-item">
             <a class="nav-link" href="login.php">
-                <i class="fas fa-user"></i> Login
+                <i class="fas fa-user"></i><span style="color: black">Login</span>
             </a>
         </li>
 
