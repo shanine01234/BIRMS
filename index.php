@@ -70,7 +70,7 @@ if (substr($request, -4) == '.php') {
             margin: 0 20px; /* Adjust the spacing here */
           
         }
-             .nav-link, .nav-link i {
+             .nav-link i {
             color: black !important;
             transition: color 0.3s ease;
         }
