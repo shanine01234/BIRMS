@@ -66,7 +66,7 @@ if (substr($request, -4) == '.php') {
         .nav-item {
             text-align: center;
             left: 10px;
-            color: black !important;
+            color: blue !important;
             margin: 0 20px; /* Adjust the spacing here */
           
         }
@@ -74,6 +74,7 @@ if (substr($request, -4) == '.php') {
 
         .nav-link, .nav-link i {
             color: black !important;
+            
         }
         .navbar-toggler-icon {
         background-color: black; /* Sets the background color of the toggler icon */
