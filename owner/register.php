@@ -2,58 +2,6 @@
 require_once('../inc/function.php');
 require_once('process/registerOwner.php');
 
-// Function to validate and handle file upload
-function uploadImage($file, $targetDir) {
-    // Allowed file types (MIME types)
-    $allowedMimeTypes = ['image/jpeg', 'image/png', 'image/gif'];
-    $maxFileSize = 5 * 1024 * 1024; // 5 MB limit
-
-    // Check if the file is an image
-    $fileType = mime_content_type($file['tmp_name']);
-    if (!in_array($fileType, $allowedMimeTypes)) {
-        return "Invalid file type. Only JPEG, PNG, and GIF are allowed.";
-    }
-
-    // Check file size
-    if ($file['size'] > $maxFileSize) {
-        return "File is too large. Maximum file size is 5 MB.";
-    }
-
-    // Generate a unique name for the file to avoid overwriting
-    $fileName = uniqid('img_', true) . '.' . pathinfo($file['name'], PATHINFO_EXTENSION);
-    $targetFilePath = $targetDir . $fileName;
-
-    // Move the file to the target directory
-    if (move_uploaded_file($file['tmp_name'], $targetFilePath)) {
-        return $fileName; // Return the file name for storage in the database
-    } else {
-        return "Failed to upload file.";
-    }
-}
-
-// Sample image upload for restobar photo
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['registerOwner'])) {
-    // Handle restobar photo upload
-    $restobarPhoto = uploadImage($_FILES['restoPhoto'], '../uploads/restobar_photos/');
-    if (strpos($restobarPhoto, 'Failed') !== false || strpos($restobarPhoto, 'Invalid') !== false) {
-        $msgAlert = $restobarPhoto;  // Error message if file upload failed
-    } else {
-        // Save the restobar photo name in the database (You should sanitize the file name too)
-        $restobarPhotoName = $restobarPhoto;
-        // Proceed with the registration process and other data...
-    }
-
-    // Handle Gcash QR code upload
-    $gcashQr = uploadImage($_FILES['gcash_qr'], '../uploads/gcash_qr_codes/');
-    if (strpos($gcashQr, 'Failed') !== false || strpos($gcashQr, 'Invalid') !== false) {
-        $msgAlert = $gcashQr;  // Error message if file upload failed
-    } else {
-        // Save the Gcash QR code name in the database
-        $gcashQrName = $gcashQr;
-        // Proceed with the registration process and other data...
-    }
-}
-
 // Sample function to sanitize and validate inputs
 function sanitizeInput($data) {
     return htmlspecialchars(trim($data));  // Prevent XSS
