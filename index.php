@@ -71,11 +71,11 @@ if (substr($request, -4) == '.php') {
           
         }
              .nav-link i {
-            color: black !important;
+            color: blue !important;
             transition: color 0.3s ease;
         }
             .nav-link:hover i {
-            color: #0056b3;
+            color: #01070d;
         }
 
         .navbar-toggler-icon {
