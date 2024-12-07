@@ -280,7 +280,7 @@ if (substr($request, -4) == '.php') {
 
         }
 
-             .nav-link i {
+            .nav-link, .nav-link i {
             color: blue !important;
         }
         .social-links .nav-item {
