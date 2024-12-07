@@ -108,24 +108,24 @@ if (substr($request, -4) == '.php') {
 
         <li class="nav-item">
             <a class="nav-link active" aria-current="page" href="restobar.php">
-                <i class="fas fa-utensils"></i> Restobar
+                <i class="fas fa-utensils"></i> <span style="color: black">Restobar</span>
             </a>
         </li>
         <li class="nav-item">
             <a class="nav-link" href="about.php">
-                <i class="fas fa-info-circle"></i> About
+                <i class="fas fa-info-circle"></i><span style="color: black"> About</span>
             </a>
         </li>
         <li class="nav-item">
                         <a class="nav-link position-relative" href="cart.php">
-                            <i class="fas fa-shopping-cart"></i> Cart
+                            <i class="fas fa-shopping-cart"></i> <span style="color: black">Cart</span>
                             <span class="badge bg-danger position-absolute top-0 end-0"><?= $count_cart->num_rows ?? 0 ?></span>
                         </a>
                     </li>
 
                     <li class="nav-item">
             <a class="nav-link position-relative" href="orders.php" >
-                <i class="fas fa-file"></i> Orders
+                <i class="fas fa-file"></i> <span style="color: black">Orders</span>
                 <span class="badge bg-danger position-absolute top-0 end-0"><?= $order_count->num_rows ?? 0 ?></span>
             </a>
         </li>
@@ -142,7 +142,7 @@ if (substr($request, -4) == '.php') {
 
             <ul class="dropdown-menu">
                 <li class="dropdown-item">
-                    <a href="?logout" class="text-dark text-decoration-none"><i class="fa fa-sign-out"></i> Logout</a>
+                    <a href="?logout" class="text-dark text-decoration-none"><i class="fa fa-sign-out"></i> <span style="color: black">Logout</span></a>
                 </li>
             </ul>
         </li>
