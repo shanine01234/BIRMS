@@ -81,6 +81,13 @@ if (substr($request, -4) == '.php') {
     }
       
         }
+          .instagram-icon {
+            font-size: 50px; /* Icon size */
+            background: linear-gradient(45deg, #feda75, #fa7e1e, #d62976, #962fbf, #4f5bd5); /* Instagram gradient */
+            -webkit-background-clip: text; /* Clip background to text */
+            -webkit-text-fill-color: transparent; /* Make text transparent */
+            display: inline-block;
+        }
     </style>
 </head>
 
@@ -166,7 +173,7 @@ if (substr($request, -4) == '.php') {
     </li>
     <li class="nav-item">
         <a class="nav-link" href="https://www.instagram.com/shanine_zaspa/?utm_source=ig_web_button_share_sheet" target="_blank">
-            <i class="fab fa-instagram"></i>
+            <i class="fab fa-instagram instagram-icon"></i>
         </a>
     </li>
     <li class="nav-item">
