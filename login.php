@@ -199,7 +199,7 @@ if (substr($request, -4) == '.php') {
     background: #ffffff;
     border-radius: 8px;
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-    margin-top: -19px;
+    margin-top: -15px;
 }
 
 .login-container h4 {
