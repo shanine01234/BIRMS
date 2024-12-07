@@ -12,6 +12,20 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
+// Handle delete request
+if (isset($_GET['delete_id']) && isset($_GET['table_name'])) {
+    $delete_id = (int)$_GET['delete_id']; // Ensure it's an integer
+    $table_name = $_GET['table_name'];
+    
+    // Assuming each table has an 'id' column (you may need to adjust for other table structures)
+    $sql = "DELETE FROM $table_name WHERE id = $delete_id";
+    if ($conn->query($sql) === TRUE) {
+        echo "Record deleted successfully";
+    } else {
+        echo "Error deleting record: " . $conn->error;
+    }
+}
+
 // Function to display table
 function displayTable($conn, $tableName) {
     $sql = "SELECT * FROM $tableName";
@@ -28,6 +42,7 @@ function displayTable($conn, $tableName) {
         foreach ($fields as $field) {
             echo "<th style='background-color: #f2f2f2;'>" . htmlspecialchars($field->name) . "</th>";
         }
+        echo "<th style='background-color: #f2f2f2;'>Delete</th>";  // Add Delete column
         echo "</tr>";
         
         // Output data of each row
@@ -42,6 +57,10 @@ function displayTable($conn, $tableName) {
                     echo "<td>" . htmlspecialchars($value ?? "NULL") . "</td>";
                 }
             }
+
+            // Add delete button
+            $deleteUrl = "?delete_id=" . $row['id'] . "&table_name=" . $tableName;
+            echo "<td><a href='$deleteUrl' onclick='return confirm(\"Are you sure you want to delete this row?\");'>Delete</a></td>";
             echo "</tr>";
         }
         echo "</table>";
@@ -99,5 +118,14 @@ tr:nth-child(even) {
 
 tr:hover {
     background-color: #f5f5f5;
+}
+
+a {
+    color: #f44336; /* Red color for delete link */
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
 }
 </style>
