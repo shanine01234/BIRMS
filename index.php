@@ -70,16 +70,13 @@ if (substr($request, -4) == '.php') {
             margin: 0 20px; /* Adjust the spacing here */
           
         }
-/* Change the color of all nav-link icons to blue */
-.nav-link i {
-    color: blue !important;
-    transition: color 0.3s ease; /* Optional: Add smooth transition */
-}
-
-/* Change the color on hover if needed */
-.nav-link:hover i {
-    color: #0056b3; /* Slightly darker blue on hover */
-}
+             .nav-link, .nav-link i {
+            color: black !important;
+            transition: color 0.3s ease;
+        }
+            .nav-link:hover i {
+            color: #0056b3;
+        }
 
         .navbar-toggler-icon {
         background-color: black; /* Sets the background color of the toggler icon */
