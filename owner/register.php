@@ -1,6 +1,44 @@
-<?php 
+<?php
 require_once('../inc/function.php');
 require_once('process/registerOwner.php');
+
+// Sample function to sanitize and validate inputs
+function sanitizeInput($data) {
+    return htmlspecialchars(trim($data));  // Prevent XSS
+}
+
+// Sample SQL Injection prevention: Use prepared statements (example using MySQLi)
+function registerOwner($conn, $firstname, $middlename, $lastname, $email, $restobar, $contact_num, $address, $password) {
+    // SQL injection prevention using prepared statements
+    $stmt = $conn->prepare("INSERT INTO owners (firstname, middlename, lastname, email, restobar, contact_num, address, password) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+    $stmt->bind_param("ssssssss", $firstname, $middlename, $lastname, $email, $restobar, $contact_num, $address, password_hash($password, PASSWORD_BCRYPT));
+    $stmt->execute();
+    $stmt->close();
+}
+
+// Validate the data for XSS and SQL injection before saving
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['registerOwner'])) {
+    $firstname = sanitizeInput($_POST['firstname']);
+    $middlename = sanitizeInput($_POST['middlename']);
+    $lastname = sanitizeInput($_POST['lastname']);
+    $email = sanitizeInput($_POST['email']);
+    $restobar = sanitizeInput($_POST['restobar']);
+    $contact_num = sanitizeInput($_POST['contact_num']);
+    $address = sanitizeInput($_POST['address']);
+    $password = sanitizeInput($_POST['password']);
+    $cpassword = sanitizeInput($_POST['cpassword']);
+    $gcash_num = sanitizeInput($_POST['gcash_num']);
+
+    // Check if passwords match
+    if ($password === $cpassword) {
+        // Register the owner with the sanitized data
+        registerOwner($conn, $firstname, $middlename, $lastname, $email, $restobar, $contact_num, $address, $password);
+        $msgAlert = "Registration successful!";
+    } else {
+        $msgAlert = "Passwords do not match!";
+    }
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -15,7 +53,7 @@ require_once('process/registerOwner.php');
     <meta name="author" content="">
 
     <title>BIRMS | Owner Register</title>
-<link rel="icon" type="image/png" href="../img/d3f06146-7852-4645-afea-783aef210f8a.jpg" alt="" width="30" height="24" style="border-radius: 100px;">
+    <link rel="icon" type="image/png" href="../img/d3f06146-7852-4645-afea-783aef210f8a.jpg" alt="" width="30" height="24" style="border-radius: 100px;">
     <!-- Custom fonts for this template-->
     <link href="../vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
     <link
@@ -25,9 +63,7 @@ require_once('process/registerOwner.php');
     <!-- Custom styles for this template-->
     <link href="../css/sb-admin-2.min.css" rel="stylesheet">
 
-    <!-- Custom CSS to adjust icon margins -->
     <style>
-        /* Adjusting the position of the eye icons */
         .password-container {
             position: relative;
         }
@@ -47,13 +83,12 @@ require_once('process/registerOwner.php');
     <div class="container">
         <div class="card o-hidden border-0 shadow-lg my-5">
             <div class="card-body p-0">
-                <!-- Nested Row within Card Body -->
                 <div class="row w-100">
                     <div class="col-lg-12">
                         <div class="p-5">
                             <div class="text-center">
                                 <h1 class="h4 text-gray-900 mb-4">Create an Account as Resto Owner!</h1>
-                                <?=$msgAlert?>
+                                <?php echo htmlspecialchars($msgAlert); // XSS prevention ?>
                             </div>
                             <form class="user" method="POST" enctype="multipart/form-data">
                                 <div class="form-group row">
@@ -127,19 +162,13 @@ require_once('process/registerOwner.php');
                 </div>
             </div>
         </div>
-
     </div>
 
-    <!-- Bootstrap core JavaScript-->
     <script src="../vendor/jquery/jquery.min.js"></script>
     <script src="../vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-
-    <!-- Core plugin JavaScript-->
     <script src="../vendor/jquery-easing/jquery.easing.min.js"></script>
 
-    <!-- Custom scripts for all pages-->
     <script>
-        // Toggle password visibility for the first password field
         document.getElementById("togglePassword").addEventListener("click", function () {
             var password = document.getElementById("exampleInputPassword");
             var type = password.type === "password" ? "text" : "password";
@@ -147,7 +176,6 @@ require_once('process/registerOwner.php');
             this.classList.toggle("fa-eye-slash");
         });
 
-        // Toggle password visibility for the repeat password field
         document.getElementById("toggleRepeatPassword").addEventListener("click", function () {
             var password = document.getElementById("exampleRepeatPassword");
             var type = password.type === "password" ? "text" : "password";
