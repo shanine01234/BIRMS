@@ -280,9 +280,54 @@ if (substr($request, -4) == '.php') {
 
         }
 
-        .nav-link,
-        .nav-link i {
-            color: black !important;
+        .nav-link {
+            display: flex;
+            align-items: center; /* Center the icon and text vertically */
+            gap: 5px; /* Add spacing between the icon and text */
+            color: black; /* Ensure consistent text color */
+        }
+             .nav-link i {
+            color: blue !important;
+            transition: color 0.3s ease;
+        }
+                .nav-link.position-relative {
+            display: inline-flex; /* Inline-flex for relative positioning */
+            align-items: center; /* Align content vertically */
+        }
+            .nav-link:hover i {
+            color: #01070d;
+        }
+        .nav-link .badge {
+            position: absolute; /* Position the badge correctly */
+            top: 0; /* Align badge to the top */
+            right: 0; /* Align badge to the right */
+            transform: translate(30%, -50%); /* Fine-tune badge positioning */
+            font-size: 0.7rem; /* Smaller font size for the badge */
+            padding: 3px 6px; /* Add some padding for better visibility */
+            border-radius: 50%; /* Make the badge circular */
+        }
+        .social-links .nav-item {
+            display: inline-block;
+        }
+        
+        .social-links .nav-link {
+            text-decoration: none;
+            font-size: 1.5rem; /* Adjust icon size */
+            color: #000; /* Default icon color */
+            transition: color 0.3s ease; /* Smooth hover transition */
+        }
+        
+        .social-links .nav-link:hover {
+            color: #007bff; /* Change color on hover */
+        }
+
+        .social-links {
+            display: flex;
+            flex-direction: row; /* Arrange items horizontally */
+            gap: 10px; /* Space between items */
+            list-style: none; /* Remove bullets */
+            padding: 0;
+            margin: 0;
         }
 
         .navbar-toggler-icon {
@@ -360,85 +405,84 @@ if (substr($request, -4) == '.php') {
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="index.php">
-                            <i class="fas fa-home"></i> Home
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="restobar.php">
-                            <i class="fas fa-utensils"></i> Restobar
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="about.php">
-                            <i class="fas fa-info-circle"></i> About
+        <li class="nav-item">
+    <a class="nav-link" href="index.php" style="margin-left: 100px;">
+        <i class="fas fa-home"></i> <span style="color: black">Home</span>
+    </a>
+</li>
+
+
+        <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="restobar.php" style="margin-left: 100px;">
+                <i class="fas fa-utensils"></i> <span style="color: black">Restobar</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="about.php" style="margin-left: 100px;">
+                <i class="fas fa-info-circle"></i><span style="color: black"> About</span>
+            </a>
+        </li>
+        <li class="nav-item">
+                        <a class="nav-link position-relative" href="cart.php" style="margin-left: -23px;">
+                            <i class="fas fa-shopping-cart"></i> <span style="color: black">Cart</span>
+                            <span class="badge bg-danger position-absolute top-0 end-0" style="transform: translate(25px, -5px);"><?= $count_cart->num_rows ?? 0 ?></span
                         </a>
                     </li>
 
-
                     <li class="nav-item">
-                        <a class="nav-link position-relative" href="cart.php">
-                            <i class="fas fa-shopping-cart"></i> Cart
-                            <span class="badge bg-danger position-absolute top-0 end-0"><?= $count_cart->num_rows ?? 0 ?></span>
-                        </a>
-                    </li>
-
-                    <li class="nav-item">
-            <a class="nav-link position-relative" href="orders.php" >
-                <i class="fas fa-file"></i> Orders
-                <span class="badge bg-danger position-absolute top-0 end-0"><?= $order_count->num_rows ?? 0 ?></span>
+            <a class="nav-link position-relative" href="orders.php"style="margin-top: -10px;margin-left: -6px;"">
+                <i class="fas fa-file"></i> <span style="color: black">Orders</span>
+                <span class="badge bg-danger position-absolute top-0 end-0"  style="transform: translate(22px, -4px);"><?= $order_count->num_rows ?? 0 ?></span>
             </a>
         </li>
 
-                    <?php
-                    if (isset($user_id)) {
-                    ?>
-                        <li class="nav-item dropdown">
-                            <a class="nav-link" href="#" data-bs-toggle="dropdown">
-                                <i class="fas fa-user"></i>
-                                <span class="d-flex align-items-center gap-2"><?= $_SESSION['name'] ?>
-                                    <i class="fa fa-caret-down"></i></span>
-                            </a>
+        <?php 
+            if (isset($user_id)) {
+                ?>
+                  <li class="nav-item dropdown">
+            <a class="nav-link" href="#" data-bs-toggle="dropdown">
+            <i class="fas fa-user"></i> 
+            <span class="d-flex align-items-center gap-2"><?= $_SESSION['name'] ?>
+                <i class="fa fa-caret-down"></i></span>
+            </a>
 
-                            <ul class="dropdown-menu">
-                                <li class="dropdown-item">
-                                    <a href="?logout" class="text-dark text-decoration-none"><i class="fa fa-sign-out"></i> Logout</a>
-                                </li>
-                            </ul>
-                        </li>
+            <ul class="dropdown-menu">
+                <li class="dropdown-item">
+                    <a href="?logout" class="text-dark text-decoration-none"><i class="fa fa-sign-out"></i> <span style="color: black">Logout</span></a>
+                </li>
+            </ul>
+        </li>
 
-                    <?php
-                    } else {
-                    ?>
-                        <li class="nav-item">
-                            <a class="nav-link" href="login.php">
-                                <i class="fas fa-user"></i> Login
-                            </a>
-                        </li>
+                <?php 
+            }else{
+                ?>
+                  <li class="nav-item">
+            <a class="nav-link" href="login.php" style="margin-left: 100px;">
+                <i class="fas fa-user"></i><span style="color: black">Login</span>
+            </a>
+        </li>
 
-                    <?php
-                    }
-                    ?>
-                </ul>
-                <ul class="navbar-nav">
-                    <li class="nav-item">
-                        <a class="nav-link" href="https://facebook.com" target="_blank">
-                            <i class="fab fa-facebook"></i>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="https://instagram.com" target="_blank">
-                            <i class="fab fa-instagram"></i>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="https://twitter.com" target="_blank">
-                            <i class="fab fa-twitter"></i>
-                        </a>
-                    </li>
-                </ul>
-            </div>
+                <?php 
+            }
+        ?>
+    </ul>
+    <ul class="navbar-nav social-links">
+    <li class="nav-item">
+        <a class="nav-link" href="https://www.facebook.com/shanine.zaspa.9" target="_blank">
+            <i class="fab fa-facebook"></i>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="https://www.instagram.com/shanine_zaspa/?utm_source=ig_web_button_share_sheet" target="_blank">
+            <i class="fab fa-instagram"></i>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="https://twitter.com" target="_blank">
+            <i class="fab fa-twitter"></i>
+        </a>
+    </li>
+</ul>            </div>
 
         </div>
     </nav>
