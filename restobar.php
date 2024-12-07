@@ -169,6 +169,20 @@ if (substr($request, -4) == '.php') {
             padding: 3px 6px; /* Add some padding for better visibility */
             border-radius: 50%; /* Make the badge circular */
         }
+        .social-links .nav-item {
+            display: inline-block;
+        }
+        
+        .social-links .nav-link {
+            text-decoration: none;
+            font-size: 1.5rem; /* Adjust icon size */
+            color: #000; /* Default icon color */
+            transition: color 0.3s ease; /* Smooth hover transition */
+        }
+        
+        .social-links .nav-link:hover {
+            color: #007bff; /* Change color on hover */
+        }
         .navbar-toggler-icon {
         background-color: black; /* Sets the background color of the toggler icon */
     }
