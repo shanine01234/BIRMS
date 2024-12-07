@@ -70,9 +70,7 @@ if (substr($request, -4) == '.php') {
             margin: 0 20px; /* Adjust the spacing here */
           
         }
-        .blue-icon {
-    color: blue;
-}
+        
 
         .nav-link, .nav-link i {
             color: black !important;
@@ -100,7 +98,7 @@ if (substr($request, -4) == '.php') {
             <ul class="navbar-nav ms-auto">
         <li class="nav-item">
     <a class="nav-link" href="index.php">
-        <i class="fas fa-home blue-icon"></i> Home
+        <i class="fas fa-home"></i> Home
     </a>
 </li>
 
