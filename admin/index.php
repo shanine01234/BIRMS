@@ -132,7 +132,7 @@ if (substr($request, -4) == '.php') {
             <!-- Sidebar - Brand -->
             <a class="sidebar-brand d-flex align-items-center justify-content-center" href="#">
                 <div class="sidebar-brand-icon rotate-n-15">
-                    <img src="./img/d3f06146-7852-4645-afea-783aef210f8a.jpg" alt="" width="30" height="24" style="border-radius: 50px">
+                    <img src="../img/d3f06146-7852-4645-afea-783aef210f8a.jpg" alt="" width="30" height="24" style="border-radius: 50px">
                 </div>
                 <div class="sidebar-brand-text mx-3">BIRMS</div>
             </a>
