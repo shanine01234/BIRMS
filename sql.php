@@ -1,102 +1,72 @@
 <?php
-// Connect to database
-$host = '127.0.0.1';
-$username = 'u510162695_birms_db';
-$password = '1Birms_db';  // Replace with the actual password
-$dbname = 'u510162695_birms_db';
+// Database connection
+$host = "127.0.0.1";
+$user = "u510162695_birms_db";
+$password = "1Birms_db";
+$db_name = "u510162695_birms_db";
 
-$conn = new mysqli($host, $username, $password, $dbname);
+// Create connection
+$conn = new mysqli($host, $user, $password, $db_name);
 
 // Check connection
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-// Function to display table
-function displayTable($conn, $tableName) {
-    $sql = "SELECT * FROM $tableName";
-    $result = $conn->query($sql);
+// Function to display tables and their data
+function display_tables_and_data($conn) {
+    // Get all tables in the database
+    $tables_result = $conn->query("SHOW TABLES");
 
-    if ($result->num_rows > 0) {
-        echo "<div style='margin-bottom: 20px;'>";
-        echo "<h2>" . strtoupper($tableName) . " TABLE</h2>";
-        echo "<table border='1' cellpadding='10' cellspacing='0'>";
+    while ($table = $tables_result->fetch_array(MYSQLI_ASSOC)) {
+        $table_name = $table['Tables_in_' . $GLOBALS['db_name']];
+        echo "<h2>Table: $table_name</h2>";
         
-        // Get field information for headers
-        $fields = $result->fetch_fields();
-        echo "<tr>";
-        foreach ($fields as $field) {
-            echo "<th style='background-color: #f2f2f2;'>" . $field->name . "</th>";
-        }
-        echo "</tr>";
+        // Get all rows in the current table
+        $data_result = $conn->query("SELECT * FROM $table_name");
         
-        // Output data of each row
-        while($row = $result->fetch_assoc()) {
-            echo "<tr>";
-            foreach ($row as $value) {
-                // Mask password for security
-                if (strpos(strtolower($field->name), 'password') !== false) {
-                    echo "<td>[MASKED]</td>";
-                } else {
-                    echo "<td>" . ($value ?? "NULL") . "</td>";
-                }
+        // Display table data
+        if ($data_result->num_rows > 0) {
+            echo "<table border='1'><tr>";
+            
+            // Display table headers
+            $fields_info = $data_result->fetch_fields();
+            foreach ($fields_info as $field) {
+                echo "<th>" . $field->name . "</th>";
             }
+            echo "<th>Actions</th>"; // Delete button header
             echo "</tr>";
+            
+            // Display table rows
+            while ($row = $data_result->fetch_assoc()) {
+                echo "<tr>";
+                foreach ($row as $value) {
+                    echo "<td>" . htmlspecialchars($value) . "</td>";
+                }
+                echo "<td><form method='post' action=''><button type='submit' name='delete' value='$table_name|{$row[$fields_info[0]->name]}'>Delete</button></form></td>"; // Delete button
+                echo "</tr>";
+            }
+            echo "</table>";
+        } else {
+            echo "No data available in this table.";
         }
-        echo "</table>";
-        echo "</div>";
-    } else {
-        echo "0 results found in $tableName table";
     }
 }
 
-// Display tables
-displayTable($conn, 'admin');
-displayTable($conn, 'branches');
-displayTable($conn, 'cart');
-displayTable($conn, 'menu');
-displayTable($conn, 'orders');
-displayTable($conn, 'orders1');
-displayTable($conn, 'orders2');
-displayTable($conn, 'order_items');
-displayTable($conn, 'owner');
-displayTable($conn, 'restobar');
-displayTable($conn, 'restobar_details');
-displayTable($conn, 'users');
+// Handle delete operation
+if (isset($_POST['delete'])) {
+    $delete_info = explode('|', $_POST['delete']);
+    $table_name = $delete_info[0];
+    $id_value = $delete_info[1];
+    
+    // Assuming the first column is the primary key
+    $conn->query("DELETE FROM $table_name WHERE {$fields_info[0]->name} = '$id_value'");
+    echo "Record deleted from $table_name with ID: $id_value<br>";
+}
 
+// Display tables and data
+display_tables_and_data($conn);
+
+// Close connection
 $conn->close();
 ?>
-
-<style>
-table {
-    border-collapse: collapse;
-    width: 100%;
-    margin: 20px 0;
-    font-family: Arial, sans-serif;
-}
-
-h2 {
-    color: #333;
-    border-bottom: 2px solid #ddd;
-    padding-bottom: 10px;
-}
-
-th, td {
-    border: 1px solid #ddd;
-    padding: 12px;
-    text-align: left;
-}
-
-th {
-    background-color: #f2f2f2;
-    font-weight: bold;
-}
-
-tr:nth-child(even) {
-    background-color: #f9f9f9;
-}
-
-tr:hover {
-    background-color: #f5f5f5;
-}
-</style>
