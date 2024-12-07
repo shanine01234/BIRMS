@@ -122,11 +122,12 @@ if (substr($request, -4) == '.php') {
             </a>
         </li>
         <li class="nav-item">
-                        <a class="nav-link position-relative" href="cart.php">
-                            <i class="fas fa-shopping-cart"></i> <span style="color: black">Cart</span>
-                            <span class="badge bg-danger position-absolute top-0 end-0"><?= $count_cart->num_rows ?? 0 ?></span>
-                        </a>
-                    </li>
+    <a class="nav-link position-relative" href="cart.php">
+        <img src="https://img.icons8.com/?size=100&id=8chNl15hy6jY&format=png&color=000000" alt="Cart" width="20" height="20">
+        <span style="color: black">Cart</span>
+        <span class="badge bg-danger position-absolute top-0 end-0"><?= $count_cart->num_rows ?? 0 ?></span>
+    </a>
+</li>
 
                     <li class="nav-item">
             <a class="nav-link position-relative" href="orders.php">
