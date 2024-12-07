@@ -99,7 +99,7 @@ if (substr($request, -4) == '.php') {
             <ul class="navbar-nav ms-auto">
         <li class="nav-item">
     <a class="nav-link" href="index.php">
-        <i class="fas fa-home"></i> Home
+        <i class="fas fa-home">Home</i> 
     </a>
 </li>
 
