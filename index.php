@@ -36,7 +36,7 @@ if (substr($request, -4) == '.php') {
         .social-links {
     display: flex;
     flex-direction: row; /* Arrange items horizontally */
-    gap: 10px; /* Space between items */
+    gap: 5px; /* Space between items */
     list-style: none; /* Remove bullets */
     padding: 0;
     margin: 0;
