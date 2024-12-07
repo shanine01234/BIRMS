@@ -35,10 +35,11 @@ if (substr($request, -4) == '.php') {
         .navbar-nav {
             display: flex;
             justify-content: center;
-            width: 75%;
+            width: 100%;
         }
         .nav-item {
             text-align: center;
+            left: 10px;
             color: black !important;
             margin: 0 20px; /* Adjust the spacing here */
           
