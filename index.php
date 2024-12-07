@@ -35,7 +35,7 @@ if (substr($request, -4) == '.php') {
         .navbar-nav {
             display: flex;
             justify-content: center;
-            width: 100%;
+            width: 75%;
         }
         .nav-item {
             text-align: center;
