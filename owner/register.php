@@ -28,19 +28,55 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['registerOwner'])) {
     $password = sanitizeInput($_POST['password']);
     $cpassword = sanitizeInput($_POST['cpassword']);
     $gcash_num = sanitizeInput($_POST['gcash_num']);
+    $msgAlert = "";
 
     // Check if passwords match
     if ($password === $cpassword) {
-        // Register the owner with the sanitized data
-        registerOwner($conn, $firstname, $middlename, $lastname, $email, $restobar, $contact_num, $address, $password);
-        $msgAlert = "Registration successful!";
+        // Validate the image file (Restobar Photo)
+        if (isset($_FILES['restoPhoto']) && $_FILES['restoPhoto']['error'] == 0) {
+            // Get file information
+            $fileTmpPath = $_FILES['restoPhoto']['tmp_name'];
+            $fileName = $_FILES['restoPhoto']['name'];
+            $fileSize = $_FILES['restoPhoto']['size'];
+            $fileType = $_FILES['restoPhoto']['type'];
+            
+            // List of allowed image MIME types
+            $allowedMimeTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/jpg'];
+
+            // Check if the file is an image by MIME type
+            if (in_array($fileType, $allowedMimeTypes)) {
+                // The file is a valid image; process the upload
+                $uploadDir = 'uploads/';
+                $newFileName = uniqid('resto_', true) . '.' . pathinfo($fileName, PATHINFO_EXTENSION);
+                $uploadFilePath = $uploadDir . $newFileName;
+
+                // Move the uploaded file to the desired directory
+                if (move_uploaded_file($fileTmpPath, $uploadFilePath)) {
+                    // Successfully uploaded
+                    echo "The file has been uploaded successfully.";
+                } else {
+                    // Error moving the file
+                    $msgAlert = "There was an error uploading the image.";
+                }
+            } else {
+                // Not a valid image file
+                $msgAlert = "Please upload a valid image file (JPEG, PNG, or GIF).";
+            }
+        } else {
+            // No file uploaded or error occurred
+            $msgAlert = "No image file uploaded or there was an error with the file upload.";
+        }
+
+        // Proceed with registration if image is valid
+        if (empty($msgAlert)) {
+            registerOwner($conn, $firstname, $middlename, $lastname, $email, $restobar, $contact_num, $address, $password);
+            $msgAlert = "Registration successful!";
+        }
     } else {
         $msgAlert = "Passwords do not match!";
     }
 }
-
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 
