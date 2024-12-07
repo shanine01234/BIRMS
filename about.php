@@ -184,7 +184,7 @@ if (substr($request, -4) == '.php') {
     <span class="navbar-toggler-icon"></span>
 </button>
             <div class="collapse navbar-collapse" id="navbarNav">
-            ul class="navbar-nav ms-auto">
+            <ul class="navbar-nav ms-auto">
         <li class="nav-item">
     <a class="nav-link" href="index.php">
         <img src="https://img.icons8.com/?size=100&id=72&format=png&color=000000" alt="Home" width="20" height="20">
