@@ -178,10 +178,11 @@ if (substr($request, -4) == '.php') {
     </li>
     <li class="nav-item">
         <a class="nav-link" href="https://twitter.com" target="_blank">
-            <i class="fab fa-twitter"></i>
+            <img src="https://img.icons8.com/?size=100&id=phOKFKYpe00C&format=png&color=000000" alt="Twitter" width="30" height="30">
         </a>
     </li>
 </ul>
+
 
 
 </div>
