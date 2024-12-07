@@ -106,7 +106,8 @@ if (substr($request, -4) == '.php') {
             <ul class="navbar-nav ms-auto">
         <li class="nav-item">
     <a class="nav-link" href="index.php">
-        <i class="fas fa-home"></i> <span style="color: black">Home</span>
+        <img src="https://img.icons8.com/?size=100&id=72&format=png&color=000000" alt="Home" width="20" height="20">
+        <span style="color: black">Home</span>
     </a>
 </li>
 
