@@ -185,8 +185,7 @@ if (substr($request, -4) == '.php') {
             list-style: none; /* Remove bullets */
             padding: 0;
             margin: 0;
-        }  color: black !important;
-        }
+        } 
         .navbar-toggler-icon {
         background-color: black; /* Sets the background color of the toggler icon */
     }
