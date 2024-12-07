@@ -83,7 +83,7 @@ if (substr($request, -4) == '.php') {
         }
           .instagram-icon {
             font-size: 50px; /* Icon size */
-            background: linear-gradient(45deg, #feda75, #fa7e1e, #d62976, #962fbf, #4f5bd5); /* Instagram gradient */
+            background: linear-gradient(45deg, #feda75, #fa7e1e, #d62976, #962fbf, #4f5bd5) !important; /* Instagram gradient */
             -webkit-background-clip: text; /* Clip background to text */
             -webkit-text-fill-color: transparent; /* Make text transparent */
             display: inline-block;
