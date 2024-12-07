@@ -49,29 +49,9 @@ if (substr($request, -4) == '.php') {
             });
         });
     </script>
-
-    <style>
-        /* Gradient background */
-        body {
-            background: linear-gradient(to right, #4facfe, #00f2fe); /* Customize your gradient colors */
-            height: 100vh;
-            margin: 0;
-            font-family: 'Nunito', sans-serif;
-        }
-        form.user .form-control {
-    font-size: 1rem;  /* Adjust font size */
-    padding: 10px;    /* Adjust padding */
-}
-
-form.user .btn-user {
-    font-size: 1rem;  /* Adjust button font size */
-    padding: 10px 20px;  /* Adjust button padding */
-}
-
-    </style>
 </head>
 
-<body>
+<body class="bg-gradient-primary">
 
     <div class="container">
         <!-- Outer Row -->
