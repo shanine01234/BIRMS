@@ -70,31 +70,10 @@ if (substr($request, -4) == '.php') {
             margin: 0 20px; /* Adjust the spacing here */
           
         }
-        .nav-link {
-            display: flex;
-            align-items: center; /* Center the icon and text vertically */
-            gap: 5px; /* Add spacing between the icon and text */
-            color: black; /* Ensure consistent text color */
-        }
-             .nav-link i {
+        
+             .nav-link, .nav-link i {
             color: blue !important;
-            transition: color 0.3s ease;
-        }
-                .nav-link.position-relative {
-            display: inline-flex; /* Inline-flex for relative positioning */
-            align-items: center; /* Align content vertically */
-        }
-            .nav-link:hover i {
-            color: #01070d;
-        }
-        .nav-link .badge {
-            position: absolute; /* Position the badge correctly */
-            top: 0; /* Align badge to the top */
-            right: 0; /* Align badge to the right */
-            transform: translate(30%, -50%); /* Fine-tune badge positioning */
-            font-size: 0.7rem; /* Smaller font size for the badge */
-            padding: 3px 6px; /* Add some padding for better visibility */
-            border-radius: 50%; /* Make the badge circular */
+            
         }
 
         .navbar-toggler-icon {
@@ -119,31 +98,31 @@ if (substr($request, -4) == '.php') {
             <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ms-auto">
         <li class="nav-item">
-    <a class="nav-link" href="index.php" style="margin-left: 100px;">
+    <a class="nav-link" href="index.php">
         <i class="fas fa-home"></i> <span style="color: black">Home</span>
     </a>
 </li>
 
 
         <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="restobar.php" style="margin-left: 100px;">
+            <a class="nav-link active" aria-current="page" href="restobar.php">
                 <i class="fas fa-utensils"></i> <span style="color: black">Restobar</span>
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="about.php" style="margin-left: 100px;">
+            <a class="nav-link" href="about.php">
                 <i class="fas fa-info-circle"></i><span style="color: black"> About</span>
             </a>
         </li>
         <li class="nav-item">
-                        <a class="nav-link position-relative" href="cart.php" style="margin-left: -23px;">
+                        <a class="nav-link position-relative" href="cart.php">
                             <i class="fas fa-shopping-cart"></i> <span style="color: black">Cart</span>
                             <span class="badge bg-danger position-absolute top-0 end-0"><?= $count_cart->num_rows ?? 0 ?></span>
                         </a>
                     </li>
 
                     <li class="nav-item">
-            <a class="nav-link position-relative" href="orders.php" style="margin-left: -6px;">
+            <a class="nav-link position-relative" href="orders.php">
                 <i class="fas fa-file"></i> <span style="color: black">Orders</span>
                 <span class="badge bg-danger position-absolute top-0 end-0"><?= $order_count->num_rows ?? 0 ?></span>
             </a>
@@ -170,7 +149,7 @@ if (substr($request, -4) == '.php') {
             }else{
                 ?>
                   <li class="nav-item">
-            <a class="nav-link" href="login.php" style="margin-left: 100px;">
+            <a class="nav-link" href="login.php"">
                 <i class="fas fa-user"></i><span style="color: black">Login</span>
             </a>
         </li>
