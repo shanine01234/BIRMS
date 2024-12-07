@@ -32,6 +32,32 @@ if (substr($request, -4) == '.php') {
     <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
+
+        .social-links {
+    display: flex;
+    flex-direction: row; /* Arrange items horizontally */
+    gap: 10px; /* Space between items */
+    list-style: none; /* Remove bullets */
+    padding: 0;
+    margin: 0;
+}
+
+.social-links .nav-item {
+    display: inline-block;
+}
+
+.social-links .nav-link {
+    text-decoration: none;
+    font-size: 1.5rem; /* Adjust icon size */
+    color: #000; /* Default icon color */
+    transition: color 0.3s ease; /* Smooth hover transition */
+}
+
+.social-links .nav-link:hover {
+    color: #007bff; /* Change color on hover */
+}
+
+        
         .navbar-nav {
             display: flex;
             justify-content: center;
@@ -127,23 +153,24 @@ if (substr($request, -4) == '.php') {
             }
         ?>
     </ul>
-    <ul class="navbar-nav">
-        <li class="nav-item">
-            <a class="nav-link" href="https://www.facebook.com/shanine.zaspa.9" target="_blank">
-                <i class="fab fa-facebook"></i>
-            </a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" href="https://www.instagram.com/shanine_zaspa/?utm_source=ig_web_button_share_sheet" target="_blank">
-                <i class="fab fa-instagram"></i>
-            </a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" href="https://twitter.com" target="_blank">
-                <i class="fab fa-twitter"></i>
-            </a>
-        </li>
-    </ul>
+    <ul class="navbar-nav social-links">
+    <li class="nav-item">
+        <a class="nav-link" href="https://www.facebook.com/shanine.zaspa.9" target="_blank">
+            <i class="fab fa-facebook"></i>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="https://www.instagram.com/shanine_zaspa/?utm_source=ig_web_button_share_sheet" target="_blank">
+            <i class="fab fa-instagram"></i>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="https://twitter.com" target="_blank">
+            <i class="fab fa-twitter"></i>
+        </a>
+    </li>
+</ul>
+
 </div>
 
         </div>
