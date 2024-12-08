@@ -47,27 +47,32 @@ if (substr($request, -4) == '.php') {
 
         /* Gradient Background */
         body {
-            background: linear-gradient(45deg, #14d9c2, #2575fc); /* Blue to purple gradient */
-            height: 100vh;
-            margin: 0;
-        }
+        background: 
+            linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), /* Gradient overlay for fade effect */
+            url('../img/photos/owner.jpg'); /* Background image path */
+        background-size: cover; /* Cover the entire viewport */
+        background-position: center; /* Center the image */
+        background-repeat: no-repeat; /* Prevent repeating */
+        height: 100vh; /* Full height of viewport */
+        margin: 0; /* Remove default margin */
+    }
 
-        /* Resize form */
-        .user-form {
-            max-width: 400px; /* Maximum width for form */
-            margin: 0 auto; /* Center the form */
-            padding: 30px; /* Add some padding */
-        }
+    /* Resize form */
+    .user-form {
+        max-width: 400px; /* Maximum width for form */
+        margin: 0 auto; /* Center the form */
+        padding: 30px; /* Add some padding */
+    }
 
-        .form-group input {
-            padding: 10px;
-            font-size: 16px; /* Resize input text */
-        }
+    .form-group input {
+        padding: 10px;
+        font-size: 16px; /* Resize input text */
+    }
 
-        .btn-user {
-            padding: 10px 20px; /* Resize the button */
-            font-size: 16px; /* Resize the button text */
-        }
+    .btn-user {
+        padding: 10px 20px; /* Resize the button */
+        font-size: 16px; /* Resize the button text */
+    }
     </style>
 </head>
 
