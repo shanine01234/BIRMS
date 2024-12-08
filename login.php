@@ -196,7 +196,7 @@ if (substr($request, -4) == '.php') {
     max-width: 500px;
     margin: 50px auto;
     padding: 20px;
-    background: rgba(255, 255, 255, 0.8); /* Semi-transparent background */
+    background-color: #f9f9f9a3; /* Semi-transparent background */
     border-radius: 8px;
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
     margin-top: -10px;
