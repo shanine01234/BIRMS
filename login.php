@@ -193,7 +193,7 @@ if (substr($request, -4) == '.php') {
 }
 
 .login-container {
-    max-width: 271px;
+    max-width: 450px;
     margin: 50px auto;
     padding: 20px;
     background: #ffffff;
