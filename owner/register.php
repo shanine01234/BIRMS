@@ -32,7 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['registerOwner'])) {
     // Check if passwords match
     if ($password === $cpassword) {
         // Register the owner with the sanitized data
-        registerOwner($firstname, $middlename, $lastname, $email, $restobar, $contact_num, $address, $password);
+        registerOwner($conn, $firstname, $middlename, $lastname, $email, $restobar, $contact_num, $address, $password);
         $msgAlert = "Registration successful!";
     } else {
         $msgAlert = "Passwords do not match!";
