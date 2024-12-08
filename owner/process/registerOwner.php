@@ -1,7 +1,7 @@
 <?php 
 // OWNER REGISTER PROCESS
 if (isset($_POST['registerOwner'])) {
-    $result = $oop->registerOwner($_POST['firstname'] ,$_POST['middlename'],$_POST['lastname'],$_POST['email'],$_POST['password'],$_POST['cpassword'],$_POST['restobar'],$_POST['contact'],$_POST['address'],$restoPhoto, $random_id, $_POST['gcash_num'], date('mdGis') . '.png');
+    $result = $oop->registerOwner($_POST['firstname'] ,$_POST['middlename'],$_POST['lastname'],$_POST['email'],$_POST['password'],$_POST['cpassword'],$_POST['restobar'],$_POST['contact_num'],$_POST['address'],$restoPhoto, $random_id, $_POST['gcash_num'], date('mdGis') . '.png');
     if ($result == 1) {
         $filename = date('mdGis') . ".png";
         $tmp_name = $_FILES['gcash_qr']['tmp_name'];
