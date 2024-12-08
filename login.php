@@ -63,7 +63,7 @@ if (isset($_POST['login']) && $_SESSION['login_attempts'] < 3) {
                             title: "Account not verified, Please verify your account first",
                             showConfirmButton: false,
                             timer: 2000,
-                            width: '400px',  // Adjust the width as needed
+                            width: '250px',  // Adjust the width as needed
                             padding: '20px', // Adjust the padding for larger alerts
                             customClass: {
                                 popup: 'custom-swal'  // You can add a custom class to control the styling further
@@ -87,7 +87,7 @@ if (isset($_POST['login']) && $_SESSION['login_attempts'] < 3) {
                             title: "Account logged in successfully",
                             showConfirmButton: false,
                             timer: 1500,
-                            width: '400px',  // Adjust the width as needed
+                            width: '250px',  // Adjust the width as needed
                             padding: '20px', // Adjust the padding for larger alerts
                             customClass: {
                                 popup: 'custom-swal'  // You can add a custom class to control the styling further
@@ -110,7 +110,7 @@ if (isset($_POST['login']) && $_SESSION['login_attempts'] < 3) {
                         title: "Incorrect email or password. Attempt: <?= $_SESSION['login_attempts']; ?> of 3",
                         showConfirmButton: false,
                         timer: 1500,
-                        width: '400px',  // Adjust the width as needed
+                        width: '250px',  // Adjust the width as needed
                         padding: '20px', // Adjust the padding for larger alerts
                         customClass: {
                             popup: 'custom-swal'  // You can add a custom class to control the styling further
@@ -133,7 +133,7 @@ if (isset($_POST['login']) && $_SESSION['login_attempts'] < 3) {
                     title: "Incorrect email or password. Attempt: <?= $_SESSION['login_attempts']; ?> of 3",
                     showConfirmButton: false,
                     timer: 1500,
-                    width: '400px',  // Adjust the width as needed
+                    width: '250px',  // Adjust the width as needed
                     padding: '20px', // Adjust the padding for larger alerts
                     customClass: {
                         popup: 'custom-swal'  // You can add a custom class to control the styling further
