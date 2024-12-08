@@ -192,17 +192,16 @@ if (substr($request, -4) == '.php') {
     justify-content: center;
     align-items: center;
 }
-
-
 .login-container {
-    max-width:500px;
+    max-width: 500px;
     margin: 50px auto;
     padding: 20px;
-    background: #ffffff;
+    background: rgba(255, 255, 255, 0.8); /* Semi-transparent background */
     border-radius: 8px;
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
     margin-top: -10px;
 }
+
 
 .login-container h4 {
     margin-bottom: 20px;
