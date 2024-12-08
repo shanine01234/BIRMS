@@ -53,7 +53,7 @@ if (substr($request, -4) == '.php') {
         background-size: cover; /* Cover the entire viewport */
         background-position: center; /* Center the image */
         background-repeat: no-repeat; /* Prevent repeating */
-        height: 100vh; /* Full height of viewport */
+        height: 90vh; /* Full height of viewport */
         margin: 0; /* Remove default margin */
     }
 
