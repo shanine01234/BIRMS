@@ -185,7 +185,8 @@ if (substr($request, -4) == '.php') {
     font-family: "Roboto", sans-serif;
     background: url('img/photos/in.jpg') no-repeat center center fixed; /* Background image */
     background-size: cover; /* Ensure the image covers the entire screen */
-    color: #f9f9f97a;
+    background-color: #f9f9f97a;
+    color: black;
     min-height: 100vh;
     margin: 0;
     display: flex;
