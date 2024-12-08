@@ -353,14 +353,19 @@ if (substr($request, -4) == '.php') {
                 <input type="email" id="email" name="email" class="form-control my-2" required>
             </div>
             <div class="form-group">
-                <label for="password">Password</label>
-                <input type="password" id="password" name="password" class="form-control my-2" required>
-            </div>
-            <div class="form-group">
+    <label for="password">Password</label>
+    <input type="password" id="password" name="password" class="form-control my-2" required>
+    <!-- Password strength message -->
+    <small id="password-strength" class="form-text"></small>
+</div>
+
+<div class="form-group">
     <label for="confirm-password">Confirm Password</label>
     <input type="password" id="confirm-password" name="confirm_password" class="form-control my-2" required>
+    <!-- Confirm password match message -->
     <small id="password-match" class="form-text"></small>
 </div>
+
             <div class="form-check my-3">
                 <input type="checkbox" id="terms" name="terms" class="form-check-input">
                 <label for="terms" class="form-check-label">
@@ -437,64 +442,38 @@ if (substr($request, -4) == '.php') {
     <script src="js/demo/chart-area-demo.js"></script>
     <script src="js/demo/chart-pie-demo.js"></script>
 
-    <script>
+   <script>
 document.addEventListener("DOMContentLoaded", function() {
     const passwordInput = document.getElementById("password");
     const confirmPasswordInput = document.getElementById("confirm-password");
+    const passwordStrengthText = document.getElementById("password-strength");
     const passwordMatchText = document.getElementById("password-match");
-
-    let alertShown = false;
 
     // Function to determine password strength
     function checkPasswordStrength(password) {
         if (password.length < 6) {
-            return { strength: "Too short", color: "red" };
+            return { message: "Password is too short", color: "red" };
         } else if (!/[A-Z]/.test(password)) {
-            return { strength: "Add an uppercase letter", color: "orange" };
+            return { message: "Add at least one uppercase letter", color: "orange" };
         } else if (!/[0-9]/.test(password)) {
-            return { strength: "Add a number", color: "orange" };
+            return { message: "Add at least one number", color: "orange" };
         } else if (!/[!@#$%^&*]/.test(password)) {
-            return { strength: "Add a special character (!@#$%^&*)", color: "yellow" };
+            return { message: "Add at least one special character (!@#$%^&*)", color: "yellow" };
         } else {
-            return { strength: "Strong Password!", color: "green" };
+            return { message: "Strong Password!", color: "green" };
         }
     }
 
-    // Password input event listener
+    // Password strength validation
     passwordInput.addEventListener("input", function() {
         const password = passwordInput.value;
         const strength = checkPasswordStrength(password);
 
-        if (strength.strength !== "Strong Password!") {
-            if (!alertShown) {
-                Swal.fire({
-                    title: "Password Strength",
-                    text: strength.strength,
-                    icon: "warning",
-                    toast: true,
-                    position: "top-end",
-                    timer: 2000,
-                    timerProgressBar: true,
-                    showConfirmButton: false
-                });
-                alertShown = true; // Prevent showing the alert repeatedly
-                setTimeout(() => { alertShown = false; }, 2000);
-            }
-        } else {
-            Swal.fire({
-                title: "Great!",
-                text: "Your password is strong!",
-                icon: "success",
-                toast: true,
-                position: "top-end",
-                timer: 1500,
-                timerProgressBar: true,
-                showConfirmButton: false
-            });
-        }
+        passwordStrengthText.textContent = strength.message;
+        passwordStrengthText.style.color = strength.color;
     });
 
-    // Password Match Check
+    // Password match validation
     confirmPasswordInput.addEventListener("input", function() {
         if (confirmPasswordInput.value === passwordInput.value) {
             passwordMatchText.textContent = "Passwords match.";
@@ -506,6 +485,7 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 });
 </script>
+
 
 
 
