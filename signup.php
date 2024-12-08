@@ -441,24 +441,56 @@ if (substr($request, -4) == '.php') {
 document.addEventListener("DOMContentLoaded", function() {
     const passwordInput = document.getElementById("password");
     const confirmPasswordInput = document.getElementById("confirm-password");
-    const passwordStrengthText = document.getElementById("password-strength");
     const passwordMatchText = document.getElementById("password-match");
 
-    // Password Strength Check
+    let alertShown = false;
+
+    // Function to determine password strength
+    function checkPasswordStrength(password) {
+        if (password.length < 6) {
+            return { strength: "Too short", color: "red" };
+        } else if (!/[A-Z]/.test(password)) {
+            return { strength: "Add an uppercase letter", color: "orange" };
+        } else if (!/[0-9]/.test(password)) {
+            return { strength: "Add a number", color: "orange" };
+        } else if (!/[!@#$%^&*]/.test(password)) {
+            return { strength: "Add a special character (!@#$%^&*)", color: "yellow" };
+        } else {
+            return { strength: "Strong Password!", color: "green" };
+        }
+    }
+
+    // Password input event listener
     passwordInput.addEventListener("input", function() {
         const password = passwordInput.value;
-        if (password.length < 6) {
-            passwordStrengthText.textContent = "Password is too short (min. 6 characters).";
-            passwordStrengthText.style.color = "red";
-        } else if (!/[A-Z]/.test(password)) {
-            passwordStrengthText.textContent = "Password must include at least 1 uppercase letter.";
-            passwordStrengthText.style.color = "orange";
-        } else if (!/[0-9]/.test(password)) {
-            passwordStrengthText.textContent = "Password must include at least 1 number.";
-            passwordStrengthText.style.color = "orange";
+        const strength = checkPasswordStrength(password);
+
+        if (strength.strength !== "Strong Password!") {
+            if (!alertShown) {
+                Swal.fire({
+                    title: "Password Strength",
+                    text: strength.strength,
+                    icon: "warning",
+                    toast: true,
+                    position: "top-end",
+                    timer: 2000,
+                    timerProgressBar: true,
+                    showConfirmButton: false
+                });
+                alertShown = true; // Prevent showing the alert repeatedly
+                setTimeout(() => { alertShown = false; }, 2000);
+            }
         } else {
-            passwordStrengthText.textContent = "Password is strong.";
-            passwordStrengthText.style.color = "green";
+            Swal.fire({
+                title: "Great!",
+                text: "Your password is strong!",
+                icon: "success",
+                toast: true,
+                position: "top-end",
+                timer: 1500,
+                timerProgressBar: true,
+                showConfirmButton: false
+            });
         }
     });
 
@@ -474,6 +506,7 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 });
 </script>
+
 
 
 </body>
