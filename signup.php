@@ -511,6 +511,18 @@ document.addEventListener("DOMContentLoaded", function () {
             passwordIcon.classList.add("fa-eye");
         }
     });
+
+    // Password match validation
+    confirmPasswordInput.addEventListener("input", function() {
+        if (confirmPasswordInput.value === passwordInput.value) {
+            passwordMatchText.textContent = "Passwords match.";
+            passwordMatchText.style.color = "green";
+        } else {
+            passwordMatchText.textContent = "Passwords do not match.";
+            passwordMatchText.style.color = "red";
+        }
+    });
+    
 });
 </script>
 
