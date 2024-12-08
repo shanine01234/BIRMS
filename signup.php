@@ -360,6 +360,10 @@ if (substr($request, -4) == '.php') {
             <i id="password-icon" class="fas fa-eye"></i>
         </button>
     </div>
+    <!-- Password Strength Progress Bar -->
+    <div class="progress my-2" style="height: 10px;">
+        <div id="password-strength-bar" class="progress-bar" role="progressbar" style="width: 0%;" aria-valuemin="0" aria-valuemax="100"></div>
+    </div>
     <small id="password-strength" class="form-text"></small>
 </div>
 
@@ -448,76 +452,68 @@ if (substr($request, -4) == '.php') {
 
     <!-- Page level custom scripts -->
     <script src="js/demo/chart-area-demo.js"></script>
-    <script src="js/demo/chart-pie-demo.js"></script>
-<script>
+    <script src="js/demo/chart-pie-demo.js"></script><script>
 document.addEventListener("DOMContentLoaded", function () {
     const passwordInput = document.getElementById("password");
-    const confirmPasswordInput = document.getElementById("confirm-password");
     const passwordStrengthText = document.getElementById("password-strength");
-    const passwordMatchText = document.getElementById("password-match");
+    const passwordStrengthBar = document.getElementById("password-strength-bar");
 
     const togglePasswordBtn = document.getElementById("toggle-password");
-    const toggleConfirmPasswordBtn = document.getElementById("toggle-confirm-password");
     const passwordIcon = document.getElementById("password-icon");
-    const confirmPasswordIcon = document.getElementById("confirm-password-icon");
 
     // Function to determine password strength
     function checkPasswordStrength(password) {
-        if (password.length < 6) {
-            return { message: "Password is too short", color: "red" };
-        } else if (!/[A-Z]/.test(password)) {
-            return { message: "Add at least one uppercase letter", color: "orange" };
-        } else if (!/[0-9]/.test(password)) {
-            return { message: "Add at least one number", color: "orange" };
-        } else if (!/[!@#$%^&*]/.test(password)) {
-            return { message: "Add at least one special character (!@#$%^&*)", color: "yellow" };
+        let score = 0;
+
+        if (password.length >= 6) score += 25; // Length >= 6
+        if (/[A-Z]/.test(password)) score += 25; // Uppercase letter
+        if (/[0-9]/.test(password)) score += 25; // Number
+        if (/[!@#$%^&*]/.test(password)) score += 25; // Special character
+
+        return score;
+    }
+
+    // Function to update the progress bar and text
+    function updateStrengthBar(score) {
+        passwordStrengthBar.style.width = `${score}%`;
+
+        if (score < 50) {
+            passwordStrengthBar.className = "progress-bar bg-danger";
+            passwordStrengthText.textContent = "Weak Password";
+            passwordStrengthText.style.color = "red";
+        } else if (score < 75) {
+            passwordStrengthBar.className = "progress-bar bg-warning";
+            passwordStrengthText.textContent = "Moderate Password";
+            passwordStrengthText.style.color = "orange";
         } else {
-            return { message: "Strong Password!", color: "green" };
+            passwordStrengthBar.className = "progress-bar bg-success";
+            passwordStrengthText.textContent = "Strong Password!";
+            passwordStrengthText.style.color = "green";
         }
     }
 
     // Password strength validation
     passwordInput.addEventListener("input", function () {
         const password = passwordInput.value;
-        const strength = checkPasswordStrength(password);
-
-        passwordStrengthText.textContent = strength.message;
-        passwordStrengthText.style.color = strength.color;
-    });
-
-    // Confirm password validation
-    confirmPasswordInput.addEventListener("input", function () {
-        if (confirmPasswordInput.value === passwordInput.value) {
-            passwordMatchText.textContent = "Passwords match.";
-            passwordMatchText.style.color = "green";
-        } else {
-            passwordMatchText.textContent = "Passwords do not match.";
-            passwordMatchText.style.color = "red";
-        }
+        const score = checkPasswordStrength(password);
+        updateStrengthBar(score);
     });
 
     // Toggle show/hide password
-    function togglePasswordVisibility(inputField, icon) {
-        if (inputField.type === "password") {
-            inputField.type = "text";
-            icon.classList.remove("fa-eye");
-            icon.classList.add("fa-eye-slash");
-        } else {
-            inputField.type = "password";
-            icon.classList.remove("fa-eye-slash");
-            icon.classList.add("fa-eye");
-        }
-    }
-
     togglePasswordBtn.addEventListener("click", function () {
-        togglePasswordVisibility(passwordInput, passwordIcon);
-    });
-
-    toggleConfirmPasswordBtn.addEventListener("click", function () {
-        togglePasswordVisibility(confirmPasswordInput, confirmPasswordIcon);
+        if (passwordInput.type === "password") {
+            passwordInput.type = "text";
+            passwordIcon.classList.remove("fa-eye");
+            passwordIcon.classList.add("fa-eye-slash");
+        } else {
+            passwordInput.type = "password";
+            passwordIcon.classList.remove("fa-eye-slash");
+            passwordIcon.classList.add("fa-eye");
+        }
     });
 });
 </script>
+
 
 
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
