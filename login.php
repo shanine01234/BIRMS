@@ -196,7 +196,7 @@ if (substr($request, -4) == '.php') {
     max-width: 500px;
     margin: 50px auto;
     padding: 20px;
-    background-color: #f9f9f9a3; /* Semi-transparent background */
+    background-color: #f9f9f97a; /* Semi-transparent background */
     border-radius: 8px;
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
     margin-top: -10px;
@@ -325,7 +325,7 @@ footer .social-icons a {
     
 
     <!-- Login Form -->
-    <div class="login-container" stye="background: rgba(255, 255, 255, 0.8);">
+    <div class="login-container" stye="background-color: #f9f9f97a;">
         
         <h4>Login</h4>
         <form method="post">
