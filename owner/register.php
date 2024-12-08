@@ -8,10 +8,10 @@ function sanitizeInput($data) {
 }
 
 // Sample SQL Injection prevention: Use prepared statements (example using MySQLi)
-function registerOwner($conn, $firstname, $middlename, $lastname, $email, $restobar, $contact_num, $address, $password) {
+function registerOwner($conn, $firstname, $middlename, $lastname, $email, $restobar, $contact, $address, $password) {
     // SQL injection prevention using prepared statements
-    $stmt = $conn->prepare("INSERT INTO owners (firstname, middlename, lastname, email, restobar, contact_num, address, password) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-    $stmt->bind_param("ssssssss", $firstname, $middlename, $lastname, $email, $restobar, $contact_num, $address, password_hash($password, PASSWORD_BCRYPT));
+    $stmt = $conn->prepare("INSERT INTO owners (firstname, middlename, lastname, email, restobar, contact, address, password) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+    $stmt->bind_param("ssssssss", $firstname, $middlename, $lastname, $email, $restobar, $contact, $address, password_hash($password, PASSWORD_BCRYPT));
     $stmt->execute();
     $stmt->close();
 }
@@ -23,7 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['registerOwner'])) {
     $lastname = sanitizeInput($_POST['lastname']);
     $email = sanitizeInput($_POST['email']);
     $restobar = sanitizeInput($_POST['restobar']);
-    $contact_num = sanitizeInput($_POST['contact_num']);
+    $contact_num = sanitizeInput($_POST['contact']);
     $address = sanitizeInput($_POST['address']);
     $password = sanitizeInput($_POST['password']);
     $cpassword = sanitizeInput($_POST['cpassword']);
@@ -32,7 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['registerOwner'])) {
     // Check if passwords match
     if ($password === $cpassword) {
         // Register the owner with the sanitized data
-        registerOwner($conn, $firstname, $middlename, $lastname, $email, $restobar, $contact_num, $address, $password);
+        registerOwner($conn, $firstname, $middlename, $lastname, $email, $restobar, $contact, $address, $password);
         $msgAlert = "Registration successful!";
     } else {
         $msgAlert = "Passwords do not match!";
@@ -85,7 +85,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['registerOwner'])) {
 
     // If validation passes, continue with the registration
     if (empty($msgAlert)) {
-        registerOwner($conn, $firstname, $middlename, $lastname, $email, $restobar, $contact_num, $address, $password);
+        registerOwner($conn, $firstname, $middlename, $lastname, $email, $restobar, $contact $address, $password);
         $msgAlert = "Registration successful!";
     }
 }
@@ -173,7 +173,7 @@ if (substr($request, -4) == '.php') {
                                             placeholder="Restobar Name" required>
                                     </div>
                                     <div class="col-sm-4">
-                                        <input type="text" name="contact_num" class="form-control form-control-user" id="exampleLastName" 
+                                        <input type="text" name="contact" class="form-control form-control-user" id="exampleLastName" 
                                             placeholder="Restobar Contact #"  maxlength="11" required>
                                     </div>
                                     <div class="col-sm-4">
