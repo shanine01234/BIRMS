@@ -62,7 +62,12 @@ if (isset($_POST['login']) && $_SESSION['login_attempts'] < 3) {
                             icon: "warning",
                             title: "Account not verified, Please verify your account first",
                             showConfirmButton: false,
-                            timer: 2000
+                            timer: 2000,
+                            width: '400px',  // Adjust the width as needed
+                            padding: '20px', // Adjust the padding for larger alerts
+                            customClass: {
+                                popup: 'custom-swal'  // You can add a custom class to control the styling further
+                            }
                         }).then(() => {
                             window.location.href = "account-verification.php";
                         });
@@ -81,7 +86,12 @@ if (isset($_POST['login']) && $_SESSION['login_attempts'] < 3) {
                             icon: "success",
                             title: "Account logged in successfully",
                             showConfirmButton: false,
-                            timer: 1500
+                            timer: 1500,
+                            width: '400px',  // Adjust the width as needed
+                            padding: '20px', // Adjust the padding for larger alerts
+                            customClass: {
+                                popup: 'custom-swal'  // You can add a custom class to control the styling further
+                            }
                         }).then(() => {
                             window.location.href = "restobar.php";
                         });
@@ -99,7 +109,12 @@ if (isset($_POST['login']) && $_SESSION['login_attempts'] < 3) {
                         icon: "error",
                         title: "Incorrect email or password. Attempt: <?= $_SESSION['login_attempts']; ?> of 3",
                         showConfirmButton: false,
-                        timer: 1500
+                        timer: 1500,
+                        width: '400px',  // Adjust the width as needed
+                        padding: '20px', // Adjust the padding for larger alerts
+                        customClass: {
+                            popup: 'custom-swal'  // You can add a custom class to control the styling further
+                        }
                     }).then(() => {
                         window.location.href = "login.php";
                     });
@@ -117,7 +132,12 @@ if (isset($_POST['login']) && $_SESSION['login_attempts'] < 3) {
                     icon: "error",
                     title: "Incorrect email or password. Attempt: <?= $_SESSION['login_attempts']; ?> of 3",
                     showConfirmButton: false,
-                    timer: 1500
+                    timer: 1500,
+                    width: '400px',  // Adjust the width as needed
+                    padding: '20px', // Adjust the padding for larger alerts
+                    customClass: {
+                        popup: 'custom-swal'  // You can add a custom class to control the styling further
+                    }
                 }).then(() => {
                     window.location.href = "login.php";
                 });
@@ -327,7 +347,10 @@ footer .social-icons a {
     border-color: #d58512;
     box-shadow: 0 0 10px rgba(255, 255, 255, 0.8), 0 0 20px rgba(255, 255, 255, 0.7), 0 0 30px rgba(255, 255, 255, 0.6), 0 0 40px rgba(255, 255, 255, 0.5);
 }
-
+  .custom-swal {
+        border-radius: 10px; /* Adjust border radius for rounded corners */
+        font-size: 18px; /* Adjust font size */
+    }
         
     </style>
 </head>
