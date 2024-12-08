@@ -352,17 +352,25 @@ if (substr($request, -4) == '.php') {
                 <label for="email">Email</label>
                 <input type="email" id="email" name="email" class="form-control my-2" required>
             </div>
-            <div class="form-group">
+            <div class="form-group position-relative">
     <label for="password">Password</label>
-    <input type="password" id="password" name="password" class="form-control my-2" required>
-    <!-- Password strength message -->
+    <div class="input-group">
+        <input type="password" id="password" name="password" class="form-control my-2" required>
+        <button type="button" id="toggle-password" class="btn btn-light border">
+            <i id="password-icon" class="fas fa-eye"></i>
+        </button>
+    </div>
     <small id="password-strength" class="form-text"></small>
 </div>
 
-<div class="form-group">
+<div class="form-group position-relative">
     <label for="confirm-password">Confirm Password</label>
-    <input type="password" id="confirm-password" name="confirm_password" class="form-control my-2" required>
-    <!-- Confirm password match message -->
+    <div class="input-group">
+        <input type="password" id="confirm-password" name="confirm_password" class="form-control my-2" required>
+        <button type="button" id="toggle-confirm-password" class="btn btn-light border">
+            <i id="confirm-password-icon" class="fas fa-eye"></i>
+        </button>
+    </div>
     <small id="password-match" class="form-text"></small>
 </div>
 
@@ -441,13 +449,17 @@ if (substr($request, -4) == '.php') {
     <!-- Page level custom scripts -->
     <script src="js/demo/chart-area-demo.js"></script>
     <script src="js/demo/chart-pie-demo.js"></script>
-
-   <script>
-document.addEventListener("DOMContentLoaded", function() {
+<script>
+document.addEventListener("DOMContentLoaded", function () {
     const passwordInput = document.getElementById("password");
     const confirmPasswordInput = document.getElementById("confirm-password");
     const passwordStrengthText = document.getElementById("password-strength");
     const passwordMatchText = document.getElementById("password-match");
+
+    const togglePasswordBtn = document.getElementById("toggle-password");
+    const toggleConfirmPasswordBtn = document.getElementById("toggle-confirm-password");
+    const passwordIcon = document.getElementById("password-icon");
+    const confirmPasswordIcon = document.getElementById("confirm-password-icon");
 
     // Function to determine password strength
     function checkPasswordStrength(password) {
@@ -465,7 +477,7 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     // Password strength validation
-    passwordInput.addEventListener("input", function() {
+    passwordInput.addEventListener("input", function () {
         const password = passwordInput.value;
         const strength = checkPasswordStrength(password);
 
@@ -473,8 +485,8 @@ document.addEventListener("DOMContentLoaded", function() {
         passwordStrengthText.style.color = strength.color;
     });
 
-    // Password match validation
-    confirmPasswordInput.addEventListener("input", function() {
+    // Confirm password validation
+    confirmPasswordInput.addEventListener("input", function () {
         if (confirmPasswordInput.value === passwordInput.value) {
             passwordMatchText.textContent = "Passwords match.";
             passwordMatchText.style.color = "green";
@@ -483,11 +495,32 @@ document.addEventListener("DOMContentLoaded", function() {
             passwordMatchText.style.color = "red";
         }
     });
+
+    // Toggle show/hide password
+    function togglePasswordVisibility(inputField, icon) {
+        if (inputField.type === "password") {
+            inputField.type = "text";
+            icon.classList.remove("fa-eye");
+            icon.classList.add("fa-eye-slash");
+        } else {
+            inputField.type = "password";
+            icon.classList.remove("fa-eye-slash");
+            icon.classList.add("fa-eye");
+        }
+    }
+
+    togglePasswordBtn.addEventListener("click", function () {
+        togglePasswordVisibility(passwordInput, passwordIcon);
+    });
+
+    toggleConfirmPasswordBtn.addEventListener("click", function () {
+        togglePasswordVisibility(confirmPasswordInput, confirmPasswordIcon);
+    });
 });
 </script>
 
 
-
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
 
 </body>
 
