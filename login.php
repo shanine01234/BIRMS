@@ -349,7 +349,7 @@ footer .social-icons a {
 }
   .custom-swal {
         border-radius: 10px; /* Adjust border radius for rounded corners */
-        font-size: 18px; /* Adjust font size */
+        font-size: 12px; /* Adjust font size */
     }
         
     </style>
