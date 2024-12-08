@@ -325,7 +325,7 @@ footer .social-icons a {
     
 
     <!-- Login Form -->
-    <div class="login-container">
+    <div class="login-container" stye="background: rgba(255, 255, 255, 0.8);">
         
         <h4>Login</h4>
         <form method="post">
