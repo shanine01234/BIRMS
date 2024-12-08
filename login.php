@@ -183,26 +183,37 @@ if (substr($request, -4) == '.php') {
     <style>
         body {
     font-family: "Roboto", sans-serif;
-    background: url('img/photos/login.jpg') no-repeat center center fixed; /* Background image */
-    background-size: cover; /* Ensure the image covers the entire screen */
-    background-color: #f9f9f97a;
-    color: black;
-    min-height: 90vh;
+    position: relative;
+    color: #495057;
+    min-height: 100vh;
     margin: 0;
     display: flex;
     justify-content: center;
     align-items: center;
 }
+
+body::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url('img/photos/login.jpg') no-repeat center center fixed;
+    background-size: cover;
+    opacity: 0.5; /* Adjust the opacity for the fade effect */
+    z-index: -1; /* Ensure it stays behind the content */
+}
+
 .login-container {
     max-width: 500px;
     margin: 50px auto;
     padding: 20px;
-    background-color: #f9f9f97a; /* Semi-transparent background */
+    background: rgba(255, 255, 255, 0.8); /* White background with opacity */
     border-radius: 8px;
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
     margin-top: -10px;
 }
-
 
 .login-container h4 {
     margin-bottom: 20px;
