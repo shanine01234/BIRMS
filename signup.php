@@ -14,7 +14,45 @@ if (isset($_POST['signup'])) {
     $contact = $_POST['contact'];
     $email = $_POST['email'];
     $password = $_POST['password'];
+    $confirm_password = $_POST['confirm_password'];
     $verification_code = uniqid();
+
+    if ($password !== $confirm_password) {
+        ?>
+        <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            Swal.fire({
+                icon: "error",
+                title: "Passwords do not match.",
+                showConfirmButton: false,
+                timer: 1500
+            }).then(() => {
+                window.location.href = "signup.php";
+            });
+        });
+        </script>
+        <?php
+        exit;
+    }
+
+    // Validate Password Strength
+    if (strlen($password) < 6 || !preg_match('/[A-Z]/', $password) || !preg_match('/[0-9]/', $password)) {
+        ?>
+        <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            Swal.fire({
+                icon: "error",
+                title: "Password must be at least 6 characters, contain 1 uppercase letter, and 1 number.",
+                showConfirmButton: false,
+                timer: 1500
+            }).then(() => {
+                window.location.href = "signup.php";
+            });
+        });
+        </script>
+        <?php
+        exit;
+    }
 
     // Check if Terms and Conditions are agreed to
     if (!isset($_POST['terms'])) {
@@ -318,6 +356,11 @@ if (substr($request, -4) == '.php') {
                 <label for="password">Password</label>
                 <input type="password" id="password" name="password" class="form-control my-2" required>
             </div>
+            <div class="form-group">
+    <label for="confirm-password">Confirm Password</label>
+    <input type="password" id="confirm-password" name="confirm_password" class="form-control my-2" required>
+    <small id="password-match" class="form-text"></small>
+</div>
             <div class="form-check my-3">
                 <input type="checkbox" id="terms" name="terms" class="form-check-input">
                 <label for="terms" class="form-check-label">
@@ -393,6 +436,45 @@ if (substr($request, -4) == '.php') {
     <!-- Page level custom scripts -->
     <script src="js/demo/chart-area-demo.js"></script>
     <script src="js/demo/chart-pie-demo.js"></script>
+
+    <script>
+document.addEventListener("DOMContentLoaded", function() {
+    const passwordInput = document.getElementById("password");
+    const confirmPasswordInput = document.getElementById("confirm-password");
+    const passwordStrengthText = document.getElementById("password-strength");
+    const passwordMatchText = document.getElementById("password-match");
+
+    // Password Strength Check
+    passwordInput.addEventListener("input", function() {
+        const password = passwordInput.value;
+        if (password.length < 6) {
+            passwordStrengthText.textContent = "Password is too short (min. 6 characters).";
+            passwordStrengthText.style.color = "red";
+        } else if (!/[A-Z]/.test(password)) {
+            passwordStrengthText.textContent = "Password must include at least 1 uppercase letter.";
+            passwordStrengthText.style.color = "orange";
+        } else if (!/[0-9]/.test(password)) {
+            passwordStrengthText.textContent = "Password must include at least 1 number.";
+            passwordStrengthText.style.color = "orange";
+        } else {
+            passwordStrengthText.textContent = "Password is strong.";
+            passwordStrengthText.style.color = "green";
+        }
+    });
+
+    // Password Match Check
+    confirmPasswordInput.addEventListener("input", function() {
+        if (confirmPasswordInput.value === passwordInput.value) {
+            passwordMatchText.textContent = "Passwords match.";
+            passwordMatchText.style.color = "green";
+        } else {
+            passwordMatchText.textContent = "Passwords do not match.";
+            passwordMatchText.style.color = "red";
+        }
+    });
+});
+</script>
+
 
 </body>
 
