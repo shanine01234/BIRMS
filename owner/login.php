@@ -59,7 +59,7 @@ if (substr($request, -4) == '.php') {
 
     /* Resize form */
     .user-form {
-        max-width: 400px; /* Maximum width for form */
+        max-width: 350px; /* Maximum width for form */
         margin: 0 auto; /* Center the form */
         padding: 30px; /* Add some padding */
     }
@@ -67,6 +67,7 @@ if (substr($request, -4) == '.php') {
     .form-group input {
         padding: 10px;
         font-size: 16px; /* Resize input text */
+        
     }
 
     .btn-user {
