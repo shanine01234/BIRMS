@@ -49,7 +49,7 @@ if (substr($request, -4) == '.php') {
         body {
         background: 
             linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), /* Gradient overlay for fade effect */
-            url('../img/photos/owner.jpg'); /* Background image path */
+            url('../img/photos/own.jpg'); /* Background image path */
         background-size: cover; /* Cover the entire viewport */
         background-position: center; /* Center the image */
         background-repeat: no-repeat; /* Prevent repeating */
