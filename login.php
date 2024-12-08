@@ -187,7 +187,7 @@ if (substr($request, -4) == '.php') {
     background-size: cover; /* Ensure the image covers the entire screen */
     background-color: #f9f9f97a;
     color: black;
-    min-height: 100vh;
+    min-height: 90vh;
     margin: 0;
     display: flex;
     justify-content: center;
