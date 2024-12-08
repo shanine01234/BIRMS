@@ -452,11 +452,15 @@ if (substr($request, -4) == '.php') {
 
     <!-- Page level custom scripts -->
     <script src="js/demo/chart-area-demo.js"></script>
-    <script src="js/demo/chart-pie-demo.js"></script><script>
-document.addEventListener("DOMContentLoaded", function () {
+    <script src="js/demo/chart-pie-demo.js"></script>
+                            
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
     const passwordInput = document.getElementById("password");
+    const confirmPasswordInput = document.getElementById("confirm-password");
     const passwordStrengthText = document.getElementById("password-strength");
     const passwordStrengthBar = document.getElementById("password-strength-bar");
+    const passwordMatchText = document.getElementById("password-match");
 
     const togglePasswordBtn = document.getElementById("toggle-password");
     const passwordIcon = document.getElementById("password-icon");
