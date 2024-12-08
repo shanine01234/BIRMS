@@ -85,7 +85,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['registerOwner'])) {
 
     // If validation passes, continue with the registration
     if (empty($msgAlert)) {
-        registerOwner($conn, $firstname, $middlename, $lastname, $email, $restobar, $contact $address, $password);
+        registerOwner($conn, $firstname, $middlename, $lastname, $email, $restobar, $contact, $address, $password);
         $msgAlert = "Registration successful!";
     }
 }
