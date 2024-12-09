@@ -363,7 +363,7 @@
     <script>
         $(document).ready(function () {
             $('#signup-form').on('submit', function (e) {
-                e.preventDefault(); // Prevent form fromsubmitting normally
+                e.preventDefault(); // Prevent form from submitting normally
 
                 $.ajax({
                     type: 'POST',
