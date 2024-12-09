@@ -304,18 +304,22 @@
             color: #000000;
 
         }
-
-        .swal-wide {
+      
+    .swal-wide {
         width: 400px !important; /* Adjust the width as needed */
+        border-radius: 5px !important; /* Make the alert rectangular */
     }
+
     .swal2-popup {
         display: flex;
         align-items: center;
         justify-content: flex-start;
     }
+
     .swal2-icon {
-        margin-right: 10px; /* Space between icon and text */
+        margin-right: 10px;
     }
+</style>
     </style>
 </head>
 
@@ -373,7 +377,7 @@
 
     <!-- JavaScript for AJAX and SweetAlert -->
     <script>
-        $(document).ready(function () {
+    $(document).ready(function () {
         $('#signup-form').on('submit', function (e) {
             e.preventDefault(); // Prevent form from submitting normally
 
@@ -383,11 +387,12 @@
                 data: $(this).serialize(),
                 success: function (response) {
                     Swal.fire({
-                        position: 'top',
+                        position: 'top-end',
                         icon: 'success',
                         title: 'Success!',
                         text: response.message,
-                        showConfirmButton: true,
+                        showConfirmButton: false,
+                        timer: 3000, // Auto-close after 3 seconds
                         customClass: {
                             popup: 'swal-wide'
                         }
@@ -395,11 +400,12 @@
                 },
                 error: function () {
                     Swal.fire({
-                        position: 'top',
+                        position: 'top-end',
                         icon: 'error',
                         title: 'Error!',
                         text: 'There was an error processing your request.',
-                        showConfirmButton: true,
+                        showConfirmButton: false,
+                        timer: 3000, // Auto-close after 3 seconds
                         customClass: {
                             popup: 'swal-wide'
                         }
@@ -408,7 +414,7 @@
             });
         });
     });
-    </script>
+</script>
 </body>
 
 </html>
