@@ -370,49 +370,71 @@ body::before {
                 </div>
                 <small id="password-match" class="form-text"></small>
             </div>
-            <div class="form-check my-3">
-                <input type="checkbox" id="terms" name="terms" class="form-check-input">
-                <label for="terms" class="form-check-label">
-                    I agree to the <a href="#" data-bs-toggle="modal" data-bs-target="#termsModal">Terms and Conditions</a>.
-                </label>
-            </div>
-            <button type="submit" name="signup" class="btn btn-warning btn-block">Sign Up</button>
-        </form>
-    </div>
+            <!-- Modal Trigger Link -->
+<div class="form-check my-3">
+    <input type="checkbox" id="terms" name="terms" class="form-check-input">
+    <label for="terms" class="form-check-label">
+        I agree to the <a href="#" data-bs-toggle="modal" data-bs-target="#termsModal">Terms and Conditions</a>.
+    </label>
+</div>
 
-     <!-- Terms and Conditions Modal -->
-     <div class="modal fade" id="termsModal" tabindex="-1" aria-labelledby="termsModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="termsModalLabel">Terms and Conditions</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body" style="font-family: Arial, sans-serif;">
-    <p><strong>Terms and Conditions for Bantayan Island Restobar Management System</strong></p>
-    <p>Welcome to Bantayan Retobars! We appreciate your visit. By accessing or using our services, you agree to comply with the following terms and conditions.</p>
-    <ol>
-        <li><strong>Age Restrictions</strong></li>
-        <p>• Guests must be 18 years or older to enter and consume alcoholic beverages.</p>
-        <p>• Valid identification is required upon request.</p>
-        <li><strong>Responsible Consumption</strong></li>
-        <p>• We encourage responsible drinking. We reserve the right to refuse service to anyone appearing intoxicated or behaving inappropriately.</p>
-        
-        <li><strong>Reservation Policy</strong></li>
-        <p>• Please notify us at least 24 hours in advance for cancellations or changes.</p>
-        <li><strong>Payment</strong></li>
-        <p>• We accept cash and G-cash payment.</p>
-        <p>• All sales are final. No refunds or exchanges.</p>
-        <li><strong>Liability</strong></li>
-        <p>• Bantayan Retobars is not responsible for lost or stolen items. Please keep your belongings secure.</p>
-        <p>• Guests assume all risks related to their visit, including injury resulting from accidents or incidents within the premises.</p>
-        <li><strong>Changes to Terms</strong></li>
-        <p>• Bantayan Retobars reserves the right to update these Terms and Conditions at any time. Changes will be effective immediately upon posting.</p>
-    </ol>
+<!-- Terms and Conditions Modal -->
+<div class="modal fade" id="termsModal" tabindex="-1" aria-labelledby="termsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="termsModalLabel">Terms and Conditions</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" style="font-family: Arial, sans-serif;">
+                <p><strong>Terms and Conditions for Bantayan Island Restobar Management System</strong></p>
+                <p>Welcome to Bantayan Restobar! We appreciate your visit. By accessing or using our services, you agree to comply with the following terms and conditions.</p>
+                <ol>
+                    <li><strong>Age Restrictions</strong>
+                        <ul>
+                            <li>Guests must be 18 years or older to enter and consume alcoholic beverages.</li>
+                            <li>Valid identification is required upon request.</li>
+                        </ul>
+                    </li>
+                    <li><strong>Responsible Consumption</strong>
+                        <ul>
+                            <li>We encourage responsible drinking. We reserve the right to refuse service to anyone appearing intoxicated or behaving inappropriately.</li>
+                        </ul>
+                    </li>
+                    <li><strong>Reservation Policy</strong>
+                        <ul>
+                            <li>Please notify us at least 24 hours in advance for cancellations or changes.</li>
+                        </ul>
+                    </li>
+                    <li><strong>Payment</strong>
+                        <ul>
+                            <li>We accept cash and G-cash payment.</li>
+                            <li>All sales are final. No refunds or exchanges.</li>
+                        </ul>
+                    </li>
+                    <li><strong>Liability</strong>
+                        <ul>
+                            <li>Bantayan Restobar is not responsible for lost or stolen items. Please keep your belongings secure.</li>
+                            <li>Guests assume all risks related to their visit, including injury resulting from accidents or incidents within the premises.</li>
+                        </ul>
+                    </li>
+                    <li><strong>Changes to Terms</strong>
+                        <ul>
+                            <li>Bantayan Restobar reserves the right to update these Terms and Conditions at any time. Changes will be effective immediately upon posting.</li>
+                        </ul>
+                    </li>
+                </ol>
+            </div>
+            <div class="modal-footer" style="font-family: Arial, sans-serif;">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
 </div>
-<div class="modal-footer" style="font-family: Arial, sans-serif;">
-    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-</div>
+
+<!-- Include Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
 
     <!-- JavaScript for AJAX and SweetAlert -->
     <script>
