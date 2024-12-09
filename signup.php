@@ -33,7 +33,7 @@
 body::before {
     content: ""; /* Required for pseudo-elements */
     position: absolute;
-    top: -5px;
+    top: -20px;
     left: 0;
     width: 100%;
     height: 1100px;
