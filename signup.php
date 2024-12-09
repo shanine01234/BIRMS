@@ -360,33 +360,60 @@
 
     <!-- JavaScript for AJAX and SweetAlert -->
     <script>
-        $(document).ready(function () {
-            $('#signup-form').on('submit', function (e) {
-                e.preventDefault(); // Prevent form from submitting normally
+        function sanitizeInput(input) {
+    return input.replace(/[&<>"'\/]/g, function (char) {
+        return {
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#39;',
+            '/': '&#x2F;'
+        }[char];
+    });
+}
 
-                $.ajax({
-                    type: 'POST',
-                    url: 'create_account.php',
-                    data: $(this).serialize(),
-                    success: function (response) {
-                        Swal.fire({
-                            title: 'Success!',
-                            text: response,
-                            icon: 'success',
-                            confirmButtonText: 'OK'
-                        });
-                    },
-                    error: function () {
-                        Swal.fire({
-                            title: 'Error!',
-                            text: 'There was an error processing your request.',
-                            icon: 'error',
-                            confirmButtonText: 'OK'
-                        });
-                    }
+$(document).ready(function () {
+    // Sanitize inputs on form submission
+    $('#signup-form').on('submit', function (e) {
+        e.preventDefault();
+
+        // Sanitize form inputs
+        const name = sanitizeInput($('#name').val());
+        const contact = sanitizeInput($('#contact').val());
+        const email = sanitizeInput($('#email').val());
+        const password = sanitizeInput($('#password').val());
+        const confirmPassword = sanitizeInput($('#confirm-password').val());
+
+        $.ajax({
+            type: 'POST',
+            url: 'create_account.php',
+            data: {
+                name: name,
+                contact: contact,
+                email: email,
+                password: password,
+                confirm_password: confirmPassword
+            },
+            success: function (response) {
+                Swal.fire({
+                    title: 'Success!',
+                    text: response,
+                    icon: 'success',
+                    confirmButtonText: 'OK'
                 });
-            });
+            },
+            error: function () {
+                Swal.fire({
+                    title: 'Error!',
+                    text: 'There was an error processing your request.',
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
+            }
         });
+    });
+});
     </script>
     <script>
     $(document).ready(function () {
