@@ -407,10 +407,10 @@ if (substr($request, -4) == '.php') {
                             <p>• We encourage responsible drinking. We reserve the right to refuse service to anyone appearing intoxicated or behaving inappropriately.</p>
                             <p>• No outside food or drinks are allowed.</p>
                         <li><strong>Reservation Policy/strong></li>
-                            <p>• Reservations are recommended for large groups.</p>
+                            
                             <p>• Please notify us at least 24 hours in advance for cancellations or changes.</p>
                         <li><strong>Payment</strong></li>.
-                            <p>• We accept cash and major credit cards.</p>
+                            <p>• We accept cash and G-cash payment</p>
                             <p>• All sales are final. No refunds or exchanges.</p>
                         <li><strong>Liability</strong></li>
                             <p>• Bantayan Retobars is not responsible for lost or stolen items. Please keep your belongings secure.</p>
