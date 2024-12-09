@@ -6,6 +6,10 @@ require 'vendor/autoload.php';
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
+// Load environment variables
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+$dotenv->load();
+
 if (isset($_POST['reset-password'])) {
     $email = $conn->real_escape_string($_POST['email']); // Secure input handling
 
@@ -29,30 +33,34 @@ if (isset($_POST['reset-password'])) {
 
         try {
             $mail->isSMTP();
-            $mail->SMTPDebug = 0; // Disable verbose debug output
-            $mail->Host = 'smtp.gmail.com';
+            $mail->SMTPDebug = 2; // Enable verbose debug output for troubleshooting
+            $mail->Host = $_ENV['SMTP_HOST'];
             $mail->SMTPAuth = true;
-            $mail->Username = 'shaninezaspa179@gmail.com';
-            $mail->Password = 'hglesxkasgmryjxq'; // Ensure this is correct and secure
-            $mail->SMTPSecure = 'tls';
-            $mail->Port = 587;
+            $mail->Username = $_ENV['SMTP_USER'];
+            $mail->Password = $_ENV['SMTP_PASS'];
+            $mail->SMTPSecure = 'tls'; // Use TLS for secure connection
+            $mail->Port = $_ENV['SMTP_PORT'];
 
-            $mail->setFrom('shaninezaspa179@gmail.com', 'Bantayan Island Restobar');
+            // Set email from address and recipient
+            $mail->setFrom($_ENV['SMTP_USER'], 'Bantayan Island Restobar');
             $mail->addAddress($email);
 
+            // Set email format to HTML
             $mail->isHTML(true);
             $mail->Subject = 'Password Reset Request';
 
             // Set up the reset link
             $resetLink = "https://bantayanrestobars.com/new_password?token=" . $token;
 
+            // Email body content
             $mail->Body = "<p>Click the link below to reset your password:</p>
                            <p><a href='$resetLink'>Reset Password</a></p>
                            <p>This link will expire in 1 hour.</p>";
 
+            // Send the email
             $mail->send();
 
-            // After successful email send, display the success message and redirect to login
+            // Display success message and redirect to login page
             echo "<script>
                     Swal.fire('Success', 'Password reset link sent. Please check your email.', 'success').then(() => {
                         window.location.href = 'login.php'; // Redirect to login page
@@ -60,20 +68,22 @@ if (isset($_POST['reset-password'])) {
                   </script>";
 
         } catch (Exception $e) {
+            // Display error message if sending fails
             echo "<script>
                     Swal.fire('Error', 'There was an error sending the reset email: {$mail->ErrorInfo}', 'error');
                   </script>";
         }
 
     } else {
+        // If email is not found in the database
         echo "<script>
                 Swal.fire('Error', 'Email not found in our records.', 'error');
               </script>";
     }
 }
 
+// Handle redirection for .php extension
 $request = $_SERVER['REQUEST_URI'];
-
 if (substr($request, -4) == '.php') {
     $new_url = substr($request, 0, -4);
     header("Location: $new_url", true, 301);
@@ -92,9 +102,8 @@ if (substr($request, -4) == '.php') {
     <meta name="author" content="">
 
     <title>Bantayan Island Restobar - Reset Password</title>
-     <link rel="icon" type="image/png" href="img/d3f06146-7852-4645-afea-783aef210f8a.jpg" alt="" width="30" height="24" style="border-radius: 100px;">
-    <!-- Custom fonts for this template-->
-
+    <link rel="icon" type="image/png" href="img/d3f06146-7852-4645-afea-783aef210f8a.jpg" alt="" width="30" height="24" style="border-radius: 100px;">
+    
     <!-- Include SweetAlert2 library -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
@@ -103,7 +112,6 @@ if (substr($request, -4) == '.php') {
     <link href="css/sb-admin-2.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
-    
     <style>
         body {
             font-family: "Roboto", sans-serif;
