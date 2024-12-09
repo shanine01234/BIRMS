@@ -331,6 +331,22 @@ if (substr($request, -4) == '.php') {
         .btn-secondary:hover {
             background-color: #5a6268; 
         }
+        .input-group-text {
+            background-color: #ffffff;
+            border: 1px solid #ced4da;
+            cursor: pointer;
+            padding: 0.375rem 0.75rem;
+        }
+        
+        .input-group-text i {
+            font-size: 16px;
+            color: #6c757d;
+        }
+        
+        .input-group-text:hover i {
+            color: #000000;
+        }
+
     </style>
 </head>
 
@@ -452,7 +468,7 @@ if (substr($request, -4) == '.php') {
     <script src="js/demo/chart-pie-demo.js"></script>
                             
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", function () {
     const passwordInput = document.getElementById("password");
     const confirmPasswordInput = document.getElementById("confirm-password");
     const passwordStrengthText = document.getElementById("password-strength");
@@ -461,6 +477,8 @@ if (substr($request, -4) == '.php') {
 
     const togglePasswordBtn = document.getElementById("toggle-password");
     const passwordIcon = document.getElementById("password-icon");
+    const toggleConfirmPasswordBtn = document.getElementById("toggle-confirm-password");
+    const confirmPasswordIcon = document.getElementById("confirm-password-icon");
 
     // Function to determine password strength
     function checkPasswordStrength(password) {
@@ -500,6 +518,17 @@ if (substr($request, -4) == '.php') {
         updateStrengthBar(score);
     });
 
+    // Password confirmation validation
+    confirmPasswordInput.addEventListener("input", function () {
+        if (confirmPasswordInput.value === passwordInput.value) {
+            passwordMatchText.textContent = "Passwords match!";
+            passwordMatchText.style.color = "green";
+        } else {
+            passwordMatchText.textContent = "Passwords do not match.";
+            passwordMatchText.style.color = "red";
+        }
+    });
+
     // Toggle show/hide password
     togglePasswordBtn.addEventListener("click", function () {
         if (passwordInput.type === "password") {
@@ -513,17 +542,17 @@ if (substr($request, -4) == '.php') {
         }
     });
 
-    // Password match validation
-    confirmPasswordInput.addEventListener("input", function() {
-        if (confirmPasswordInput.value === passwordInput.value) {
-            passwordMatchText.textContent = "Passwords match.";
-            passwordMatchText.style.color = "green";
+    toggleConfirmPasswordBtn.addEventListener("click", function () {
+        if (confirmPasswordInput.type === "password") {
+            confirmPasswordInput.type = "text";
+            confirmPasswordIcon.classList.remove("fa-eye");
+            confirmPasswordIcon.classList.add("fa-eye-slash");
         } else {
-            passwordMatchText.textContent = "Passwords do not match.";
-            passwordMatchText.style.color = "red";
+            confirmPasswordInput.type = "password";
+            confirmPasswordIcon.classList.remove("fa-eye-slash");
+            confirmPasswordIcon.classList.add("fa-eye");
         }
     });
-    
 });
 </script>
 
