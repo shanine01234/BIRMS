@@ -304,22 +304,6 @@
             color: #000000;
 
         }
-      
-    .swal-wide {
-        width: 400px !important; /* Adjust the width as needed */
-        border-radius: 5px !important; /* Make the alert rectangular */
-    }
-
-    .swal2-popup {
-        display: flex;
-        align-items: center;
-        justify-content: flex-start;
-    }
-
-    .swal2-icon {
-        margin-right: 10px;
-    }
-</style>
     </style>
 </head>
 
@@ -377,44 +361,34 @@
 
     <!-- JavaScript for AJAX and SweetAlert -->
     <script>
-    $(document).ready(function () {
-        $('#signup-form').on('submit', function (e) {
-            e.preventDefault(); // Prevent form from submitting normally
+        $(document).ready(function () {
+            $('#signup-form').on('submit', function (e) {
+                e.preventDefault(); // Prevent form from submitting normally
 
-            $.ajax({
-                type: 'POST',
-                url: 'create_account.php',
-                data: $(this).serialize(),
-                success: function (response) {
-                    Swal.fire({
-                        position: 'top-end',
-                        icon: 'success',
-                        title: 'Success!',
-                        text: response.message,
-                        showConfirmButton: false,
-                        timer: 3000, // Auto-close after 3 seconds
-                        customClass: {
-                            popup: 'swal-wide'
-                        }
-                    });
-                },
-                error: function () {
-                    Swal.fire({
-                        position: 'top-end',
-                        icon: 'error',
-                        title: 'Error!',
-                        text: 'There was an error processing your request.',
-                        showConfirmButton: false,
-                        timer: 3000, // Auto-close after 3 seconds
-                        customClass: {
-                            popup: 'swal-wide'
-                        }
-                    });
-                }
+                $.ajax({
+                    type: 'POST',
+                    url: 'create_account.php',
+                    data: $(this).serialize(),
+                    success: function (response) {
+                        Swal.fire({
+                            title: 'Success!',
+                            text: response,
+                            icon: 'success',
+                            confirmButtonText: 'OK'
+                        });
+                    },
+                    error: function () {
+                        Swal.fire({
+                            title: 'Error!',
+                            text: 'There was an error processing your request.',
+                            icon: 'error',
+                            confirmButtonText: 'OK'
+                        });
+                    }
+                });
             });
         });
-    });
-</script>
+    </script>
 </body>
 
 </html>
