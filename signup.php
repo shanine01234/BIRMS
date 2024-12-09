@@ -361,33 +361,39 @@
 
     <!-- JavaScript for AJAX and SweetAlert -->
     <script>
-        $(document).ready(function () {
-            $('#signup-form').on('submit', function (e) {
-                e.preventDefault(); // Prevent form from submitting normally
+      $(document).ready(function () {
+    $('#signup-form').on('submit', function (e) {
+        e.preventDefault(); // Prevent form from submitting normally
 
-                $.ajax({
-                    type: 'POST',
-                    url: 'create_account.php',
-                    data: $(this).serialize(),
-                    success: function (response) {
-                        Swal.fire({
-                            title: 'Success!',
-                            text: response,
-                            icon: 'success',
-                            confirmButtonText: 'OK'
-                        });
-                    },
-                    error: function () {
-                        Swal.fire({
-                            title: 'Error!',
-                            text: 'There was an error processing your request.',
-                            icon: 'error',
-                            confirmButtonText: 'OK'
-                        });
-                    }
+        $.ajax({
+            type: 'POST',
+            url: 'create_account.php',
+            data: $(this).serialize(),
+            success: function (response) {
+                const res = JSON.parse(response);
+                if (res.redirect) {
+                    // Redirect to verify_gmail.php if the email is registered but not verified
+                    window.location.href = 'verify_gmail.php';
+                } else {
+                    Swal.fire({
+                        title: 'Success!',
+                        text: res.message,
+                        icon: 'success',
+                        confirmButtonText: 'OK'
+                    });
+                }
+            },
+            error: function () {
+                Swal.fire({
+                    title: 'Error!',
+                    text: 'There was an error processing your request.',
+                    icon: 'error',
+                    confirmButtonText: 'OK'
                 });
-            });
+            }
         });
+    });
+});
     </script>
 </body>
 

@@ -62,6 +62,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if ($status == 1) {
             echo json_encode(["message" => "This email is already registered and verified."]);
             exit;
+        } else {
+            // If the email is registered but not verified
+            echo json_encode(["message" => "Email registered but not verified.", "redirect" => true]);
+            exit;
         }
     }
     $stmt->close();
