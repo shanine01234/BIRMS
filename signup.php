@@ -337,7 +337,8 @@ body::before {
     </style>
 </head>
 
-<>
+<body style="background-color: #fff;">
+    <!-- Signup Form -->
     <div class="signup-container">
         <a href="login.php" class="btn btn-warning btn-back">Back</a>
         <h4 class="text-start my-3" style="font-size: 30px;">Sign Up</h4>
@@ -348,7 +349,7 @@ body::before {
             </div>
             <div class="form-group">
                 <label for="contact">Contact Number</label>
-                <input type="text" id="contact" name="contact" class="form-control my-2" required>
+                <input type="text" id="contact" name="contact" class="form-control my-2" required pattern="09[0-9]{9}" title="Contact number must be 11 digits and start with '09'">
             </div>
             <div class="form-group">
                 <label for="email">Email</label>
@@ -356,12 +357,36 @@ body::before {
             </div>
             <div class="form-group position-relative">
                 <label for="password">Password</label>
-                <input type="password" id="password" name="password" class="form-control my-2" required>
+                <div class="input-group">
+                    <input type="password" id="password" name="password" class="form-control my-2" required>
+                    <button type="button" id="toggle-password" class="btn btn-light border" style="height: 39px; top: 7px;">
+                        <i id="password-icon" class="fas fa-eye"></i>
+                    </button>
+                </div>
+                <div class="progress my-2" style="height: 10px;">
+                <div id="password-strength-bar" class="progress-bar bg-danger" role="progressbar" style="width: 0%;" aria-valuemin="0" aria-valuemax="100"></div>
+            </div>
+                <small id="password-strength" class="form-text text-muted"></small>
+            </div>
+            <div class="form-group position-relative">
+                <label for="confirm-password">Confirm Password</label>
+                <div class="input-group">
+                    <input type="password" id="confirm-password" name="confirm_password" class="form-control my-2" required>
+                    <button type="button" id="toggle-confirm-password" class="btn btn-light border" style="height: 39px; top: 7px;">
+                        <i id="confirm-password-icon" class="fas fa-eye"></i>
+                    </button>
+                </div>
+                <small id="password-match" class="form-text"></small>
+            </div>
+            <div class="form-check my-3">
+                <input type="checkbox" id="terms" name="terms" class="form-check-input">
+                <label for="terms" class="form-check-label">
+                    I agree to the <a href="#" data-bs-toggle="modal" data-bs-target="#termsModal">Terms and Conditions</a>.
+                </label>
             </div>
             <button type="submit" name="signup" class="btn btn-warning btn-block">Sign Up</button>
         </form>
     </div>
-
 
     <!-- JavaScript for AJAX and SweetAlert -->
     <script>
