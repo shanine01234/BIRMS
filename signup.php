@@ -33,10 +33,10 @@
 body::before {
     content: ""; /* Required for pseudo-elements */
     position: absolute;
-    top: 0;
+    top: 20px;
     left: 0;
     width: 100%;
-    height: 1200px;
+    height: 1100px;
     background-image: url('img/photos/one.jpg'); /* Replace with your image */
     background-size: cover;
     background-repeat: no-repeat;
