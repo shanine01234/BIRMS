@@ -37,7 +37,7 @@ body::before {
     left: 0;
     width: 100%;
     height: 100%;
-    background-image: url('your-image-url.jpg'); /* Replace with your image */
+    background-image: url('img/photos/one.jpg'); /* Replace with your image */
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center;
