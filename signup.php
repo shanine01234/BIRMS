@@ -326,6 +326,9 @@ body::before {
             color: #000000;
 
         }
+        .modal-body {
+        font-family: Arial, sans-serif; /* Set the font family to Arial */
+    }
     </style>
 </head>
 
