@@ -17,18 +17,18 @@ $conn = new mysqli($host, $user, $password, $db_name);
 
 // Check connection
 if ($conn->connect_error) {
-    echo json_encode(["message" => "Connection failed: " . $conn->connect_error]);
+    echo json_encode(["success" => false, "message" => "Connection failed: " . $conn->connect_error]);
     exit;
 }
 
-// Handle form submission
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Concatenate the code parts
-    $code = implode('', $_POST['code']);
+// Handle AJAX request
+$data = json_decode(file_get_contents('php://input'), true);
+if (isset($data['code'])) {
+    $code = $data['code'];
 
     // Validate the code
     if (strlen($code) !== 5 || !ctype_digit($code)) {
-        echo json_encode(["message" => "Invalid verification code."]);
+        echo json_encode(["success" => false, "message" => "Invalid verification code."]);
         exit;
     }
 
@@ -47,14 +47,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $update_stmt->bind_param("i", $user_id);
 
         if ($update_stmt->execute()) {
-            echo json_encode(["message" => "Email verified successfully."]);
+            echo json_encode(["success" => true, "message" => "Email verified successfully."]);
         } else {
-            echo json_encode(["message" => "Error updating status: " . $update_stmt->error]);
+            echo json_encode(["success" => false, "message" => "Error updating status: " . $update_stmt->error]);
         }
 
         $update_stmt->close();
     } else {
-        echo json_encode(["message" => "Verification code is incorrect or already used."]);
+        echo json_encode(["success" => false, "message" => "Verification code is incorrect or already used."]);
     }
 
     // Close the statement
