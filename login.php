@@ -26,26 +26,25 @@ if ($_SESSION['login_attempts'] >= 3) {
 if (isset($_POST['login']) && $_SESSION['login_attempts'] < 3) {
     $email = $_POST['email'];
     $password = $_POST['password'];
-    //$recaptchaResponse = $_POST['g-recaptcha-response'];
 
-     // Verify reCAPTCHA
-     $url = 'https://www.google.com/recaptcha/api/siteverify';
-     $data = [
-         'secret' => $recaptchaSecret,
-         //'response' => $recaptchaResponse
-     ];
-     
-     $options = [
-         'http' => [
-             'header'  => "Content-type: application/x-www-form-urlencoded\r\n",
-             'method'  => 'POST',
-             'content' => http_build_query($data)
-         ]
-     ];
-     
-     $context  = stream_context_create($options);
-     $verify = file_get_contents($url, false, $context);
-     $captchaSuccess = json_decode($verify);
+    // Verify reCAPTCHA
+    $url = 'https://www.google.com/recaptcha/api/siteverify';
+    $data = [
+        'secret' => $recaptchaSecret,
+        //'response' => $recaptchaResponse
+    ];
+    
+    $options = [
+        'http' => [
+            'header'  => "Content-type: application/x-www-form-urlencoded\r\n",
+            'method'  => 'POST',
+            'content' => http_build_query($data)
+        ]
+    ];
+    
+    $context  = stream_context_create($options);
+    $verify = file_get_contents($url, false, $context);
+    $captchaSuccess = json_decode($verify);
 
     $stmt = $conn->query("SELECT * FROM users WHERE email = '$email'");
     if ($stmt->num_rows) {
@@ -54,27 +53,6 @@ if (isset($_POST['login']) && $_SESSION['login_attempts'] < 3) {
         if (password_verify($password, $row['password'])) {
             $_SESSION['login_attempts'] = 0; // Reset the attempts after successful login
             if ($row['status'] == 1) {
-                ?>
-                <script>
-                    document.addEventListener('DOMContentLoaded', function() {
-                        Swal.fire({
-                            position: "middle",
-                            icon: "warning",
-                            title: "Account not verified, Please verify your account first",
-                            showConfirmButton: false,
-                            timer: 2000,
-                            width: '250px',  // Adjust the width as needed
-                            padding: '20px', // Adjust the padding for larger alerts
-                            customClass: {
-                                popup: 'custom-swal'  // You can add a custom class to control the styling further
-                            }
-                        }).then(() => {
-                            window.location.href = "account-verification.php";
-                        });
-                    })
-                </script>
-                <?php
-            } else {
                 $_SESSION['name'] = $row['username'];
                 $_SESSION['email'] = $row['email'];
                 $_SESSION['user_id'] = $row['id'];    
@@ -87,13 +65,34 @@ if (isset($_POST['login']) && $_SESSION['login_attempts'] < 3) {
                             title: "Account logged in successfully",
                             showConfirmButton: false,
                             timer: 1500,
-                            width: '250px',  // Adjust the width as needed
-                            padding: '20px', // Adjust the padding for larger alerts
+                            width: '250px',
+                            padding: '20px',
                             customClass: {
-                                popup: 'custom-swal'  // You can add a custom class to control the styling further
+                                popup: 'custom-swal'
                             }
                         }).then(() => {
-                            window.location.href = "restobar.php";
+                            window.location.href = "home.php"; // Redirect to home page
+                        });
+                    })
+                </script>
+                <?php
+            } else {
+                ?>
+                <script>
+                    document.addEventListener('DOMContentLoaded', function() {
+                        Swal.fire({
+                            position: "middle",
+                            icon: "warning",
+                            title: "Account not verified, Please verify your account first",
+                            showConfirmButton: false,
+                            timer: 2000,
+                            width: '250px',
+                            padding: '20px',
+                            customClass: {
+                                popup: 'custom-swal'
+                            }
+                        }).then(() => {
+                            window.location.href = "account-verification.php";
                         });
                     })
                 </script>
@@ -110,10 +109,10 @@ if (isset($_POST['login']) && $_SESSION['login_attempts'] < 3) {
                         title: "Incorrect email or password. Attempt: <?= $_SESSION['login_attempts']; ?> of 3",
                         showConfirmButton: false,
                         timer: 1500,
-                        width: '250px',  // Adjust the width as needed
-                        padding: '20px', // Adjust the padding for larger alerts
+                        width: '250px',
+                        padding: '20px',
                         customClass: {
-                            popup: 'custom-swal'  // You can add a custom class to control the styling further
+                            popup: 'custom-swal'
                         }
                     }).then(() => {
                         window.location.href = "login.php";
@@ -133,10 +132,10 @@ if (isset($_POST['login']) && $_SESSION['login_attempts'] < 3) {
                     title: "Incorrect email or password. Attempt: <?= $_SESSION['login_attempts']; ?> of 3",
                     showConfirmButton: false,
                     timer: 1500,
-                    width: '250px',  // Adjust the width as needed
-                    padding: '20px', // Adjust the padding for larger alerts
+                    width: '250px',
+                    padding: '20px',
                     customClass: {
-                        popup: 'custom-swal'  // You can add a custom class to control the styling further
+                        popup: 'custom-swal'
                     }
                 }).then(() => {
                     window.location.href = "login.php";
@@ -172,10 +171,7 @@ if (substr($request, -4) == '.php') {
     header("Location: $new_url", true, 301);
     exit();
 }
-
-
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 
