@@ -20,48 +20,19 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
-        body, html {
-    margin: 0;
-    padding: 0;
-    height: 100%; /* Ensures full height for body and html */
-    overflow: hidden; /* Prevents scrolling */
-    font-family: "Inconsolata", monospace;
-}
+        body {
 
-body {
-    position: relative;
-    display: flex; /* Centers the content */
-    justify-content: center;
-    align-items: center;
-    height: 100vh; /* Full viewport height */
-}
+            font-family: "Inconsolata", monospace;
 
-body::before {
-    content: ""; /* Pseudo-element for the background */
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-image: url('img/photos/one.jpg'); /* Replace with your image path */
-    background-size: cover; /* Ensures the image fully covers the screen */
-    background-repeat: no-repeat;
-    background-position: center;
-    opacity: 0.5; /* Fades the background */
-    z-index: -1; /* Places it behind the content */
-}
+            font-optical-sizing: auto;
 
-.signup-container {
-    position: relative;
-    z-index: 1;
-    background-color: rgba(255, 255, 255, 0.9); /* Semi-transparent white background for readability */
-    padding: 30px;
-    border-radius: 10px;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
-    max-width: 400px;
-    width: 90%; /* Responsive width */
-}
+            font-weight: <weight>;
 
+            font-style: normal;
+
+            font-variation-settings: "wdth" 100;
+
+        }
 
         .cover-container {
 
