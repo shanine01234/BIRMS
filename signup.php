@@ -10,52 +10,13 @@ require "./phpmailer/src/PHPMailer.php";
 require "./phpmailer/src/SMTP.php";
 
 if (isset($_POST['signup'])) {
-    $name = trim($_POST['name']); // Trim spaces from input
+    $name = $_POST['name'];
     $contact = $_POST['contact'];
     $email = $_POST['email'];
     $password = $_POST['password'];
     $confirm_password = $_POST['confirm_password'];
     $verification_code = uniqid();
 
-    // Validate Name: Ensure no spaces at the beginning
-    if (preg_match('/^\s/', $_POST['name'])) {
-        ?>
-        <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            Swal.fire({
-                icon: "error",
-                title: "Name cannot start with a space.",
-                showConfirmButton: false,
-                timer: 1500
-            }).then(() => {
-                window.location.href = "signup.php";
-            });
-        });
-        </script>
-        <?php
-        exit;
-    }
-
-    // Validate Contact Number: Must start with 09 and have 11 digits
-    if (!preg_match('/^09[0-9]{9}$/', $contact)) {
-        ?>
-        <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            Swal.fire({
-                icon: "error",
-                title: "Invalid contact number. Must be 11 digits and start with '09'.",
-                showConfirmButton: false,
-                timer: 1500
-            }).then(() => {
-                window.location.href = "signup.php";
-            });
-        });
-        </script>
-        <?php
-        exit;
-    }
-
-    // Check Password Match
     if ($password !== $confirm_password) {
         ?>
         <script>
@@ -93,18 +54,19 @@ if (isset($_POST['signup'])) {
         exit;
     }
 
-    // Check Terms and Conditions Agreement
+    // Check if Terms and Conditions are agreed to
     if (!isset($_POST['terms'])) {
         ?>
         <script>
         document.addEventListener('DOMContentLoaded', function() {
             Swal.fire({
+                position: "middle",
                 icon: "error",
-                title: "Please agree to the Terms and Conditions.",
+                title: "Please agree to the Terms and Conditions to sign up.",
                 showConfirmButton: false,
                 timer: 1500
             }).then(() => {
-                window.location.href = "signup.php";
+                window.location.href = "signup.php"
             });
         });
         </script>
@@ -112,46 +74,99 @@ if (isset($_POST['signup'])) {
         exit;
     }
 
-    // Check for Duplicate Email
-    $stmt = $conn->query("SELECT * FROM users WHERE email = '$email'");
-    if ($stmt->num_rows) {
+    // Validate Contact Number
+    if (!preg_match('/^09[0-9]{9}$/', $contact)) {
         ?>
         <script>
         document.addEventListener('DOMContentLoaded', function() {
             Swal.fire({
+                position: "middle",
                 icon: "error",
-                title: "Account already exists.",
+                title: "Invalid contact number. Must be 11 digits and start with '09'.",
                 showConfirmButton: false,
                 timer: 1500
             }).then(() => {
-                window.location.href = "signup.php";
+                window.location.href = "signup.php"
             });
         });
         </script>
         <?php
+        exit;
+    }
+
+    $stmt = $conn->query("SELECT * FROM users WHERE email = '$email'");
+    if ($stmt->num_rows) {
+       ?>
+        <script>
+           document.addEventListener('DOMContentLoaded', function(){
+            Swal.fire({
+                    position: "middle",
+                    icon: "error",
+                    title: "Account already exists",
+                    showConfirmButton: false,
+                    timer: 1500
+            }).then(() => {
+                window.location.href = "signup.php"
+            });
+           })
+        </script>
+       <?php 
     } else {
         $hashed = password_hash($password, PASSWORD_DEFAULT);
         $query = $conn->query("INSERT INTO users SET username = '$name', contact = '$contact', email = '$email', password = '$hashed', verification_code = '$verification_code'");
-
         if ($query) {
-            // Sending Verification Email Logic
+
+            $mail = new PHPMailer(true);
+            $mail->SMTPDebug = 0;
+            $mail->isSMTP();
+            $mail->Host = 'smtp.gmail.com';
+            $mail->SMTPAuth = true;
+            $mail->Username = 'shaninezaspa179@gmail.com';
+            $mail->Password = 'hglesxkasgmryjxq';
+            $mail->Port = 587;
+
+            $mail->SMTPOptions = array(
+                'ssl' => array(
+                    'verify_peer' => false,
+                    'verify_peer_name' => false,
+                    'allow_self_signed' => true
+                )
+            );
+
+            $mail->setFrom('bantayanrestobar@gmail.com', 'Barangay Restobar');
+
+            $mail->addAddress($email);
+            $mail->Subject = "Account Verification Code";
+            $mail->Body = "This is your verification code: " . $verification_code;
+
+            $mail->send();
+
             ?>
             <script>
-            document.addEventListener('DOMContentLoaded', function() {
+            document.addEventListener('DOMContentLoaded', function(){
                 Swal.fire({
-                    icon: "success",
-                    title: "Account created successfully!",
-                    showConfirmButton: false,
-                    timer: 1500
+                        position: "middle",
+                        icon: "success",
+                        title: "Account created successfully",
+                        showConfirmButton: false,
+                        timer: 1500
                 }).then(() => {
-                    window.location.href = "account-verification.php";
+                    window.location.href = "account-verification.php"
                 });
-            });
+            })
             </script>
-            <?php
+        <?php 
         }
     }
 }
+
+$request = $_SERVER['REQUEST_URI'];
+if (substr($request, -4) == '.php') {
+    $new_url = substr($request, 0, -4);
+    header("Location: $new_url", true, 301);
+    exit();
+}
+
 $request = $_SERVER['REQUEST_URI'];
 if (substr($request, -4) == '.php') {
     $new_url = substr($request, 0, -4);
@@ -479,7 +494,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Function to update the progress bar and text
     function updateStrengthBar(score) {
-        passwordStrengthBar.style.width = `${score}%`;
+        passwordStrengthBar.style.width = ${score}%;
 
         if (score < 50) {
             passwordStrengthBar.className = "progress-bar bg-danger";
