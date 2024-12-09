@@ -326,8 +326,8 @@ body::before {
             color: #000000;
 
         }
-        .modal-body {
-        font-family: Arial, sans-serif; /* Set the font family to Arial */
+        .modal-body, .modal-body p {
+        font-family: Arial, sans-serif; /* Set Arial font for both the modal body and paragraph elements */
     }
     </style>
 </head>
@@ -404,7 +404,7 @@ body::before {
                         <li><strong>Reservation Policy/strong></li>
                             <p>• Reservations are recommended for large groups.</p>
                             <p>• Please notify us at least 24 hours in advance for cancellations or changes.</p>
-                        <li><strong>Payment</strong></li>.
+                        <li><strong>Payment</strong></li>
                             <p>• We accept cash and major credit cards.</p>
                             <p>• All sales are final. No refunds or exchanges.</p>
                         <li><strong>Liability</strong></li>
