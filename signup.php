@@ -533,6 +533,40 @@ $(document).ready(function () {
         }
     });
 </script>
+<script>
+    $(document).ready(function () {
+    // Toggle password visibility
+    $('#toggle-password').on('click', function () {
+        const passwordField = $('#password');
+        const passwordIcon = $('#password-icon');
+        
+        // Toggle input type and icon
+        if (passwordField.attr('type') === 'password') {
+            passwordField.attr('type', 'text');
+            passwordIcon.removeClass('fas fa-eye').addClass('fas fa-eye-slash');
+        } else {
+            passwordField.attr('type', 'password');
+            passwordIcon.removeClass('fas fa-eye-slash').addClass('fas fa-eye');
+        }
+    });
+
+    // Toggle confirm password visibility
+    $('#toggle-confirm-password').on('click', function () {
+        const confirmPasswordField = $('#confirm-password');
+        const confirmPasswordIcon = $('#confirm-password-icon');
+        
+        // Toggle input type and icon
+        if (confirmPasswordField.attr('type') === 'password') {
+            confirmPasswordField.attr('type', 'text');
+            confirmPasswordIcon.removeClass('fas fa-eye').addClass('fas fa-eye-slash');
+        } else {
+            confirmPasswordField.attr('type', 'password');
+            confirmPasswordIcon.removeClass('fas fa-eye-slash').addClass('fas fa-eye');
+        }
+    });
+});
+
+</script>
 
 </body>
 
