@@ -556,7 +556,21 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 </script>
 
-
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const form = document.querySelector("form");
+    
+    form.addEventListener("submit", function (event) {
+        // Get all input fields
+        const inputs = form.querySelectorAll("input[type='text'], input[type='email'], input[type='password']");
+        
+        // Trim whitespace from each input value
+        inputs.forEach(input => {
+            input.value = input.value.trim();
+        });
+    });
+});
+</script>
 
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
 
