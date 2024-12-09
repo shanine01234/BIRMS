@@ -68,7 +68,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $mail = new PHPMailer(true);
         try {
             //Server settings
-             $mail->isSMTP();
+            $mail->isSMTP();
             $mail->SMTPDebug = 0; // Disable verbose debug output
             $mail->Host = 'smtp.gmail.com';
             $mail->SMTPAuth = true;
@@ -78,7 +78,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $mail->Port = 587;
 
             //Recipients
-            $mail->setFrom('shaninezaspa179@gmail.com', 'Restobar');
+            $mail->setFrom('your-email@gmail.com', 'Restobar'); // Replace with your email
             $mail->addAddress($email, $name);
 
             // Content
