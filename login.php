@@ -71,7 +71,7 @@ if (isset($_POST['login']) && $_SESSION['login_attempts'] < 3) {
                                 popup: 'custom-swal'
                             }
                         }).then(() => {
-                            window.location.href = "home.php"; // Redirect to home page
+                            window.location.href = "index.php"; // Redirect to home page
                         });
                     })
                 </script>
