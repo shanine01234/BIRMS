@@ -36,7 +36,7 @@ body::before {
     top: 0;
     left: 0;
     width: 100%;
-    height: 200px;
+    height: 1200px;
     background-image: url('img/photos/one.jpg'); /* Replace with your image */
     background-size: cover;
     background-repeat: no-repeat;
