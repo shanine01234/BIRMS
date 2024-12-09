@@ -435,6 +435,11 @@ body::before {
 <!-- Include Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 
+            <button type="submit" name="signup" class="btn btn-warning btn-block">Sign Up</button>
+        </form>
+    </div>
+
+    
 
     <!-- JavaScript for AJAX and SweetAlert -->
     <script>
