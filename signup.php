@@ -421,7 +421,7 @@ if (substr($request, -4) == '.php') {
         <p>• Valid identification is required upon request.</p>
         <li><strong>Responsible Consumption</strong></li>
         <p>• We encourage responsible drinking. We reserve the right to refuse service to anyone appearing intoxicated or behaving inappropriately.</p>
-        <p>• No outside food or drinks are allowed.</p>
+        
         <li><strong>Reservation Policy</strong></li>
         <p>• Please notify us at least 24 hours in advance for cancellations or changes.</p>
         <li><strong>Payment</strong></li>
