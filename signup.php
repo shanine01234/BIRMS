@@ -21,172 +21,288 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
         body {
+
             font-family: "Inconsolata", monospace;
+
             font-optical-sizing: auto;
+
             font-weight: <weight>;
+
             font-style: normal;
+
             font-variation-settings: "wdth" 100;
+
         }
 
         .cover-container {
+
             position: relative;
+
             width: 100%;
+
             height: 400px;
+
         }
 
         .cover-image {
+
             width: 100%;
+
             height: 100%;
+
             object-fit: cover;
+
         }
 
         .cover-text {
+
             position: absolute;
+
             top: 50%;
+
             left: 50%;
+
             transform: translate(-50%, -50%);
+
             color: black;
+
             text-align: center;
+
             width: 70%;
+
         }
 
         .card {
+
             display: flex;
+
             flex-direction: row;
+
             width: 100%;
+
             max-width: 700px;
+
             margin: auto;
+
             border: 2px solid black;
+
         }
 
         .card img {
+
             width: 50%;
+
             height: auto;
+
         }
 
         .card-body {
+
             width: 50%;
+
             padding: 10px;
+
         }
 
         .image-container {
+
             position: relative;
+
             overflow: hidden;
+
             width: 300px;
+
             height: 400px;
+
         }
 
         .image-container img {
+
             display: block;
+
             width: 100%;
+
             height: 100%;
+
             object-fit: cover;
+
             transition: opacity 0.3s ease;
+
         }
 
         .image-container:hover img {
+
             opacity: 0.3;
+
         }
 
         .overlay {
+
             position: absolute;
+
             top: 0;
+
             left: 0;
+
             width: 100%;
+
             height: 100%;
+
             background: rgba(0, 0, 0, 0.7);
+
             color: white;
+
             display: flex;
+
             align-items: center;
+
             justify-content: center;
+
             opacity: 0;
+
             transition: opacity 0.3s ease;
+
             text-align: center;
+
             padding: 10px;
+
         }
 
         .image-container:hover .overlay {
+
             opacity: 1;
+
         }
 
         .overlay-text {
+
             font-size: 16px;
+
             line-height: 1.5;
+
         }
 
         footer {
+
             background-color: #343a40;
+
             color: white;
+
             padding: 20px 0;
+
             text-align: center;
+
         }
 
         footer .social-icons a {
+
             color: white;
+
             margin: 0 10px;
+
             font-size: 20px;
+
         }
 
         .navbar-nav {
+
             display: flex;
+
             justify-content: center;
+
             width: 100%;
+
         }
 
         .nav-item {
+
             text-align: center;
+
             color: black !important;
+
             margin: 0 15px;
+
         }
 
         .nav-link,
         .nav-link i {
+
             color: black !important;
+
         }
 
         .navbar-toggler-icon {
+
             background-color: black;
+
         }
 
         .signup-container {
+
             border: 2px solid #ddd;
+
             padding: 20px;
+
             border-radius: 5px;
+
             max-width: 400px;
+
             margin: 0 auto;
+
             background-color: white;
+
             margin-top: 100px;
+
         }
 
         .btn-back {
+
             display: inline-block;
+
             margin-bottom: 20px;
+
         }
 
         .btn-secondary {
+
             background-color: #6c757d;
+
             color: white;
+
             border: none;
+
         }
 
         .btn-secondary:hover {
+
             background-color: #5a6268;
+
         }
 
         .input-group-text {
+
             background-color: #ffffff;
+
             border: 1px solid #ced4da;
+
             cursor: pointer;
+
             padding: 0.375rem 0.75rem;
+
         }
 
         .input-group-text i {
+
             font-size: 16px;
+
             color: #6c757d;
+
         }
 
         .input-group-text:hover i {
+
             color: #000000;
+
         }
     </style>
 </head>
@@ -254,18 +370,12 @@
                     url: 'create_account.php',
                     data: $(this).serialize(),
                     success: function (response) {
-                        const res = JSON.parse(response);
-                        if (res.redirect) {
-                            // Redirect to verify_gmail.php if the email is registered but not verified
-                            window.location.href = 'verify_gmail.php';
-                        } else {
-                            Swal.fire({
-                                title: 'Success!',
-                                text: res.message,
-                                icon: 'success',
-                                confirmButtonText: 'OK'
-                            });
-                        }
+                        Swal.fire({
+                            title: 'Success!',
+                            text: response,
+                            icon: 'success',
+                            confirmButtonText: 'OK'
+                        });
                     },
                     error: function () {
                         Swal.fire({
