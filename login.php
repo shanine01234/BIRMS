@@ -215,7 +215,7 @@ body::before {
     left: 0;
     width: 100%;
     height: 100%;
-    background: url('img/photos/login.jpg') no-repeat center center fixed;
+    background: url('img/photos/one.jpg') no-repeat center center fixed;
     background-size: cover;
     opacity: 0.5; /* Adjust the opacity for the fade effect */
     z-index: -1; /* Ensure it stays behind the content */
