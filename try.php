@@ -15,7 +15,7 @@ try {
     }
 
     // SQL query to add a 'status' column
-    $sql = "ALTER TABLE users ADD COLUMN status VARCHAR(50) NOT NULL DEFAULT 'active'";
+    $sql = "ALTER TABLE users ADD COLUMN contact VARCHAR(50) NOT NULL DEFAULT 'active'";
 
     // Execute the query
     if ($conn->query($sql) === TRUE) {

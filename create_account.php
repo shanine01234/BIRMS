@@ -1,6 +1,11 @@
 <?php
 header('Content-Type: application/json');
 
+// Enable error reporting for debugging
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 // Database connection
 $host = "127.0.0.1";
 $user = "u510162695_birms_db";
@@ -12,7 +17,7 @@ $conn = new mysqli($host, $user, $password, $db_name);
 
 // Check connection
 if ($conn->connect_error) {
-    echo json_encode("Connection failed: " . $conn->connect_error);
+    echo json_encode(["message" => "Connection failed: " . $conn->connect_error]);
     exit;
 }
 
@@ -27,17 +32,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Validate input data
     if (empty($name) || empty($contact) || empty($email) || empty($password) || empty($confirm_password)) {
-        echo json_encode("All fields are required.");
+        echo json_encode(["message" => "All fields are required."]);
         exit;
     }
 
     if ($password !== $confirm_password) {
-        echo json_encode("Passwords do not match.");
+        echo json_encode(["message" => "Passwords do not match."]);
         exit;
     }
 
     if (!$terms) {
-        echo json_encode("You must agree to the terms and conditions.");
+        echo json_encode(["message" => "You must agree to the terms and conditions."]);
         exit;
     }
 
@@ -54,9 +59,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Execute the statement
     if ($stmt->execute()) {
-        echo json_encode("Account created successfully. Please verify your email.");
+        echo json_encode(["message" => "Account created successfully. Please verify your email."]);
     } else {
-        echo json_encode("Error: " . $stmt->error);
+        echo json_encode(["message" => "Error: " . $stmt->error]);
     }
 
     // Close the statement
