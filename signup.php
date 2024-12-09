@@ -312,7 +312,7 @@
     <div class="signup-container">
         <a href="login.php" class="btn btn-warning btn-back">Back</a>
         <h4 class="text-start my-3" style="font-size: 30px;">Sign Up</h4>
-        <form id="signup-form" action="create_account.php">
+        <form id="signup-form">
             <div class="form-group">
                 <label for="name">Name</label>
                 <input type="text" id="name" name="name" class="form-control my-2" required>
@@ -359,7 +359,36 @@
         </form>
     </div>
 
-    
+    <!-- JavaScript for AJAX and SweetAlert -->
+    <script>
+        $(document).ready(function () {
+            $('#signup-form').on('submit', function (e) {
+                e.preventDefault(); // Prevent form from submitting normally
+
+                $.ajax({
+                    type: 'POST',
+                    url: 'create_account.php',
+                    data: $(this).serialize(),
+                    success: function (response) {
+                        Swal.fire({
+                            title: 'Success!',
+                            text: response,
+                            icon: 'success',
+                            confirmButtonText: 'OK'
+                        });
+                    },
+                    error: function () {
+                        Swal.fire({
+                            title: 'Error!',
+                            text: 'There was an error processing your request.',
+                            icon: 'error',
+                            confirmButtonText: 'OK'
+                        });
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 
 </html>
