@@ -384,6 +384,7 @@ body::before {
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="termsModalLabel">Terms and Conditions</h5>
+                <!-- Close button to close modal -->
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body" style="font-family: Arial, sans-serif;">
@@ -426,13 +427,14 @@ body::before {
                 </ol>
             </div>
             <div class="modal-footer" style="font-family: Arial, sans-serif;">
+                <!-- Close button that also triggers modal close -->
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Include Bootstrap JS -->
+<!-- Include Bootstrap JS (important for modal functionality) -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 
             <button type="submit" name="signup" class="btn btn-warning btn-block">Sign Up</button>
