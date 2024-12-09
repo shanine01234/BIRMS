@@ -78,11 +78,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stmt->bind_param("sssssi", $name, $email, $hashed_password, $contact, $verification_code, $status);
 
     // Execute the statement
+    // Execute the statement
     if ($stmt->execute()) {
         // Send verification email
         $mail = new PHPMailer(true);
         try {
-            //Server settings
+            // Server settings
             $mail->isSMTP();
             $mail->SMTPDebug = 0; // Disable verbose debug output
             $mail->Host = 'smtp.gmail.com';
@@ -92,17 +93,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $mail->SMTPSecure = 'tls';
             $mail->Port = 587;
 
-            //Recipients
+            // Recipients
             $mail->setFrom('shaninezaspa179@gmail.com', 'Bantayan Restobar');
             $mail->addAddress($email, $name);
 
             // Content
             $mail->isHTML(true);
             $mail->Subject = 'Email Verification';
-            $mail->Body    = "Dear $name,<br><br>Your verification code is: <strong>$verification_code</strong><br><br>Please use this code to verify your email address.";
+            $mail->Body = "Dear $name,<br><br>Your verification code is: <strong>$verification_code</strong><br><br>Please use this code to verify your email address.";
 
             $mail->send();
-            echo json_encode(["message" => "Account created successfully. Please verify your email."]);
+
+            // Redirect to verify_email.php
+            header('Location: verify_email.php');
+            exit; // Ensure no further code is executed after the redirect
         } catch (Exception $e) {
             echo json_encode(["message" => "Message could not be sent. Mailer Error: {$mail->ErrorInfo}"]);
         }
