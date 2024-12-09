@@ -60,7 +60,6 @@ body::before {
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
     max-width: 400px;
     width: 90%; /* Responsive width */
-    text-align: center;
 }
 
 
