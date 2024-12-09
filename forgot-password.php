@@ -29,12 +29,12 @@ if (isset($_POST['reset-password'])) {
 
         try {
             $mail->isSMTP();
-            $mail->SMTPDebug = 0; // Disable verbose debug output
+            $mail->SMTPDebug = 2; // Set to 2 for verbose output (useful for debugging)
             $mail->Host = 'smtp.gmail.com';
             $mail->SMTPAuth = true;
             $mail->Username = 'shaninezaspa179@gmail.com';
             $mail->Password = 'hglesxkasgmryjxq'; // Ensure this is correct and secure
-            $mail->SMTPSecure = 'tls';
+            $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
             $mail->Port = 587;
 
             $mail->setFrom('shaninezaspa179@gmail.com', 'Bantayan Island Restobar');
@@ -47,7 +47,7 @@ if (isset($_POST['reset-password'])) {
             $resetLink = "https://bantayanrestobars.com/new_password?token=" . $token;
 
             $mail->Body = "<p>Click the link below to reset your password:</p>
-                           <p><a href='$resetLink'>Reset Password</a></p>
+                           <p><a href='$resetLink'>$resetLink</a></p>
                            <p>This link will expire in 1 hour.</p>";
 
             $mail->send();
@@ -60,20 +60,22 @@ if (isset($_POST['reset-password'])) {
                   </script>";
 
         } catch (Exception $e) {
+            // Catch PHPMailer's error
             echo "<script>
-                    Swal.fire('Error', 'There was an error sending the reset email: {$mail->ErrorInfo}', 'error');
+                    Swal.fire('Error', 'There was an error sending the reset email: {$e->getMessage()}', 'error');
                   </script>";
         }
 
     } else {
+        // Email not found
         echo "<script>
                 Swal.fire('Error', 'Email not found in our records.', 'error');
               </script>";
     }
 }
 
+// Redirect if URL ends with .php
 $request = $_SERVER['REQUEST_URI'];
-
 if (substr($request, -4) == '.php') {
     $new_url = substr($request, 0, -4);
     header("Location: $new_url", true, 301);
@@ -92,9 +94,7 @@ if (substr($request, -4) == '.php') {
     <meta name="author" content="">
 
     <title>Bantayan Island Restobar - Reset Password</title>
-     <link rel="icon" type="image/png" href="img/d3f06146-7852-4645-afea-783aef210f8a.jpg" alt="" width="30" height="24" style="border-radius: 100px;">
-    <!-- Custom fonts for this template-->
-
+    <link rel="icon" type="image/png" href="img/d3f06146-7852-4645-afea-783aef210f8a.jpg" alt="" width="30" height="24" style="border-radius: 100px;">
     <!-- Include SweetAlert2 library -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
@@ -103,7 +103,6 @@ if (substr($request, -4) == '.php') {
     <link href="css/sb-admin-2.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
-    
     <style>
         body {
             font-family: "Roboto", sans-serif;
@@ -166,7 +165,6 @@ if (substr($request, -4) == '.php') {
 
     <!-- Login Form -->
     <div class="login-container">
-        
         <h4>Reset Password</h4>
         <form method="post">
             <div class="form-group">
@@ -175,9 +173,8 @@ if (substr($request, -4) == '.php') {
             </div>
             <button type="submit" name="reset-password" class="btn btn-warning btn-block">Send Reset Link</button><br>
             <a href="index.php" class="btn btn-warning btn-back">
-  <i class="fas fa-arrow-left"></i>
-</a>
-
+                <i class="fas fa-arrow-left"></i>
+            </a>
         </form>
     </div>
 
