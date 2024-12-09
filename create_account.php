@@ -78,7 +78,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $mail->Port = 587;
 
             //Recipients
-            $mail->setFrom('shaninezaspa179@gmail.com', 'Restobar');
+            $mail->setFrom('your_email@example.com', 'Your Name');
             $mail->addAddress($email, $name);
 
             // Content
