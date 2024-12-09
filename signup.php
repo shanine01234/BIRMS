@@ -333,11 +333,10 @@
                         <i id="password-icon" class="fas fa-eye"></i>
                     </button>
                 </div>
-                <!-- Password Strength Progress Bar -->
                 <div class="progress my-2" style="height: 10px;">
-                    <div id="password-strength-bar" class="progress-bar" role="progressbar" style="width: 0%;" aria-valuemin="0" aria-valuemax="100"></div>
-                </div>
-                <small id="password-strength" class="form-text"></small>
+                <div id="password-strength-bar" class="progress-bar bg-danger" role="progressbar" style="width: 0%;" aria-valuemin="0" aria-valuemax="100"></div>
+            </div>
+                <small id="password-strength" class="form-text text-muted"></small>
             </div>
             <div class="form-group position-relative">
                 <label for="confirm-password">Confirm Password</label>
@@ -389,6 +388,56 @@
             });
         });
     </script>
+    <script>
+    $(document).ready(function () {
+        const passwordField = $('#password');
+        const strengthBar = $('#password-strength-bar');
+        const strengthText = $('#password-strength');
+
+        passwordField.on('input', function () {
+            const password = passwordField.val();
+            const strength = checkPasswordStrength(password);
+
+            // Update the progress bar
+            strengthBar.css('width', strength.score + '%');
+            strengthBar.removeClass('bg-danger bg-warning bg-success');
+            if (strength.score <= 40) {
+                strengthBar.addClass('bg-danger');
+            } else if (strength.score <= 70) {
+                strengthBar.addClass('bg-warning');
+            } else {
+                strengthBar.addClass('bg-success');
+            }
+
+            // Update the strength message
+            strengthText.text(strength.message);
+        });
+
+        function checkPasswordStrength(password) {
+            let score = 0;
+            let message = 'Weak';
+
+            if (password.length >= 6) score += 20;
+            if (password.length >= 10) score += 20;
+            if (/[a-z]/.test(password)) score += 20; // Lowercase
+            if (/[A-Z]/.test(password)) score += 20; // Uppercase
+            if (/\d/.test(password)) score += 10;    // Number
+            if (/[@$!%*?&]/.test(password)) score += 10; // Special char
+
+            // Update message based on score
+            if (score <= 40) {
+                message = 'Weak';
+            } else if (score <= 70) {
+                message = 'Moderate';
+            } else {
+                message = 'Strong';
+            }
+
+            return { score, message };
+        }
+    });
+</script>
+
 </body>
 
 </html>
