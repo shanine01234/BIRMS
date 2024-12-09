@@ -1,5 +1,6 @@
 <?php 
 require_once('inc/header.php');
+session_start(); // Start session to track login attempts.
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
@@ -9,172 +10,138 @@ require "./phpmailer/src/Exception.php";
 require "./phpmailer/src/PHPMailer.php";
 require "./phpmailer/src/SMTP.php";
 
-if (isset($_POST['signup'])) {
-    $name = $_POST['name'];
-    $contact = $_POST['contact'];
-    $email = $_POST['email'];
+// Database connection using MySQLi
+$conn = new mysqli("localhost", "username", "password", "database_name");
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+
+// Function to clean and validate inputs
+function clean_input($data) {
+    return htmlspecialchars(trim($data), ENT_QUOTES, 'UTF-8');
+}
+
+// Track failed attempts for brute force protection
+if (!isset($_SESSION['failed_attempts'])) {
+    $_SESSION['failed_attempts'] = 0;
+    $_SESSION['last_attempt_time'] = time();
+}
+
+$max_attempts = 5;
+$lockout_time = 600; // 10 minutes lockout
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['signup'])) {
+
+    // Brute Force Prevention
+    if ($_SESSION['failed_attempts'] >= $max_attempts && (time() - $_SESSION['last_attempt_time']) < $lockout_time) {
+        echo "<script>
+            Swal.fire({
+                icon: 'error',
+                title: 'Too many failed attempts.',
+                text: 'Please try again later.',
+            });
+        </script>";
+        exit;
+    }
+
+    // Sanitize inputs
+    $name = clean_input($_POST['name']);
+    $contact = clean_input($_POST['contact']);
+    $email = clean_input($_POST['email']);
     $password = $_POST['password'];
     $confirm_password = $_POST['confirm_password'];
     $verification_code = uniqid();
 
+    // Password Confirmation
     if ($password !== $confirm_password) {
-        ?>
-        <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            Swal.fire({
-                icon: "error",
-                title: "Passwords do not match.",
-                showConfirmButton: false,
-                timer: 1500
-            }).then(() => {
-                window.location.href = "signup.php";
-            });
-        });
-        </script>
-        <?php
+        echo "<script>
+            Swal.fire({ icon: 'error', title: 'Passwords do not match.' });
+        </script>";
         exit;
     }
 
-    // Validate Password Strength
+    // Password Strength Validation
     if (strlen($password) < 6 || !preg_match('/[A-Z]/', $password) || !preg_match('/[0-9]/', $password)) {
-        ?>
-        <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            Swal.fire({
-                icon: "error",
-                title: "Password must be at least 6 characters, contain 1 uppercase letter, and 1 number.",
-                showConfirmButton: false,
-                timer: 1500
-            }).then(() => {
-                window.location.href = "signup.php";
-            });
-        });
-        </script>
-        <?php
-        exit;
-    }
-
-    // Check if Terms and Conditions are agreed to
-    if (!isset($_POST['terms'])) {
-        ?>
-        <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            Swal.fire({
-                position: "middle",
-                icon: "error",
-                title: "Please agree to the Terms and Conditions to sign up.",
-                showConfirmButton: false,
-                timer: 1500
-            }).then(() => {
-                window.location.href = "signup.php"
-            });
-        });
-        </script>
-        <?php
+        echo "<script>
+            Swal.fire({ icon: 'error', title: 'Password too weak.' });
+        </script>";
         exit;
     }
 
     // Validate Contact Number
     if (!preg_match('/^09[0-9]{9}$/', $contact)) {
-        ?>
-        <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            Swal.fire({
-                position: "middle",
-                icon: "error",
-                title: "Invalid contact number. Must be 11 digits and start with '09'.",
-                showConfirmButton: false,
-                timer: 1500
-            }).then(() => {
-                window.location.href = "signup.php"
-            });
-        });
-        </script>
-        <?php
+        echo "<script>
+            Swal.fire({ icon: 'error', title: 'Invalid contact number.' });
+        </script>";
         exit;
     }
 
-    $stmt = $conn->query("SELECT * FROM users WHERE email = '$email'");
-    if ($stmt->num_rows) {
-       ?>
-        <script>
-           document.addEventListener('DOMContentLoaded', function(){
-            Swal.fire({
-                    position: "middle",
-                    icon: "error",
-                    title: "Account already exists",
-                    showConfirmButton: false,
-                    timer: 1500
-            }).then(() => {
-                window.location.href = "signup.php"
-            });
-           })
-        </script>
-       <?php 
-    } else {
-        $hashed = password_hash($password, PASSWORD_DEFAULT);
-        $query = $conn->query("INSERT INTO users SET username = '$name', contact = '$contact', email = '$email', password = '$hashed', verification_code = '$verification_code'");
-        if ($query) {
+    // Check if Email Already Exists (SQL Injection Protected)
+    $stmt = $conn->prepare("SELECT * FROM users WHERE email = ?");
+    $stmt->bind_param("s", $email);
+    $stmt->execute();
+    $stmt->store_result();
+    
+    if ($stmt->num_rows > 0) {
+        echo "<script>
+            Swal.fire({ icon: 'error', title: 'Account already exists.' });
+        </script>";
+        $stmt->close();
+        exit;
+    }
+    $stmt->close();
 
-            $mail = new PHPMailer(true);
-            $mail->SMTPDebug = 0;
+    // Hash Password
+    $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+
+    // Insert User Data (SQL Injection Protected)
+    $stmt = $conn->prepare("INSERT INTO users (username, contact, email, password, verification_code) VALUES (?, ?, ?, ?, ?)");
+    $stmt->bind_param("sssss", $name, $contact, $email, $hashed_password, $verification_code);
+
+    if ($stmt->execute()) {
+        $stmt->close();
+
+        // Send Verification Email
+        $mail = new PHPMailer(true);
+        try {
             $mail->isSMTP();
             $mail->Host = 'smtp.gmail.com';
             $mail->SMTPAuth = true;
-            $mail->Username = 'shaninezaspa179@gmail.com';
-            $mail->Password = 'hglesxkasgmryjxq';
+            $mail->Username = 'youremail@gmail.com';
+            $mail->Password = 'yourpassword';
             $mail->Port = 587;
 
-            $mail->SMTPOptions = array(
-                'ssl' => array(
-                    'verify_peer' => false,
-                    'verify_peer_name' => false,
-                    'allow_self_signed' => true
-                )
-            );
-
-            $mail->setFrom('bantayanrestobar@gmail.com', 'Barangay Restobar');
-
+            $mail->setFrom('no-reply@yourdomain.com', 'Restobar');
             $mail->addAddress($email);
             $mail->Subject = "Account Verification Code";
-            $mail->Body = "This is your verification code: " . $verification_code;
+            $mail->Body = "Your verification code: " . $verification_code;
 
             $mail->send();
-
-            ?>
-            <script>
-            document.addEventListener('DOMContentLoaded', function(){
-                Swal.fire({
-                        position: "middle",
-                        icon: "success",
-                        title: "Account created successfully",
-                        showConfirmButton: false,
-                        timer: 1500
-                }).then(() => {
-                    window.location.href = "account-verification.php"
-                });
-            })
-            </script>
-        <?php 
+            echo "<script>
+                Swal.fire({ icon: 'success', title: 'Account created. Check your email.' });
+            </script>";
+            exit;
+        } catch (Exception $e) {
+            echo "<script>
+                Swal.fire({ icon: 'error', title: 'Mail failed to send.', text: '" . $mail->ErrorInfo . "' });
+            </script>";
         }
+    } else {
+        $_SESSION['failed_attempts']++;
+        $_SESSION['last_attempt_time'] = time();
+        echo "<script>
+            Swal.fire({ icon: 'error', title: 'Account creation failed.' });
+        </script>";
     }
+    $stmt->close();
 }
 
+// Prevent .php access
 $request = $_SERVER['REQUEST_URI'];
 if (substr($request, -4) == '.php') {
-    $new_url = substr($request, 0, -4);
-    header("Location: $new_url", true, 301);
+    header("Location: " . substr($request, 0, -4), true, 301);
     exit();
 }
-
-$request = $_SERVER['REQUEST_URI'];
-if (substr($request, -4) == '.php') {
-    $new_url = substr($request, 0, -4);
-    header("Location: $new_url", true, 301);
-    exit();
-}
-
-
 ?>
 
 <!DOCTYPE html>
