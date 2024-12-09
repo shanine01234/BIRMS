@@ -1,13 +1,21 @@
-<?php 
+<?php
+
 require_once('inc/header.php');
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 use PHPMailer\PHPMailer\SMTP;
 
-require "./phpmailer/src/Exception.php";
-require "./phpmailer/src/PHPMailer.php";
-require "./phpmailer/src/SMTP.php";
+require './phpmailer/src/Exception.php';
+require './phpmailer/src/PHPMailer.php';
+require './phpmailer/src/SMTP.php';
+
+// Database connection
+$conn = new mysqli('host', 'username', 'password', 'database');
+
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
 
 if (isset($_POST['signup'])) {
     $name = $_POST['name'];
@@ -17,164 +25,129 @@ if (isset($_POST['signup'])) {
     $confirm_password = $_POST['confirm_password'];
     $verification_code = uniqid();
 
+    // Password match check
     if ($password !== $confirm_password) {
-        ?>
-        <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        echo "<script>
             Swal.fire({
-                icon: "error",
-                title: "Passwords do not match.",
+                icon: 'error',
+                title: 'Passwords do not match.',
                 showConfirmButton: false,
                 timer: 1500
             }).then(() => {
-                window.location.href = "signup.php";
+                window.location.href = 'signup.php';
             });
-        });
-        </script>
-        <?php
+        </script>";
         exit;
     }
 
-    // Validate Password Strength
+    // Password strength validation
     if (strlen($password) < 6 || !preg_match('/[A-Z]/', $password) || !preg_match('/[0-9]/', $password)) {
-        ?>
-        <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        echo "<script>
             Swal.fire({
-                icon: "error",
-                title: "Password must be at least 6 characters, contain 1 uppercase letter, and 1 number.",
+                icon: 'error',
+                title: 'Password must be at least 6 characters, contain 1 uppercase letter, and 1 number.',
                 showConfirmButton: false,
                 timer: 1500
             }).then(() => {
-                window.location.href = "signup.php";
+                window.location.href = 'signup.php';
             });
-        });
-        </script>
-        <?php
+        </script>";
         exit;
     }
 
-    // Check if Terms and Conditions are agreed to
+    // Terms and conditions check
     if (!isset($_POST['terms'])) {
-        ?>
-        <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        echo "<script>
             Swal.fire({
-                position: "middle",
-                icon: "error",
-                title: "Please agree to the Terms and Conditions to sign up.",
+                icon: 'error',
+                title: 'Please agree to the Terms and Conditions to sign up.',
                 showConfirmButton: false,
                 timer: 1500
             }).then(() => {
-                window.location.href = "signup.php"
+                window.location.href = 'signup.php';
             });
-        });
-        </script>
-        <?php
+        </script>";
         exit;
     }
 
-    // Validate Contact Number
+    // Contact number validation
     if (!preg_match('/^09[0-9]{9}$/', $contact)) {
-        ?>
-        <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        echo "<script>
             Swal.fire({
-                position: "middle",
-                icon: "error",
-                title: "Invalid contact number. Must be 11 digits and start with '09'.",
+                icon: 'error',
+                title: 'Invalid contact number. Must be 11 digits and start with \'09\'.',
                 showConfirmButton: false,
                 timer: 1500
             }).then(() => {
-                window.location.href = "signup.php"
+                window.location.href = 'signup.php';
             });
-        });
-        </script>
-        <?php
+        </script>";
         exit;
     }
 
-    $stmt = $conn->query("SELECT * FROM users WHERE email = '$email'");
-    if ($stmt->num_rows) {
-       ?>
-        <script>
-           document.addEventListener('DOMContentLoaded', function(){
+    // Check if email already exists
+    $stmt = $conn->prepare("SELECT * FROM users WHERE email = ?");
+    $stmt->bind_param("s", $email);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result->num_rows) {
+        echo "<script>
             Swal.fire({
-                    position: "middle",
-                    icon: "error",
-                    title: "Account already exists",
-                    showConfirmButton: false,
-                    timer: 1500
+                icon: 'error',
+                title: 'Account already exists',
+                showConfirmButton: false,
+                timer: 1500
             }).then(() => {
-                window.location.href = "signup.php"
+                window.location.href = 'signup.php';
             });
-           })
-        </script>
-       <?php 
+        </script>";
     } else {
         $hashed = password_hash($password, PASSWORD_DEFAULT);
-        $query = $conn->query("INSERT INTO users SET username = '$name', contact = '$contact', email = '$email', password = '$hashed', verification_code = '$verification_code'");
+        $stmt = $conn->prepare("INSERT INTO users (username, contact, email, password, verification_code) VALUES (?, ?, ?, ?, ?)");
+        $stmt->bind_param("sssss", $name, $contact, $email, $hashed, $verification_code);
+        $query = $stmt->execute();
+
         if ($query) {
-
             $mail = new PHPMailer(true);
-            $mail->SMTPDebug = 0;
-            $mail->isSMTP();
-            $mail->Host = 'smtp.gmail.com';
-            $mail->SMTPAuth = true;
-            $mail->Username = 'shaninezaspa179@gmail.com';
-            $mail->Password = 'hglesxkasgmryjxq';
-            $mail->Port = 587;
 
-            $mail->SMTPOptions = array(
-                'ssl' => array(
-                    'verify_peer' => false,
-                    'verify_peer_name' => false,
-                    'allow_self_signed' => true
-                )
-            );
+            try {
+                $mail->isSMTP();
+                $mail->Host = 'smtp.gmail.com';
+                $mail->SMTPAuth = true;
+                $mail->Username = 'your-email@gmail.com';
+                $mail->Password = 'your-email-password';
+                $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+                $mail->Port = 587;
 
-            $mail->setFrom('bantayanrestobar@gmail.com', 'Barangay Restobar');
+                $mail->setFrom('your-email@gmail.com', 'Your Name');
+                $mail->addAddress($email);
 
-            $mail->addAddress($email);
-            $mail->Subject = "Account Verification Code";
-            $mail->Body = "This is your verification code: " . $verification_code;
+                $mail->Subject = "Account Verification Code";
+                $mail->Body = "This is your verification code: " . $verification_code;
 
-            $mail->send();
+                $mail->send();
 
-            ?>
-            <script>
-            document.addEventListener('DOMContentLoaded', function(){
-                Swal.fire({
-                        position: "middle",
-                        icon: "success",
-                        title: "Account created successfully",
+                echo "<script>
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Account created successfully',
                         showConfirmButton: false,
                         timer: 1500
-                }).then(() => {
-                    window.location.href = "account-verification.php"
-                });
-            })
-            </script>
-        <?php 
+                    }).then(() => {
+                        window.location.href = 'account-verification.php';
+                    });
+                </script>";
+            } catch (Exception $e) {
+                echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
+            }
+        } else {
+            die("Error: " . $conn->error);
         }
     }
 }
 
-$request = $_SERVER['REQUEST_URI'];
-if (substr($request, -4) == '.php') {
-    $new_url = substr($request, 0, -4);
-    header("Location: $new_url", true, 301);
-    exit();
-}
-
-$request = $_SERVER['REQUEST_URI'];
-if (substr($request, -4) == '.php') {
-    $new_url = substr($request, 0, -4);
-    header("Location: $new_url", true, 301);
-    exit();
-}
-
-
+$conn->close();
 ?>
 <!DOCTYPE html>
 <html lang="en">
