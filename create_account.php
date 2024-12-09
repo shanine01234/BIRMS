@@ -51,21 +51,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         exit;
     }
 
-    // Check if the email is already used and verified
-    $stmt = $conn->prepare("SELECT status FROM users WHERE email = ?");
-    $stmt->bind_param("s", $email);
-    $stmt->execute();
-    $stmt->store_result();
-    $stmt->bind_result($status);
-    if ($stmt->num_rows > 0) {
-        $stmt->fetch();
-        if ($status == 1) {
-            echo json_encode(["message" => "This email is already registered and verified."]);
-            exit;
-        }
-    }
-    $stmt->close();
-
     // Hash the password
     $hashed_password = password_hash($password, PASSWORD_BCRYPT);
 
@@ -78,13 +63,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stmt->bind_param("sssssi", $name, $email, $hashed_password, $contact, $verification_code, $status);
 
     // Execute the statement
-    // Execute the statement
     if ($stmt->execute()) {
         // Send verification email
         $mail = new PHPMailer(true);
         try {
-            // Server settings
-            $mail->isSMTP();
+            //Server settings
+             $mail->isSMTP();
             $mail->SMTPDebug = 0; // Disable verbose debug output
             $mail->Host = 'smtp.gmail.com';
             $mail->SMTPAuth = true;
@@ -93,20 +77,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $mail->SMTPSecure = 'tls';
             $mail->Port = 587;
 
-            // Recipients
-            $mail->setFrom('shaninezaspa179@gmail.com', 'Bantayan Restobar');
+            //Recipients
+            $mail->setFrom('shaninezaspa179@gmail.com', 'Restobar');
             $mail->addAddress($email, $name);
 
             // Content
             $mail->isHTML(true);
             $mail->Subject = 'Email Verification';
-            $mail->Body = "Dear $name,<br><br>Your verification code is: <strong>$verification_code</strong><br><br>Please use this code to verify your email address.";
+            $mail->Body    = "Dear $name,<br><br>Your verification code is: <strong>$verification_code</strong><br><br>Please use this code to verify your email address.";
 
             $mail->send();
-
-            // Redirect to verify_email.php
-            header('Location: verify_email.php');
-            exit; // Ensure no further code is executed after the redirect
+            echo json_encode(["message" => "Account created successfully. Please verify your email."]);
         } catch (Exception $e) {
             echo json_encode(["message" => "Message could not be sent. Mailer Error: {$mail->ErrorInfo}"]);
         }
