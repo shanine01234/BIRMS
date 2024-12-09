@@ -44,7 +44,7 @@ if (isset($_POST['reset-password'])) {
             $mail->Subject = 'Password Reset Request';
 
             // Set up the reset link
-            $resetLink = "https://bantayanrestobars.com/new_password?token=" . $token;
+            $resetLink = "https://bantayanrestobars.com/reset_password.php?token=" . $token;
 
             $mail->Body = "<p>Click the link below to reset your password:</p>
                            <p><a href='$resetLink'>Reset Password</a></p>
