@@ -372,7 +372,7 @@ if (substr($request, -4) == '.php') {
     <label for="password">Password</label>
     <div class="input-group">
         <input type="password" id="password" name="password" class="form-control my-2" required>
-        <button type="button" id="toggle-password" class="btn btn-light border">
+        <button type="button" id="toggle-password" class="btn btn-light border" style="height: 39px; top: 7px;">
             <i id="password-icon" class="fas fa-eye"></i>
         </button>
     </div>
