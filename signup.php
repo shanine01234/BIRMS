@@ -369,34 +369,44 @@
 
     <!-- JavaScript for AJAX and SweetAlert -->
     <script>
-        $(document).ready(function () {
-            $('#signup-form').on('submit', function (e) {
-                e.preventDefault(); // Prevent form from submitting normally
+       $(document).ready(function () {
+    $('#signup-form').on('submit', function (e) {
+        e.preventDefault(); // Prevent form from submitting normally
 
-                $.ajax({
-                    type: 'POST',
-                    url: 'create_account.php',
-                    data: $(this).serialize(),
-                    success: function (response) {
-                        const res = JSON.parse(response);
-                        Swal.fire({
-                            title: 'Success!',
-                            text: res.message,
-                            icon: 'success',
-                            confirmButtonText: 'OK'
-                        });
-                    },
-                    error: function () {
-                        Swal.fire({
-                            title: 'Error!',
-                            text: 'There was an error processing your request.',
-                            icon: 'error',
-                            confirmButtonText: 'OK'
-                        });
-                    }
+        $.ajax({
+            type: 'POST',
+            url: 'create_account.php',
+            data: $(this).serialize(),
+            dataType: 'json', // Expect JSON response from the server
+            success: function (response) {
+                // Check if the response contains a message
+                if (response.message) {
+                    Swal.fire({
+                        title: 'Success!',
+                        text: response.message,
+                        icon: 'success',
+                        confirmButtonText: 'OK'
+                    });
+                } else {
+                    Swal.fire({
+                        title: 'Error!',
+                        text: 'Unexpected response format.',
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                }
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                Swal.fire({
+                    title: 'Error!',
+                    text: 'There was an error processing your request: ' + textStatus,
+                    icon: 'error',
+                    confirmButtonText: 'OK'
                 });
-            });
+            }
         });
+    });
+});
     </script>
 </body>
 
