@@ -305,11 +305,9 @@
 
         }
       
-    
-    .custom-swal {
-        width: 350px !important; /* Adjust the width for a more compact look */
-        border-radius: 8px !important; /* Make the alert rectangular */
-        padding: 10px !important; /* Reduce padding for compactness */
+    .swal-wide {
+        width: 400px !important; /* Adjust the width as needed */
+        border-radius: 5px !important; /* Make the alert rectangular */
     }
 
     .swal2-popup {
@@ -319,20 +317,9 @@
     }
 
     .swal2-icon {
-        margin-right: 15px; /* Space between icon and text */
-        flex-shrink: 0; /* Prevent icon from shrinking */
+        margin-right: 10px;
     }
-
-    .swal2-title {
-        font-size: 16px; /* Adjust title font size */
-        margin: 0; /* Remove default margin */
-    }
-
-    .swal2-content {
-        font-size: 14px; /* Adjust text font size */
-        margin: 0; /* Remove default margin */
-    }
-
+</style>
     </style>
 </head>
 
@@ -407,7 +394,7 @@
                         showConfirmButton: false,
                         timer: 3000, // Auto-close after 3 seconds
                         customClass: {
-                            popup: 'custom-swal'
+                            popup: 'swal-wide'
                         }
                     });
                 },
@@ -420,7 +407,7 @@
                         showConfirmButton: false,
                         timer: 3000, // Auto-close after 3 seconds
                         customClass: {
-                            popup: 'custom-swal'
+                            popup: 'swal-wide'
                         }
                     });
                 }
