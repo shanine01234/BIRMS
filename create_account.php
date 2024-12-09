@@ -1,4 +1,9 @@
 <?php
+require 'vendor/autoload.php'; // Include PHPMailer's autoload file
+
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+
 header('Content-Type: application/json');
 
 // Enable error reporting for debugging
@@ -49,8 +54,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Hash the password
     $hashed_password = password_hash($password, PASSWORD_BCRYPT);
 
-    // Generate a verification code
-    $verification_code = bin2hex(random_bytes(15));
+    // Generate a 5-digit verification code
+    $verification_code = random_int(10000, 99999);
 
     // Prepare and bind
     $stmt = $conn->prepare("INSERT INTO users (username, email, password, contact, code, status) VALUES (?, ?, ?, ?, ?, ?)");
@@ -59,7 +64,33 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Execute the statement
     if ($stmt->execute()) {
-        echo json_encode(["message" => "Account created successfully. Please verify your email."]);
+        // Send verification email
+        $mail = new PHPMailer(true);
+        try {
+            //Server settings
+                  $mail->isSMTP();
+            $mail->SMTPDebug = 0; // Disable verbose debug output
+            $mail->Host = 'smtp.gmail.com';
+            $mail->SMTPAuth = true;
+            $mail->Username = 'shaninezaspa179@gmail.com';
+            $mail->Password = 'hglesxkasgmryjxq'    ; // Ensure this is correct and secure
+            $mail->SMTPSecure = 'tls';
+            $mail->Port = 587;
+
+            //Recipients
+            $mail->setFrom('shaninezaspa179@gmail.com', 'Restobar'); // Replace with your email
+            $mail->addAddress($email, $name);
+
+            // Content
+            $mail->isHTML(true);
+            $mail->Subject = 'Email Verification';
+            $mail->Body    = "Dear $name,<br><br>Your verification code is: <strong>$verification_code</strong><br><br>Please use this code to verify your email address.";
+
+            $mail->send();
+            echo json_encode(["message" => "Account created successfully. Please verify your email."]);
+        } catch (Exception $e) {
+            echo json_encode(["message" => "Message could not be sent. Mailer Error: {$mail->ErrorInfo}"]);
+        }
     } else {
         echo json_encode(["message" => "Error: " . $stmt->error]);
     }

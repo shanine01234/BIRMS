@@ -10,9 +10,7 @@
     <title>Bantayan Island Restobar</title>
     <!-- Custom fonts for this template-->
     <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
-    <link
-        href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@200..900&display=swap" rel="stylesheet">
     <!-- Custom styles for this template-->
@@ -321,8 +319,7 @@
             </div>
             <div class="form-group">
                 <label for="contact">Contact Number</label>
-                <input type="text" id="contact" name="contact" class="form-control my-2" required pattern="09[0-9]{9}"
-                    title="Contact number must be 11 digits and start with '09'">
+                <input type="text" id="contact" name="contact" class="form-control my-2" required pattern="09[0-9]{9}" title="Contact number must be 11 digits and start with '09'">
             </div>
             <div class="form-group">
                 <label for="email">Email</label>
@@ -332,25 +329,21 @@
                 <label for="password">Password</label>
                 <div class="input-group">
                     <input type="password" id="password" name="password" class="form-control my-2" required>
-                    <button type="button" id="toggle-password" class="btn btn-light border"
-                        style="height: 39px; top: 7px;">
+                    <button type="button" id="toggle-password" class="btn btn-light border" style="height: 39px; top: 7px;">
                         <i id="password-icon" class="fas fa-eye"></i>
                     </button>
                 </div>
                 <!-- Password Strength Progress Bar -->
                 <div class="progress my-2" style="height: 10px;">
-                    <div id="password-strength-bar" class="progress-bar" role="progressbar" style="width: 0%;"
-                        aria-valuemin="0" aria-valuemax="100"></div>
+                    <div id="password-strength-bar" class="progress-bar" role="progressbar" style="width: 0%;" aria-valuemin="0" aria-valuemax="100"></div>
                 </div>
                 <small id="password-strength" class="form-text"></small>
             </div>
             <div class="form-group position-relative">
                 <label for="confirm-password">Confirm Password</label>
                 <div class="input-group">
-                    <input type="password" id="confirm-password" name="confirm_password" class="form-control my-2"
-                        required>
-                    <button type="button" id="toggle-confirm-password" class="btn btn-light border"
-                        style="height: 39px; top: 7px;">
+                    <input type="password" id="confirm-password" name="confirm_password" class="form-control my-2" required>
+                    <button type="button" id="toggle-confirm-password" class="btn btn-light border" style="height: 39px; top: 7px;">
                         <i id="confirm-password-icon" class="fas fa-eye"></i>
                     </button>
                 </div>
@@ -359,8 +352,7 @@
             <div class="form-check my-3">
                 <input type="checkbox" id="terms" name="terms" class="form-check-input">
                 <label for="terms" class="form-check-label">
-                    I agree to the <a href="#" data-bs-toggle="modal" data-bs-target="#termsModal">Terms and
-                        Conditions</a>.
+                    I agree to the <a href="#" data-bs-toggle="modal" data-bs-target="#termsModal">Terms and Conditions</a>.
                 </label>
             </div>
             <button type="submit" name="signup" class="btn btn-warning btn-block">Sign Up</button>
@@ -373,28 +365,28 @@
     $('#signup-form').on('submit', function (e) {
         e.preventDefault(); // Prevent form from submitting normally
 
+        if (!$('#terms').is(':checked')) {
+            Swal.fire({
+                title: 'Error!',
+                text: 'You must agree to the terms and conditions.',
+                icon: 'error',
+                confirmButtonText: 'OK'
+            });
+            return;
+        }
+
         $.ajax({
             type: 'POST',
-            url: 'create_account.php',
+            url: 'contact_account.php', // Update the URL to your PHP script
             data: $(this).serialize(),
-            dataType: 'json', // Expect JSON response from the server
+            dataType: 'json', // Expect a JSON response
             success: function (response) {
-                // Check if the response contains a message
-                if (response.message) {
-                    Swal.fire({
-                        title: 'Success!',
-                        text: response.message,
-                        icon: 'success',
-                        confirmButtonText: 'OK'
-                    });
-                } else {
-                    Swal.fire({
-                        title: 'Error!',
-                        text: 'Unexpected response format.',
-                        icon: 'error',
-                        confirmButtonText: 'OK'
-                    });
-                }
+                Swal.fire({
+                    title: 'Success!',
+                    text: response.message,
+                    icon: 'success',
+                    confirmButtonText: 'OK'
+                });
             },
             error: function (jqXHR, textStatus, errorThrown) {
                 Swal.fire({
