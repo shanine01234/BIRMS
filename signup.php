@@ -361,44 +361,91 @@
 
     <!-- JavaScript for AJAX and SweetAlert -->
     <script>
-       $(document).ready(function () {
-    $('#signup-form').on('submit', function (e) {
-        e.preventDefault(); // Prevent form from submitting normally
-
-        if (!$('#terms').is(':checked')) {
-            Swal.fire({
-                title: 'Error!',
-                text: 'You must agree to the terms and conditions.',
-                icon: 'error',
-                confirmButtonText: 'OK'
+        $(document).ready(function () {
+            // Password visibility toggle
+            $('#toggle-password').click(function () {
+                const passwordField = $('#password');
+                const passwordIcon = $('#password-icon');
+                const type = passwordField.attr('type') === 'password' ? 'text' : 'password';
+                passwordField.attr('type', type);
+                passwordIcon.toggleClass('fa-eye fa-eye-slash');
             });
-            return;
-        }
 
-        $.ajax({
-            type: 'POST',
-            url: 'contact_account.php', // Update the URL to your PHP script
-            data: $(this).serialize(),
-            dataType: 'json', // Expect a JSON response
-            success: function (response) {
-                Swal.fire({
-                    title: 'Success!',
-                    text: response.message,
-                    icon: 'success',
-                    confirmButtonText: 'OK'
+            $('#toggle-confirm-password').click(function () {
+                const confirmPasswordField = $('#confirm-password');
+                const confirmPasswordIcon = $('#confirm-password-icon');
+                const type = confirmPasswordField.attr('type') === 'password' ? 'text' : 'password';
+                confirmPasswordField.attr('type', type);
+                confirmPasswordIcon.toggleClass('fa-eye fa-eye-slash');
+            });
+
+            // Password strength indicator
+            $('#password').on('input', function () {
+                const password = $(this).val();
+                const strengthBar = $('#password-strength-bar');
+                const strengthText = $('#password-strength');
+                let strength = 0;
+
+                if (password.length >= 8) strength += 20;
+                if (/[A-Z]/.test(password)) strength += 20;
+                if (/[a-z]/.test(password)) strength += 20;
+                if (/[0-9]/.test(password)) strength += 20;
+                if (/[\W]/.test(password)) strength += 20;
+
+                strengthBar.css('width', strength + '%');
+
+                if (strength < 40) {
+                    strengthBar.removeClass().addClass('progress-bar bg-danger');
+                    strengthText.text('Weak');
+                } else if (strength < 80) {
+                    strengthBar.removeClass().addClass('progress-bar bg-warning');
+                    strengthText.text('Moderate');
+                } else {
+                    strengthBar.removeClass().addClass('progress-bar bg-success');
+                    strengthText.text('Strong');
+                }
+            });
+
+            // Form submission
+            $('#signup-form').on('submit', function (e) {
+                e.preventDefault(); // Prevent form from submitting normally
+
+                if (!$('#terms').is(':checked')) {
+                    Swal.fire({
+                        title: 'Error!',
+                        text: 'You must agree to the terms and conditions.',
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                    return;
+                }
+
+                $.ajax({
+                    type: 'POST',
+                    url: 'contact_account.php', // Update the URL to your PHP script
+                    data: $(this).serialize(),
+                    dataType: 'json', // Expect a JSON response
+                    success: function (response) {
+                        Swal.fire({
+                            title: 'Success!',
+                            text: response.message,
+                            icon: 'success',
+                            confirmButtonText: 'OK'
+                        });
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        Swal.fire({
+                            title: 'Error!',
+                            text: 'There was an error processing your request: ' + textStatus + ' - ' + errorThrown,
+                            icon: 'error',
+                            confirmButtonText: 'OK'
+                        });
+                        console.log('Response Text:', jqXHR.responseText);
+                    }
                 });
-            },
-            error: function (jqXHR, textStatus, errorThrown) {
-                Swal.fire({
-                    title: 'Error!',
-                    text: 'There was an error processing your request: ' + textStatus,
-                    icon: 'error',
-                    confirmButtonText: 'OK'
-                });
-            }
+            });
         });
-    });
-});
+    
     </script>
 </body>
 
