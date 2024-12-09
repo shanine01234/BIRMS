@@ -347,7 +347,7 @@ if (substr($request, -4) == '.php') {
             </div>
             <div class="form-group">
                 <label for="contact">Contact Number</label>
-                <input type="text" id="contact" name="contact" pattern="09[0-9]{9}" title="Contact number must be 11 digits and start with '09'" required>
+                <input type="text" id="contact" name="contact" class="form-control my-2" required pattern="09[0-9]{9}" title="Contact number must be 11 digits and start with '09'">
             </div>
             <div class="form-group">
                 <label for="email">Email</label>
