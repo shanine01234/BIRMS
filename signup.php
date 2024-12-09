@@ -304,6 +304,18 @@
             color: #000000;
 
         }
+
+        .swal-wide {
+        width: 400px !important; /* Adjust the width as needed */
+    }
+    .swal2-popup {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+    }
+    .swal2-icon {
+        margin-right: 10px; /* Space between icon and text */
+    }
     </style>
 </head>
 
@@ -362,32 +374,40 @@
     <!-- JavaScript for AJAX and SweetAlert -->
     <script>
         $(document).ready(function () {
-            $('#signup-form').on('submit', function (e) {
-                e.preventDefault(); // Prevent form from submitting normally
+        $('#signup-form').on('submit', function (e) {
+            e.preventDefault(); // Prevent form from submitting normally
 
-                $.ajax({
-                    type: 'POST',
-                    url: 'create_account.php',
-                    data: $(this).serialize(),
-                    success: function (response) {
-                        Swal.fire({
-                            title: 'Success!',
-                            text: response,
-                            icon: 'success',
-                            confirmButtonText: 'OK'
-                        });
-                    },
-                    error: function () {
-                        Swal.fire({
-                            title: 'Error!',
-                            text: 'There was an error processing your request.',
-                            icon: 'error',
-                            confirmButtonText: 'OK'
-                        });
-                    }
-                });
+            $.ajax({
+                type: 'POST',
+                url: 'create_account.php',
+                data: $(this).serialize(),
+                success: function (response) {
+                    Swal.fire({
+                        position: 'top',
+                        icon: 'success',
+                        title: 'Success!',
+                        text: response.message,
+                        showConfirmButton: true,
+                        customClass: {
+                            popup: 'swal-wide'
+                        }
+                    });
+                },
+                error: function () {
+                    Swal.fire({
+                        position: 'top',
+                        icon: 'error',
+                        title: 'Error!',
+                        text: 'There was an error processing your request.',
+                        showConfirmButton: true,
+                        customClass: {
+                            popup: 'swal-wide'
+                        }
+                    });
+                }
             });
         });
+    });
     </script>
 </body>
 

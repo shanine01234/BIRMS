@@ -51,6 +51,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         exit;
     }
 
+    // Check if the email is already used and verified
+    $stmt = $conn->prepare("SELECT status FROM users WHERE email = ?");
+    $stmt->bind_param("s", $email);
+    $stmt->execute();
+    $stmt->store_result();
+    $stmt->bind_result($status);
+    if ($stmt->num_rows > 0) {
+        $stmt->fetch();
+        if ($status == 1) {
+            echo json_encode(["message" => "This email is already registered and verified."]);
+            exit;
+        }
+    }
+    $stmt->close();
+
     // Hash the password
     $hashed_password = password_hash($password, PASSWORD_BCRYPT);
 
