@@ -20,39 +20,47 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
-        body {
-    position: relative; /* Makes sure pseudo-elements position properly */
-    font-family: "Inconsolata", monospace;
-    font-optical-sizing: auto;
-    font-weight: normal;
-    font-style: normal;
+        body, html {
     margin: 0;
-    height: 100vh; /* Ensures full height */
+    padding: 0;
+    height: 100%; /* Ensures full height for body and html */
+    overflow: hidden; /* Prevents scrolling */
+    font-family: "Inconsolata", monospace;
+}
+
+body {
+    position: relative;
+    display: flex; /* Centers the content */
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* Full viewport height */
 }
 
 body::before {
-    content: ""; /* Required for pseudo-elements */
+    content: ""; /* Pseudo-element for the background */
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-image: url('img/photos/one.jpg'); /* Replace with your image */
-    background-size: cover;
+    background-image: url('your-image-url.jpg'); /* Replace with your image path */
+    background-size: cover; /* Ensures the image fully covers the screen */
     background-repeat: no-repeat;
     background-position: center;
-    opacity: 0.5; /* Adjust opacity for the fade effect */
-    z-index: -1; /* Puts the background behind content */
-    filter: brightness(80%) blur(2px); /* Optional: add slight blur and dim effect */
+    opacity: 0.5; /* Fades the background */
+    z-index: -1; /* Places it behind the content */
 }
 
 .signup-container {
     position: relative;
-    z-index: 1; /* Ensures the form stays above the faded background */
-    background-color: rgba(255, 255, 255, 0.8); /* Add a semi-transparent background */
-    padding: 20px;
+    z-index: 1;
+    background-color: rgba(255, 255, 255, 0.9); /* Semi-transparent white background for readability */
+    padding: 30px;
     border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+    max-width: 400px;
+    width: 90%; /* Responsive width */
+    text-align: center;
 }
 
 
@@ -329,8 +337,7 @@ body::before {
     </style>
 </head>
 
-<body style="background-color: #fff;">
-    <!-- Signup Form -->
+<>
     <div class="signup-container">
         <a href="login.php" class="btn btn-warning btn-back">Back</a>
         <h4 class="text-start my-3" style="font-size: 30px;">Sign Up</h4>
@@ -341,7 +348,7 @@ body::before {
             </div>
             <div class="form-group">
                 <label for="contact">Contact Number</label>
-                <input type="text" id="contact" name="contact" class="form-control my-2" required pattern="09[0-9]{9}" title="Contact number must be 11 digits and start with '09'">
+                <input type="text" id="contact" name="contact" class="form-control my-2" required>
             </div>
             <div class="form-group">
                 <label for="email">Email</label>
@@ -349,36 +356,12 @@ body::before {
             </div>
             <div class="form-group position-relative">
                 <label for="password">Password</label>
-                <div class="input-group">
-                    <input type="password" id="password" name="password" class="form-control my-2" required>
-                    <button type="button" id="toggle-password" class="btn btn-light border" style="height: 39px; top: 7px;">
-                        <i id="password-icon" class="fas fa-eye"></i>
-                    </button>
-                </div>
-                <div class="progress my-2" style="height: 10px;">
-                <div id="password-strength-bar" class="progress-bar bg-danger" role="progressbar" style="width: 0%;" aria-valuemin="0" aria-valuemax="100"></div>
-            </div>
-                <small id="password-strength" class="form-text text-muted"></small>
-            </div>
-            <div class="form-group position-relative">
-                <label for="confirm-password">Confirm Password</label>
-                <div class="input-group">
-                    <input type="password" id="confirm-password" name="confirm_password" class="form-control my-2" required>
-                    <button type="button" id="toggle-confirm-password" class="btn btn-light border" style="height: 39px; top: 7px;">
-                        <i id="confirm-password-icon" class="fas fa-eye"></i>
-                    </button>
-                </div>
-                <small id="password-match" class="form-text"></small>
-            </div>
-            <div class="form-check my-3">
-                <input type="checkbox" id="terms" name="terms" class="form-check-input">
-                <label for="terms" class="form-check-label">
-                    I agree to the <a href="#" data-bs-toggle="modal" data-bs-target="#termsModal">Terms and Conditions</a>.
-                </label>
+                <input type="password" id="password" name="password" class="form-control my-2" required>
             </div>
             <button type="submit" name="signup" class="btn btn-warning btn-block">Sign Up</button>
         </form>
     </div>
+
 
     <!-- JavaScript for AJAX and SweetAlert -->
     <script>
