@@ -1,4 +1,5 @@
 <?php
+
 require_once('inc/header.php');
 require 'vendor/autoload.php';
 
@@ -7,22 +8,25 @@ use PHPMailer\PHPMailer\Exception;
 
 if (isset($_POST['reset-password'])) {
     $email = $conn->real_escape_string($_POST['email']); // Secure input handling
-    
+
     // Check if email exists in the database
     $stmt = $conn->prepare("SELECT * FROM users WHERE email = ?");
     $stmt->bind_param("s", $email);
     $stmt->execute();
     $result = $stmt->get_result();
-    
+
     if ($result->num_rows > 0) {
         $row = $result->fetch_assoc();
         $token = bin2hex(random_bytes(50)); // Generate reset token
-        
+
         // Save the reset token and timestamp in the database
-        $conn->query("UPDATE users SET reset_token='$token', reset_expiry=DATE_ADD(NOW(), INTERVAL 1 HOUR) WHERE email='$email'");
-        
+        $stmt = $conn->prepare("UPDATE users SET token=?, reset_token_at=NOW() WHERE email=?");
+        $stmt->bind_param("ss", $token, $email);
+        $stmt->execute();
+
         // Configure PHPMailer
         $mail = new PHPMailer(true);
+
         try {
             $mail->isSMTP();
             $mail->SMTPDebug = 0; // Disable verbose debug output
@@ -32,31 +36,35 @@ if (isset($_POST['reset-password'])) {
             $mail->Password = 'hglesxkasgmryjxq'; // Ensure this is correct and secure
             $mail->SMTPSecure = 'tls';
             $mail->Port = 587;
-            
+
             $mail->setFrom('shaninezaspa179@gmail.com', 'Bantayan Island Restobar');
             $mail->addAddress($email);
+
             $mail->isHTML(true);
             $mail->Subject = 'Password Reset Request';
-            
+
             // Set up the reset link
-            $resetLink = "http://bantayanrestobars.com/reset-password.php?token=" . $token;
+            $resetLink = "https://bantayanrestobars.com/new_password?token=" . $token;
 
             $mail->Body = "<p>Click the link below to reset your password:</p>
                            <p><a href='$resetLink'>Reset Password</a></p>
                            <p>This link will expire in 1 hour.</p>";
-            
+
             $mail->send();
+
             // After successful email send, display the success message and redirect to login
             echo "<script>
                     Swal.fire('Success', 'Password reset link sent. Please check your email.', 'success').then(() => {
                         window.location.href = 'login.php'; // Redirect to login page
                     });
                   </script>";
+
         } catch (Exception $e) {
             echo "<script>
                     Swal.fire('Error', 'There was an error sending the reset email: {$mail->ErrorInfo}', 'error');
                   </script>";
         }
+
     } else {
         echo "<script>
                 Swal.fire('Error', 'Email not found in our records.', 'error');
@@ -64,12 +72,14 @@ if (isset($_POST['reset-password'])) {
     }
 }
 
-    $request = $_SERVER['REQUEST_URI'];
+$request = $_SERVER['REQUEST_URI'];
+
 if (substr($request, -4) == '.php') {
     $new_url = substr($request, 0, -4);
     header("Location: $new_url", true, 301);
     exit();
 }
+
 ?>
 
 <!DOCTYPE html>
