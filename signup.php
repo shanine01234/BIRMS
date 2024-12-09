@@ -21,18 +21,40 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
         body {
+    position: relative; /* Makes sure pseudo-elements position properly */
+    font-family: "Inconsolata", monospace;
+    font-optical-sizing: auto;
+    font-weight: normal;
+    font-style: normal;
+    margin: 0;
+    height: 100vh; /* Ensures full height */
+}
 
-            font-family: "Inconsolata", monospace;
+body::before {
+    content: ""; /* Required for pseudo-elements */
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('your-image-url.jpg'); /* Replace with your image */
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    opacity: 0.5; /* Adjust opacity for the fade effect */
+    z-index: -1; /* Puts the background behind content */
+    filter: brightness(80%) blur(2px); /* Optional: add slight blur and dim effect */
+}
 
-            font-optical-sizing: auto;
+.signup-container {
+    position: relative;
+    z-index: 1; /* Ensures the form stays above the faded background */
+    background-color: rgba(255, 255, 255, 0.8); /* Add a semi-transparent background */
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
 
-            font-weight: <weight>;
-
-            font-style: normal;
-
-            font-variation-settings: "wdth" 100;
-
-        }
 
         .cover-container {
 
