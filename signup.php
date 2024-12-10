@@ -550,7 +550,6 @@ $(document).ready(function () {
         }
     });
 
-    <script>
     document.getElementById("createAccountForm").addEventListener("submit", function (e) {
         e.preventDefault();
 
@@ -573,8 +572,6 @@ $(document).ready(function () {
             alert("There was an error processing your request.");
         });
     });
-</script>
-
 
     // Toggle confirm password visibility
     $('#toggle-confirm-password').on('click', function () {
