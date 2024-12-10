@@ -4,29 +4,34 @@ require 'vendor/autoload.php'; // Include PHPMailer's autoload file
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
-header('Content-Type: application/json');
-
 // Enable error reporting for debugging
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-// Load sensitive data securely using .env file
+// Set content type
+header('Content-Type: application/json');
+
+// Load .env file securely
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
 $dotenv->load();
 
-// Database connection
-$host = $_ENV['127.0.0.1'];
-$user = $_ENV['u510162695_birms_db'];
-$password = $_ENV['1Birms_db'];
-$db_name = $_ENV['u510162695_birms_db'];
+// Verify .env loaded
+if (!isset($_ENV['DB_HOST'], $_ENV['DB_USER'], $_ENV['DB_PASS'], $_ENV['DB_NAME'], $_ENV['SMTP_USER'], $_ENV['SMTP_PASS'])) {
+    echo json_encode(["message" => "Failed to load environment variables."]);
+    exit;
+}
 
-// Create connection
+// Database configuration
+$host = $_ENV['DB_HOST'];
+$user = $_ENV['DB_USER'];
+$password = $_ENV['DB_PASS'];
+$db_name = $_ENV['DB_NAME'];
+
+// Create database connection
 $conn = new mysqli($host, $user, $password, $db_name);
-
-// Check connection
 if ($conn->connect_error) {
-    echo json_encode(["message" => "Connection failed: " . $conn->connect_error]);
+    echo json_encode(["message" => "Database connection failed: " . $conn->connect_error]);
     exit;
 }
 
@@ -40,21 +45,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $confirm_password = trim($_POST['confirm_password']);
     $terms = isset($_POST['terms']) ? 1 : 0;
 
+    // Input validation
     if (empty($name) || empty($contact) || empty($email) || empty($password) || empty($confirm_password)) {
         echo json_encode(["message" => "All fields are required."]);
         exit;
     }
-
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         echo json_encode(["message" => "Invalid email format."]);
         exit;
     }
-
     if ($password !== $confirm_password) {
         echo json_encode(["message" => "Passwords do not match."]);
         exit;
     }
-
     if (!$terms) {
         echo json_encode(["message" => "You must agree to the terms and conditions."]);
         exit;
@@ -71,13 +74,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
     $checkEmail->close();
 
-    // Hash the password securely
+    // Securely hash password
     $hashed_password = password_hash($password, PASSWORD_BCRYPT);
 
     // Generate a 5-digit verification code
     $verification_code = random_int(10000, 99999);
 
-    // Insert into the database
+    // Insert user into database
     $stmt = $conn->prepare("INSERT INTO users (username, email, password, contact, code, status) VALUES (?, ?, ?, ?, ?, ?)");
     $status = 0; // 0 for unverified
     $stmt->bind_param("sssssi", $name, $email, $hashed_password, $contact, $verification_code, $status);
@@ -86,36 +89,34 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Send verification email
         $mail = new PHPMailer(true);
         try {
-            //Server settings
+            // Server settings
             $mail->isSMTP();
-            $mail->SMTPDebug = 0; // Disable verbose debug output
+            $mail->SMTPDebug = 0; // Set to 2 for debugging SMTP
             $mail->Host = 'smtp.gmail.com';
             $mail->SMTPAuth = true;
             $mail->Username = $_ENV['SMTP_USER'];
-            $mail->Password = $_ENV['SMTP_PASS']; // Secure via .env
+            $mail->Password = $_ENV['SMTP_PASS'];
             $mail->SMTPSecure = 'tls';
             $mail->Port = 587;
 
-            //Recipients
+            // Email content
             $mail->setFrom($_ENV['SMTP_USER'], 'Bantayan Island Restobar');
             $mail->addAddress($email, $name);
-
-            // Content
             $mail->isHTML(true);
             $mail->Subject = 'Email Verification';
-            $mail->Body    = "Dear $name,<br><br>Your verification code is: <strong>$verification_code</strong><br><br>Please use this code to verify your email address.";
+            $mail->Body = "Dear $name,<br><br>Your verification code is: <strong>$verification_code</strong><br><br>Please use this code to verify your email address.<br><br>Thank you!<br>Bantayan Island Restobar";
 
             $mail->send();
             echo json_encode(["message" => "Account created successfully. Please verify your email."]);
         } catch (Exception $e) {
-            echo json_encode(["message" => "Message could not be sent. Mailer Error: {$mail->ErrorInfo}"]);
+            echo json_encode(["message" => "Account created, but email could not be sent. Error: {$mail->ErrorInfo}"]);
         }
     } else {
         echo json_encode(["message" => "Error: " . $stmt->error]);
     }
 
-    // Close the statement and connection
+    // Close resources
     $stmt->close();
+    $conn->close();
 }
-$conn->close();
 ?>
