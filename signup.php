@@ -16,6 +16,11 @@ if (isset($_POST['signup'])) {
     $password = $_POST['password'];
     $verification_code = uniqid();
 
+    // Sanitize Inputs
+    $name = htmlspecialchars($name, ENT_QUOTES, 'UTF-8');
+    $contact = htmlspecialchars($contact, ENT_QUOTES, 'UTF-8');
+    $email = filter_var($email, FILTER_SANITIZE_EMAIL);
+
     // Check if Terms and Conditions are agreed to
     if (!isset($_POST['terms'])) {
         ?>
