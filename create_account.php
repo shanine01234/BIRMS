@@ -1,110 +1,126 @@
 <?php
-$servername = "localhost";
-$username = "u510162695_birms_db";
-$password = "1Birms_db";
-$dbname = "u510162695_birms_db";
+require 'vendor/autoload.php'; // Include PHPMailer's autoload file
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+use PHPMailer\PHPMailer\SMTP;
 
-$conn = new mysqli($servername, $username, $password, $dbname);
+require "./phpmailer/src/Exception.php";
+require "./phpmailer/src/PHPMailer.php";
+require "./phpmailer/src/SMTP.php";
 
+
+header('Content-Type: application/json');
+
+// Enable error reporting for debugging
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
+// Load sensitive data securely using .env file
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+$dotenv->load();
+
+// Database connection
+$host = $_ENV['127.0.0.1'];
+$user = $_ENV['u510162695_birms_db'];
+$password = $_ENV['1Birms_db'];
+$db_name = $_ENV['u510162695_birms_db'];
+
+// Create connection
+$conn = new mysqli($host, $user, $password, $db_name);
+
+// Check connection
 if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
-?>
-
-<?php
-// Include database connection file
-require_once 'db_connection.php';
-
-// Function to generate a secure random token
-function generateToken($length = 32) {
-    return bin2hex(random_bytes($length)); // Generates a random hex token
+    echo json_encode(["message" => "Connection failed: " . $conn->connect_error]);
+    exit;
 }
 
-// Function to validate email
-function isValidEmail($email) {
-    return filter_var($email, FILTER_VALIDATE_EMAIL);
-}
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Retrieve and sanitize input
-    $username = htmlspecialchars(trim($_POST['username']));
-    $email = htmlspecialchars(trim($_POST['email']));
+// Handle form submission
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // Sanitize and validate input data
+    $name = htmlspecialchars(trim($_POST['name']), ENT_QUOTES, 'UTF-8');
+    $contact_num = htmlspecialchars(trim($_POST['contact_num']), ENT_QUOTES, 'UTF-8');
+    $email = filter_var(trim($_POST['email']), FILTER_SANITIZE_EMAIL);
     $password = trim($_POST['password']);
+    $confirm_password = trim($_POST['confirm_password']);
+    $terms = isset($_POST['terms']) ? 1 : 0;
 
-    // Validate input
-    if (empty($username) || empty($email) || empty($password)) {
-        die('Error: All fields are required.');
+    if (empty($name) || empty($contact_num) || empty($email) || empty($password) || empty($confirm_password)) {
+        echo json_encode(["message" => "All fields are required."]);
+        exit;
     }
 
-    if (!isValidEmail($email)) {
-        die('Error: Invalid email format.');
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        echo json_encode(["message" => "Invalid email format."]);
+        exit;
     }
 
-    try {
-        // Check if the email already exists
-        $checkStmt = $pdo->prepare("SELECT * FROM users WHERE email = :email");
-        $checkStmt->execute([':email' => $email]);
+    if ($password !== $confirm_password) {
+        echo json_encode(["message" => "Passwords do not match."]);
+        exit;
+    }
 
-        if ($checkStmt->rowCount() > 0) {
-            die('Error: Email is already registered.');
-        }
+    if (!$terms) {
+        echo json_encode(["message" => "You must agree to the terms and conditions."]);
+        exit;
+    }
 
-        // Hash the password securely
-        $hashed_password = password_hash($password, PASSWORD_BCRYPT);
+    // Check if email already exists
+    $checkEmail = $conn->prepare("SELECT id FROM users WHERE email = ?");
+    $checkEmail->bind_param("s", $email);
+    $checkEmail->execute();
+    $checkEmail->store_result();
+    if ($checkEmail->num_rows > 0) {
+        echo json_encode(["message" => "This email is already registered."]);
+        exit;
+    }
+    $checkEmail->close();
 
-        // Generate a verification token
-        $verification_token = generateToken();
+    // Hash the password securely
+    $hashed_password = password_hash($password, PASSWORD_BCRYPT);
 
-        // Insert the user into the database
-        $stmt = $pdo->prepare("INSERT INTO users (username, email, password, verification_token) 
-                               VALUES (:username, :email, :password, :token)");
-        $stmt->execute([
-            ':username' => $username,
-            ':email' => $email,
-            ':password' => $hashed_password,
-            ':token' => $verification_token
-        ]);
+    // Generate a 5-digit verification code
+    $verification_code = random_int(10000, 99999);
 
+    // Insert into the database
+    $stmt = $conn->prepare("INSERT INTO users (username, email, password, contact_num, code, status) VALUES (?, ?, ?, ?, ?, ?)");
+    $status = 0; // 0 for unverified
+    $stmt->bind_param("sssssi", $name, $email, $hashed_password, $contact_num, $verification_code, $status);
+
+    if ($stmt->execute()) {
         // Send verification email
-        $verify_link = "http://yourwebsite.com/verify.php?token=" . $verification_token;
-        $subject = "Verify Your Account";
-        $message = "Hello $username,\n\nPlease verify your account by clicking the link below:\n$verify_link\n\nThank you!";
-        $headers = "From: no-reply@yourwebsite.com\r\n";
+        $mail = new PHPMailer(true);
+        try {
+            //Server settings
+            $mail->isSMTP();
+            $mail->SMTPDebug = 0; // Disable verbose debug output
+            $mail->Host = 'smtp.gmail.com';
+            $mail->SMTPAuth = true;
+            $mail->Username = $_ENV['SMTP_USER'];
+            $mail->Password = $_ENV['SMTP_PASS']; // Secure via .env
+            $mail->SMTPSecure = 'tls';
+            $mail->Port = 587;
 
-        if (mail($email, $subject, $message, $headers)) {
-            echo "Success: A verification email has been sent to your email address.";
-        } else {
-            echo "Error: Failed to send verification email.";
+            //Recipients
+            $mail->setFrom($_ENV['SMTP_USER'], 'Bantayan Island Restobar');
+            $mail->addAddress($email, $name);
+
+            // Content
+            $mail->isHTML(true);
+            $mail->Subject = 'Email Verification';
+            $mail->Body    = "Dear $name,<br><br>Your verification code is: <strong>$verification_code</strong><br><br>Please use this code to verify your email address.";
+
+            $mail->send();
+            echo json_encode(["message" => "Account created successfully. Please verify your email."]);
+        } catch (Exception $e) {
+            echo json_encode(["message" => "Message could not be sent. Mailer Error: {$mail->ErrorInfo}"]);
         }
-    } catch (PDOException $e) {
-        die("Error: " . $e->getMessage());
+    } else {
+        echo json_encode(["message" => "Error: " . $stmt->error]);
     }
+
+    // Close the statement and connection
+    $stmt->close();
 }
-?>
-<?php
-// Include database connection file
-require_once 'db_connection.php';
-
-if (isset($_GET['token'])) {
-    $token = $_GET['token'];
-
-    try {
-        // Check if the token exists in the database
-        $stmt = $pdo->prepare("SELECT * FROM users WHERE verification_token = :token AND is_verified = 0");
-        $stmt->execute([':token' => $token]);
-
-        if ($stmt->rowCount() > 0) {
-            // Verify the user
-            $updateStmt = $pdo->prepare("UPDATE users SET is_verified = 1, verification_token = NULL WHERE verification_token = :token");
-            $updateStmt->execute([':token' => $token]);
-            echo "Success: Your account has been verified!";
-        } else {
-            echo "Error: Invalid or expired verification token.";
-        }
-    } catch (PDOException $e) {
-        die("Error: " . $e->getMessage());
-    }
-} else {
-    echo "Error: No verification token provided.";
-}
+$conn->close();
 ?>
