@@ -83,7 +83,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $verification_code = random_int(10000, 99999);
 
     // Insert into the database
-    $stmt = $conn->prepare("INSERT INTO users (username, email, password, contact_num, code, status) VALUES (?, ?, ?, ?, ?, ?)");
+    $stmt = $conn->prepare("INSERT INTO users (username, email, password, contact, code, status) VALUES (?, ?, ?, ?, ?, ?)");
     $status = 0; // 0 for unverified
     $stmt->bind_param("sssssi", $name, $email, $hashed_password, $contact_num, $verification_code, $status);
 
@@ -96,8 +96,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $mail->SMTPDebug = 0; // Disable verbose debug output
             $mail->Host = 'smtp.gmail.com';
             $mail->SMTPAuth = true;
-            $mail->Username = $_ENV['SMTP_USER'];
-            $mail->Password = $_ENV['SMTP_PASS']; // Secure via .env
+            $mail->Username = 'shaninezaspa179@gmail.com';
+            $mail->Password = 'hglesxkasgmryjxq'; // Ensure this is correct and secure
             $mail->SMTPSecure = 'tls';
             $mail->Port = 587;
 
