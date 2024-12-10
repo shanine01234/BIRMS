@@ -550,6 +550,32 @@ $(document).ready(function () {
         }
     });
 
+    <script>
+    document.getElementById("createAccountForm").addEventListener("submit", function (e) {
+        e.preventDefault();
+
+        const formData = new FormData(this);
+
+        fetch("create_account.php", {
+            method: "POST",
+            body: formData
+        })
+        .then(response => response.json()) // Parse response as JSON
+        .then(data => {
+            if (data.message) {
+                alert(data.message); // Display the "message" field from the JSON
+            } else {
+                alert("An unexpected error occurred.");
+            }
+        })
+        .catch(error => {
+            console.error("Error:", error);
+            alert("There was an error processing your request.");
+        });
+    });
+</script>
+
+
     // Toggle confirm password visibility
     $('#toggle-confirm-password').on('click', function () {
         const confirmPasswordField = $('#confirm-password');
