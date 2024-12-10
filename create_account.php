@@ -150,7 +150,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (!empty($errors)) {
         session_start();
         $_SESSION['signup_errors'] = $errors;
-        header("Location: index.php");
+        header("Location: signup.php");
         exit();
     }
 }
