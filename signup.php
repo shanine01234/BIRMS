@@ -40,8 +40,9 @@ unset($_SESSION['signup_errors'], $_SESSION['registration_success']);
                     type="text" 
                     id="name" 
                     name="name" 
-                    value="<?php echo htmlspecialchars($name); ?>"
+                    value="<?php echo htmlspecialchars($name ?? ''); ?>"
                     required 
+                    pattern="[A-Za-z\s]+" 
                     class="w-full px-3 py-2 border <?php echo isset($errors['name']) ? 'border-red-500' : 'border-gray-300'; ?> rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     placeholder="Enter your full name"
                 >
@@ -56,8 +57,9 @@ unset($_SESSION['signup_errors'], $_SESSION['registration_success']);
                     type="tel" 
                     id="contact" 
                     name="contact" 
-                    value="<?php echo htmlspecialchars($contact); ?>"
+                    value="<?php echo htmlspecialchars($contact ?? ''); ?>"
                     required 
+                    pattern="\d{10}" 
                     class="w-full px-3 py-2 border <?php echo isset($errors['contact']) ? 'border-red-500' : 'border-gray-300'; ?> rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     placeholder="Enter 10-digit mobile number"
                 >
@@ -72,10 +74,11 @@ unset($_SESSION['signup_errors'], $_SESSION['registration_success']);
                     type="email" 
                     id="email" 
                     name="email" 
-                    value="<?php echo htmlspecialchars($email); ?>"
+                    value="<?php echo htmlspecialchars($email ?? ''); ?>"
                     required 
+                    pattern="^[a-zA-Z0-9._%+-]+@gmail\.com$" 
                     class="w-full px-3 py-2 border <?php echo isset($errors['email']) ? 'border-red-500' : 'border-gray-300'; ?> rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="you@example.com"
+                    placeholder="you@gmail.com"
                 >
                 <?php if (isset($errors['email'])): ?>
                     <p class="text-red-500 text-xs mt-1"><?php echo htmlspecialchars($errors['email']); ?></p>
