@@ -34,13 +34,13 @@ if ($conn->connect_error) {
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Sanitize and validate input data
     $name = htmlspecialchars(trim($_POST['name']), ENT_QUOTES, 'UTF-8');
-    $contact = htmlspecialchars(trim($_POST['contact']), ENT_QUOTES, 'UTF-8');
+    $contact_num = htmlspecialchars(trim($_POST['contact_num']), ENT_QUOTES, 'UTF-8');
     $email = filter_var(trim($_POST['email']), FILTER_SANITIZE_EMAIL);
     $password = trim($_POST['password']);
     $confirm_password = trim($_POST['confirm_password']);
     $terms = isset($_POST['terms']) ? 1 : 0;
 
-    if (empty($name) || empty($contact) || empty($email) || empty($password) || empty($confirm_password)) {
+    if (empty($name) || empty($contact_num) || empty($email) || empty($password) || empty($confirm_password)) {
         echo json_encode(["message" => "All fields are required."]);
         exit;
     }
@@ -78,9 +78,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $verification_code = random_int(10000, 99999);
 
     // Insert into the database
-    $stmt = $conn->prepare("INSERT INTO users (username, email, password, contact, code, status) VALUES (?, ?, ?, ?, ?, ?)");
+    $stmt = $conn->prepare("INSERT INTO users (username, email, password, contact_num, code, status) VALUES (?, ?, ?, ?, ?, ?)");
     $status = 0; // 0 for unverified
-    $stmt->bind_param("sssssi", $name, $email, $hashed_password, $contact, $verification_code, $status);
+    $stmt->bind_param("sssssi", $name, $email, $hashed_password, $contact_num, $verification_code, $status);
 
     if ($stmt->execute()) {
         // Send verification email
