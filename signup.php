@@ -11,14 +11,14 @@ require "./phpmailer/src/SMTP.php";
 
 if (isset($_POST['signup'])) {
     $name = $_POST['name'];
-    $contact = $_POST['contact'];
+    $contact_num = $_POST['contact_num'];
     $email = $_POST['email'];
     $password = $_POST['password'];
     $verification_code = uniqid();
 
     // Sanitize Inputs
     $name = htmlspecialchars($name, ENT_QUOTES, 'UTF-8');
-    $contact = htmlspecialchars($contact, ENT_QUOTES, 'UTF-8');
+    $contact_num = htmlspecialchars($contact_num, ENT_QUOTES, 'UTF-8');
     $email = filter_var($email, FILTER_SANITIZE_EMAIL);
 
     // Check if Terms and Conditions are agreed to
@@ -42,7 +42,7 @@ if (isset($_POST['signup'])) {
     }
 
     // Validate Contact Number
-    if (!preg_match('/^09[0-9]{9}$/', $contact)) {
+    if (!preg_match('/^09[0-9]{9}$/', $contact_num)) {
         ?>
         <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -80,7 +80,7 @@ if (isset($_POST['signup'])) {
        <?php 
     } else {
         $hashed = password_hash($password, PASSWORD_DEFAULT);
-        $query = $conn->query("INSERT INTO users SET username = '$name', contact = '$contact', email = '$email', password = '$hashed', verification_code = '$verification_code'");
+        $query = $conn->query("INSERT INTO users SET username = '$name', contact_num = '$contact_num', email = '$email', password = '$hashed', verification_code = '$verification_code'");
         if ($query) {
 
             $mail = new PHPMailer(true);
@@ -311,8 +311,8 @@ if (substr($request, -4) == '.php') {
 
         <!-- Contact -->
         <div class="form-group">
-            <label for="contact">Contact Number</label>
-            <input type="text" id="contact" name="contact" class="form-control my-2" required maxlength="11" pattern="09[0-9]{9}" title="Contact number must be 11 digits and start with '09'">
+            <label for="contact_num">Contact Number</label>
+            <input type="text" id="contact_num" name="contact_num" class="form-control my-2" required maxlength="11" pattern="09[0-9]{9}" title="Contact number must be 11 digits and start with '09'">
             <small id="contactError" class="text-danger"></small>
         </div>
 
@@ -358,7 +358,7 @@ if (substr($request, -4) == '.php') {
 
 <script>
     const nameInput = document.getElementById('name');
-    const contactInput = document.getElementById('contact');
+    const contactInput = document.getElementById('contact_num');
     const password = document.getElementById('password');
     const confirmPassword = document.getElementById('confirm_password');
     const passwordStrengthBar = document.getElementById('passwordStrengthBar');
