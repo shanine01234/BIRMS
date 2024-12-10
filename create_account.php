@@ -49,7 +49,7 @@ function registerUser($username, $email, $password, $contact) {
             email, 
             password, 
             contact, 
-            verification_code, 
+            code, 
             status,
             code
         ) VALUES (
@@ -57,7 +57,7 @@ function registerUser($username, $email, $password, $contact) {
             :email, 
             :password, 
             :contact, 
-            :verification_code, 
+            :code, 
             0,
             NULL
         )");
