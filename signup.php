@@ -1,8 +1,14 @@
 <?php
 session_start();
 
+// Retrieve any errors or success messages from the session
+$errors = $_SESSION['signup_errors'] ?? [];
+$registration_success = $_SESSION['registration_success'] ?? '';
 
+// Clear session messages
+unset($_SESSION['signup_errors'], $_SESSION['registration_success']);
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
