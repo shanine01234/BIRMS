@@ -138,7 +138,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $_SESSION['registration_success'] = $registrationResult['message'];
             
             // Optionally, you can redirect to a verification page
-            header("Location: verification.php");
+            header("Location: verify_gmail.php");
             exit();
         } else {
             // Store errors to display on the form
