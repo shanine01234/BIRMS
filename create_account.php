@@ -40,37 +40,23 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $confirm_password = trim($_POST['confirm_password']);
     $terms = isset($_POST['terms']) ? 1 : 0;
 
-    // Check for empty fields
     if (empty($name) || empty($contact) || empty($email) || empty($password) || empty($confirm_password)) {
         echo json_encode(["message" => "All fields are required."]);
         exit;
     }
 
-    // Validate email format
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         echo json_encode(["message" => "Invalid email format."]);
         exit;
     }
 
-    // Check if passwords match
     if ($password !== $confirm_password) {
         echo json_encode(["message" => "Passwords do not match."]);
         exit;
     }
 
-    // Check terms and conditions
     if (!$terms) {
         echo json_encode(["message" => "You must agree to the terms and conditions."]);
-        exit;
-    }
-
-    // Brute Force Protection: Check if the user has failed too many attempts recently
-    $ip_address = $_SERVER['REMOTE_ADDR']; // get the user's IP address
-    $result = $conn->query("SELECT COUNT(*) AS failed_attempts FROM login_attempts WHERE ip_address = '$ip_address' AND timestamp > (NOW() - INTERVAL 15 MINUTE)");
-    $failed_attempts = $result->fetch_assoc()['failed_attempts'];
-    
-    if ($failed_attempts > 5) {
-        echo json_encode(["message" => "Too many failed attempts. Please try again later."]);
         exit;
     }
 
@@ -100,7 +86,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Send verification email
         $mail = new PHPMailer(true);
         try {
-            // Server settings
+            //Server settings
             $mail->isSMTP();
             $mail->SMTPDebug = 0; // Disable verbose debug output
             $mail->Host = 'smtp.gmail.com';
@@ -110,7 +96,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $mail->SMTPSecure = 'tls';
             $mail->Port = 587;
 
-            // Recipients
+            //Recipients
             $mail->setFrom($_ENV['SMTP_USER'], 'Bantayan Island Restobar');
             $mail->addAddress($email, $name);
 
