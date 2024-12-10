@@ -78,7 +78,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $verification_code = random_int(10000, 99999);
 
     // Insert into the database
-    $stmt = $conn->prepare("INSERT INTO zusers (username, email, password, contact, code, status) VALUES (?, ?, ?, ?, ?, ?)");
+    $stmt = $conn->prepare("INSERT INTO users (username, email, password, contact, code, status) VALUES (?, ?, ?, ?, ?, ?)");
     $status = 0; // 0 for unverified
     $stmt->bind_param("sssssi", $name, $email, $hashed_password, $contact, $verification_code, $status);
 
