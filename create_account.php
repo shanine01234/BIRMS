@@ -48,15 +48,15 @@ function sendVerificationEmail($email) {
 
         // Server settings
         $mail->isSMTP();
-        $mail->Host = 'smtp.gmail.com'; // Replace with your SMTP host
+        $mail->SMTPDebug = 0; // Disable verbose debug output
+        $mail->Host = 'smtp.gmail.com';
         $mail->SMTPAuth = true;
-        $mail->Username = 'your-email@gmail.com'; // Replace with your email
-        $mail->Password = 'your-password'; // Replace with your email password
-        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+        $mail->Username = 'shaninezaspa179@gmail.com';
+        $mail->Password = 'hglesxkasgmryjxq'; // Ensure this is correct and secure
+        $mail->SMTPSecure = 'tls';
         $mail->Port = 587;
 
-        // Recipients
-        $mail->setFrom('your-email@gmail.com', 'Your Name');
+        $mail->setFrom('shaninezaspa179@gmail.com', 'Bantayan Island Restobar');
         $mail->addAddress($email);
 
         // Content
