@@ -23,10 +23,10 @@ if (!isset($_ENV['DB_HOST'], $_ENV['DB_USER'], $_ENV['DB_PASS'], $_ENV['DB_NAME'
 }
 
 // Database configuration
-$host = $_ENV['DB_HOST'];
-$user = $_ENV['DB_USER'];
-$password = $_ENV['DB_PASS'];
-$db_name = $_ENV['DB_NAME'];
+$host = $_ENV['127.0.0.1'];
+$user = $_ENV['u510162695_birms_db'];
+$password = $_ENV['1Birms_db'];
+$db_name = $_ENV['u510162695_birms_db'];
 
 // Create database connection
 $conn = new mysqli($host, $user, $password, $db_name);
