@@ -1,89 +1,160 @@
 <?php
-require 'vendor/autoload.php'; // Include PHPMailer's autoload file
-
-header('Content-Type: application/json');
-
-// Enable error reporting for debugging
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
+// Enable error reporting for debugging (remove in production)
 error_reporting(E_ALL);
+ini_set('display_errors', 1);
 
-// Load sensitive data securely using .env file
-$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
-$dotenv->load();
+// Database connection function
+function connectDatabase() {
+    $host = '127.0.0.1';
+    $user = 'u510162695_birms_db';
+    $password = '1Birms_db';
+    $db_name = 'u510162695_birms_db';
 
-// Database connection
-$host = $_ENV['127.0.0.1'];
-$user = $_ENV['u510162695_birms_db'];
-$password = $_ENV['1Birms_db'];
-$db_name = $_ENV['u510162695_birms_db'];
+    try {
+        $conn = new PDO("mysql:host=$host;dbname=$db_name", $user, $password);
+        $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        return $conn;
+    } catch(PDOException $e) {
+        error_log("Database Connection Failed: " . $e->getMessage());
+        die("Connection failed: " . $e->getMessage());
+    }
+}
 
-// Create connection
-$conn = new mysqli($host, $user, $password, $db_name);
+// Function to generate verification code
+function generateVerificationCode($length = 30) {
+    return bin2hex(random_bytes($length / 2));
+}
 
-// Check connection
-if ($conn->connect_error) {
-    echo json_encode(["message" => "Connection failed: " . $conn->connect_error]);
-    exit;
+// Main registration process
+function registerUser($username, $email, $password, $contact) {
+    try {
+        $conn = connectDatabase();
+
+        // Check if email already exists
+        $checkEmail = $conn->prepare("SELECT COUNT(*) FROM users WHERE email = :email");
+        $checkEmail->execute(['email' => $email]);
+        if ($checkEmail->fetchColumn() > 0) {
+            return ['success' => false, 'message' => 'Email already exists'];
+        }
+
+        // Generate verification code
+        $verification_code = generateVerificationCode();
+
+        // Hash the password
+        $hashed_password = password_hash($password, PASSWORD_BCRYPT);
+
+        // Prepare SQL to insert user
+        $stmt = $conn->prepare("INSERT INTO users (
+            username, 
+            email, 
+            password, 
+            contact, 
+            verification_code, 
+            status,
+            code
+        ) VALUES (
+            :username, 
+            :email, 
+            :password, 
+            :contact, 
+            :verification_code, 
+            0,
+            NULL
+        )");
+
+        // Execute the statement
+        $result = $stmt->execute([
+            'username' => $username,
+            'email' => $email,
+            'password' => $hashed_password,
+            'contact' => $contact,
+            'verification_code' => $verification_code
+        ]);
+
+        if ($result) {
+            // Send verification email (you would implement this)
+            // sendVerificationEmail($email, $verification_code);
+
+            return [
+                'success' => true, 
+                'message' => 'Registration successful. Please check your email to verify your account.',
+                'verification_code' => $verification_code
+            ];
+        } else {
+            return ['success' => false, 'message' => 'Registration failed'];
+        }
+    } catch(PDOException $e) {
+        error_log("Registration Error: " . $e->getMessage());
+        return ['success' => false, 'message' => 'Database error: ' . $e->getMessage()];
+    }
 }
 
 // Handle form submission
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Sanitize and validate input data
-    $name = htmlspecialchars(trim($_POST['name']), ENT_QUOTES, 'UTF-8');
-    $contact = htmlspecialchars(trim($_POST['contact']), ENT_QUOTES, 'UTF-8');
-    $email = filter_var(trim($_POST['email']), FILTER_SANITIZE_EMAIL);
-    $password = trim($_POST['password']);
-    $confirm_password = trim($_POST['confirm_password']);
-    $terms = isset($_POST['terms']) ? 1 : 0;
+    // Validate and sanitize inputs
+    $username = filter_input(INPUT_POST, 'name', FILTER_SANITIZE_STRING);
+    $email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL);
+    $contact = filter_input(INPUT_POST, 'contact', FILTER_SANITIZE_STRING);
+    $password = $_POST['password'] ?? '';
+    $confirm_password = $_POST['confirm_password'] ?? '';
+    $terms = $_POST['terms'] ?? '';
 
-    if (empty($name) || empty($contact) || empty($email) || empty($password) || empty($confirm_password)) {
-        echo json_encode(["message" => "All fields are required."]);
-        exit;
+    // Validation array
+    $errors = [];
+
+    // Perform validations
+    if (empty($username)) {
+        $errors['name'] = "Name is required";
     }
 
-    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        echo json_encode(["message" => "Invalid email format."]);
-        exit;
+    if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $errors['email'] = "Invalid email format";
+    }
+
+    if (empty($contact) || !preg_match("/^[0-9]{10}$/", $contact)) {
+        $errors['contact'] = "Invalid contact number. Please enter 10 digits.";
+    }
+
+    if (empty($password)) {
+        $errors['password'] = "Password is required";
+    } elseif (strlen($password) < 8) {
+        $errors['password'] = "Password must be at least 8 characters long";
     }
 
     if ($password !== $confirm_password) {
-        echo json_encode(["message" => "Passwords do not match."]);
-        exit;
+        $errors['confirm_password'] = "Passwords do not match";
     }
 
-    if (!$terms) {
-        echo json_encode(["message" => "You must agree to the terms and conditions."]);
-        exit;
+    if (empty($terms)) {
+        $errors['terms'] = "You must accept the Terms and Conditions";
     }
 
-    // Check if email already exists
-    $checkEmail = $conn->prepare("SELECT id FROM users WHERE email = ?");
-    $checkEmail->bind_param("s", $email);
-    $checkEmail->execute();
-    $checkEmail->store_result();
-    if ($checkEmail->num_rows > 0) {
-        echo json_encode(["message" => "This email is already registered."]);
-        exit;
-    }
-    $checkEmail->close();
+    // If no errors, proceed with registration
+    if (empty($errors)) {
+        $registrationResult = registerUser($username, $email, $password, $contact);
 
-    // Hash the password securely
-    $hashed_password = password_hash($password, PASSWORD_BCRYPT);
-
-    // Insert into the database
-    $stmt = $conn->prepare("INSERT INTO users (username, email, password, contact, status) VALUES (?, ?, ?, ?, ?)");
-    $status = 0; // 0 for unverified
-    $stmt->bind_param("ssssi", $name, $email, $hashed_password, $contact, $status);
-
-    if ($stmt->execute()) {
-        echo json_encode(["message" => "Account created successfully."]);
-    } else {
-        echo json_encode(["message" => "Error: " . $stmt->error]);
+        if ($registrationResult['success']) {
+            // Redirect or show success message
+            session_start();
+            $_SESSION['registration_success'] = $registrationResult['message'];
+            
+            // Optionally, you can redirect to a verification page
+            header("Location: verification.php");
+            exit();
+        } else {
+            // Store errors to display on the form
+            $errors['registration'] = $registrationResult['message'];
+        }
     }
 
-    // Close the statement and connection
-    $stmt->close();
+    // If there are errors, you would typically redirect back to the signup form
+    // with error messages. Here, you'd need to modify the previous signup.php 
+    // to handle these errors
+    if (!empty($errors)) {
+        session_start();
+        $_SESSION['signup_errors'] = $errors;
+        header("Location: signup.php");
+        exit();
+    }
 }
-$conn->close();
 ?>

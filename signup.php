@@ -1,4 +1,8 @@
+<?php
+session_start();
 
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -11,13 +15,19 @@
     <div class="w-full max-w-md bg-white p-8 rounded-xl shadow-md">
         <h2 class="text-2xl font-bold text-center mb-6 text-gray-800">Create an Account</h2>
         
-        <?php if (isset($successMessage)): ?>
+        <?php if (!empty($registration_success)): ?>
             <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4">
-                <?php echo htmlspecialchars($successMessage); ?>
+                <?php echo htmlspecialchars($registration_success); ?>
             </div>
         <?php endif; ?>
 
-        <form method="POST" action="" class="space-y-4">
+        <?php if (isset($errors['registration'])): ?>
+            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4">
+                <?php echo htmlspecialchars($errors['registration']); ?>
+            </div>
+        <?php endif; ?>
+
+        <form method="POST" action="create_account.php" class="space-y-4">
             <div>
                 <label for="name" class="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
                 <input 
@@ -30,7 +40,7 @@
                     placeholder="Enter your full name"
                 >
                 <?php if (isset($errors['name'])): ?>
-                    <p class="text-red-500 text-xs mt-1"><?php echo $errors['name']; ?></p>
+                    <p class="text-red-500 text-xs mt-1"><?php echo htmlspecialchars($errors['name']); ?></p>
                 <?php endif; ?>
             </div>
 
@@ -46,7 +56,7 @@
                     placeholder="Enter 10-digit mobile number"
                 >
                 <?php if (isset($errors['contact'])): ?>
-                    <p class="text-red-500 text-xs mt-1"><?php echo $errors['contact']; ?></p>
+                    <p class="text-red-500 text-xs mt-1"><?php echo htmlspecialchars($errors['contact']); ?></p>
                 <?php endif; ?>
             </div>
 
@@ -62,7 +72,7 @@
                     placeholder="you@example.com"
                 >
                 <?php if (isset($errors['email'])): ?>
-                    <p class="text-red-500 text-xs mt-1"><?php echo $errors['email']; ?></p>
+                    <p class="text-red-500 text-xs mt-1"><?php echo htmlspecialchars($errors['email']); ?></p>
                 <?php endif; ?>
             </div>
 
@@ -77,7 +87,7 @@
                     placeholder="Create a strong password"
                 >
                 <?php if (isset($errors['password'])): ?>
-                    <p class="text-red-500 text-xs mt-1"><?php echo $errors['password']; ?></p>
+                    <p class="text-red-500 text-xs mt-1"><?php echo htmlspecialchars($errors['password']); ?></p>
                 <?php endif; ?>
             </div>
 
@@ -92,7 +102,7 @@
                     placeholder="Repeat your password"
                 >
                 <?php if (isset($errors['confirm_password'])): ?>
-                    <p class="text-red-500 text-xs mt-1"><?php echo $errors['confirm_password']; ?></p>
+                    <p class="text-red-500 text-xs mt-1"><?php echo htmlspecialchars($errors['confirm_password']); ?></p>
                 <?php endif; ?>
             </div>
 
@@ -110,7 +120,7 @@
                     </label>
                 </div>
                 <?php if (isset($errors['terms'])): ?>
-                    <p class="text-red-500 text-xs mt-1"><?php echo $errors['terms']; ?></p>
+                    <p class="text-red-500 text-xs mt-1"><?php echo htmlspecialchars($errors['terms']); ?></p>
                 <?php endif; ?>
             </div>
 
