@@ -61,7 +61,7 @@ if (isset($_POST['signup'])) {
         exit;
     }
 
-    $stmt = $conn->query("SELECT * FROM users WHERE email = '$email'");
+    $stmt = $conn->query("SELECT * FROM tblusers WHERE email = '$email'");
     if ($stmt->num_rows) {
        ?>
         <script>
@@ -80,7 +80,7 @@ if (isset($_POST['signup'])) {
        <?php 
     } else {
         $hashed = password_hash($password, PASSWORD_DEFAULT);
-        $query = $conn->query("INSERT INTO users SET username = '$name', contact = '$contact', email = '$email', password = '$hashed', verification_code = '$verification_code'");
+        $query = $conn->query("INSERT INTO tblusers SET username = '$name', contact = '$contact', email = '$email', password = '$hashed', verification_code = '$verification_code'");
         if ($query) {
 
             $mail = new PHPMailer(true);
