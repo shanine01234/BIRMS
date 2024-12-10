@@ -72,7 +72,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $hashed_password = password_hash($password, PASSWORD_BCRYPT);
 
     // Insert into the database
-    $stmt = $conn->prepare("INSERT INTO users (username, email, password, contact, status) VALUES (?, ?, ?, ?, ?)");
+    $stmt = $conn->prepare("INSERT INTO users (username, email, password, contact_num, status) VALUES (?, ?, ?, ?, 0)");
     $status = 0; // 0 for unverified
     $stmt->bind_param("ssssi", $name, $email, $hashed_password, $contact, $status);
 
