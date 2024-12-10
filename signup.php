@@ -11,14 +11,14 @@ require "./phpmailer/src/SMTP.php";
 
 if (isset($_POST['signup'])) {
     $name = $_POST['name'];
-    $contact = $_POST['contact'];
+    $contact_num = $_POST['contact_num'];
     $email = $_POST['email'];
     $password = $_POST['password'];
     $verification_code = uniqid();
 
     // Sanitize Inputs
     $name = htmlspecialchars($name, ENT_QUOTES, 'UTF-8');
-    $contact = htmlspecialchars($contact, ENT_QUOTES, 'UTF-8');
+    $contact_num = htmlspecialchars($contact_num, ENT_QUOTES, 'UTF-8');
     $email = filter_var($email, FILTER_SANITIZE_EMAIL);
 
     // Check if Terms and Conditions are agreed to
@@ -42,7 +42,7 @@ if (isset($_POST['signup'])) {
     }
 
     // Validate Contact Number
-    if (!preg_match('/^09[0-9]{9}$/', $contact)) {
+    if (!preg_match('/^09[0-9]{9}$/', $contact_num)) {
         ?>
         <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -80,7 +80,7 @@ if (isset($_POST['signup'])) {
        <?php 
     } else {
         $hashed = password_hash($password, PASSWORD_DEFAULT);
-        $query = $conn->query("INSERT INTO users SET username = '$name', contact = '$contact', email = '$email', password = '$hashed', verification_code = '$verification_code'");
+        $query = $conn->query("INSERT INTO users SET username = '$name', contact_num = '$contact_num', email = '$email', password = '$hashed', verification_code = '$verification_code'");
         if ($query) {
 
             $mail = new PHPMailer(true);
