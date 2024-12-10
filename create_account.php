@@ -17,7 +17,7 @@ $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
 $dotenv->load();
 
 // Verify .env loaded
-if (!isset($_ENV['DB_HOST'], $_ENV['DB_USER'], $_ENV['DB_PASS'], $_ENV['DB_NAME'], $_ENV['SMTP_USER'], $_ENV['SMTP_PASS'])) {
+if (!isset($_ENV['127.0.0.1'], $_ENV['u510162695_birms_db'], $_ENV['1Birms_db'], $_ENV['u510162695_birms_db'], $_ENV['SMTP_USER'], $_ENV['SMTP_PASS'])) {
     echo json_encode(["message" => "Failed to load environment variables."]);
     exit;
 }
