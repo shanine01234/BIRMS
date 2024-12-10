@@ -471,6 +471,14 @@ $(document).ready(function () {
                     icon: 'success',
                     confirmButtonText: 'OK'
                 });
+            },
+            error: function () {
+                Swal.fire({
+                    title: 'Error!',
+                    text: 'There was an error processing your request.',
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
             }
         });
     });
