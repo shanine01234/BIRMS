@@ -1,89 +1,60 @@
-<?php
-require 'vendor/autoload.php'; // Include PHPMailer's autoload file
 
-header('Content-Type: application/json');
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+    <div class="w-full max-w-md bg-white p-8 rounded-xl shadow-md">
+        <h2 class="text-2xl font-bold text-center mb-6 text-gray-800">Login</h2>
+        
+        <?php if (!empty($error_message)): ?>
+            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+                <?php echo htmlspecialchars($error_message); ?>
+            </div>
+        <?php endif; ?>
 
-// Enable error reporting for debugging
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
+        <form method="POST" action="" class="space-y-4">
+            <div>
+                <label for="email" class="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
+                <input 
+                    type="email" 
+                    id="email" 
+                    name="email" 
+                    required 
+                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="you@example.com"
+                >
+            </div>
 
-// Load sensitive data securely using .env file
-$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
-$dotenv->load();
+            <div>
+                <label for="password" class="block text-sm font-medium text-gray-700 mb-2">Password</label>
+                <input 
+                    type="password" 
+                    id="password" 
+                    name="password" 
+                    required 
+                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="Enter your password"
+                >
+            </div>
 
-// Database connection
-$host = $_ENV['127.0.0.1'];
-$user = $_ENV['u510162695_birms_db'];
-$password = $_ENV['1Birms_db'];
-$db_name = $_ENV['u510162695_birms_db'];
+            <div>
+                <button 
+                    type="submit" 
+                    class="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 transition duration-300"
+                >
+                    Login
+                </button>
+            </div>
 
-// Create connection
-$conn = new mysqli($host, $user, $password, $db_name);
-
-// Check connection
-if ($conn->connect_error) {
-    echo json_encode(["message" => "Connection failed: " . $conn->connect_error]);
-    exit;
-}
-
-// Handle form submission
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Sanitize and validate input data
-    $name = htmlspecialchars(trim($_POST['name']), ENT_QUOTES, 'UTF-8');
-    $contact = htmlspecialchars(trim($_POST['contact']), ENT_QUOTES, 'UTF-8');
-    $email = filter_var(trim($_POST['email']), FILTER_SANITIZE_EMAIL);
-    $password = trim($_POST['password']);
-    $confirm_password = trim($_POST['confirm_password']);
-    $terms = isset($_POST['terms']) ? 1 : 0;
-
-    if (empty($name) || empty($contact) || empty($email) || empty($password) || empty($confirm_password)) {
-        echo json_encode(["message" => "All fields are required."]);
-        exit;
-    }
-
-    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        echo json_encode(["message" => "Invalid email format."]);
-        exit;
-    }
-
-    if ($password !== $confirm_password) {
-        echo json_encode(["message" => "Passwords do not match."]);
-        exit;
-    }
-
-    if (!$terms) {
-        echo json_encode(["message" => "You must agree to the terms and conditions."]);
-        exit;
-    }
-
-    // Check if email already exists
-    $checkEmail = $conn->prepare("SELECT id FROM users WHERE email = ?");
-    $checkEmail->bind_param("s", $email);
-    $checkEmail->execute();
-    $checkEmail->store_result();
-    if ($checkEmail->num_rows > 0) {
-        echo json_encode(["message" => "This email is already registered."]);
-        exit;
-    }
-    $checkEmail->close();
-
-    // Hash the password securely
-    $hashed_password = password_hash($password, PASSWORD_BCRYPT);
-
-    // Insert into the database
-    $stmt = $conn->prepare("INSERT INTO users (username, email, password, contact_num, status) VALUES (?, ?, ?, ?, 0)");
-    $status = 0; // 0 for unverified
-    $stmt->bind_param("ssssi", $name, $email, $hashed_password, $contact, $status);
-
-    if ($stmt->execute()) {
-        echo json_encode(["message" => "Account created successfully."]);
-    } else {
-        echo json_encode(["message" => "Error: " . $stmt->error]);
-    }
-
-    // Close the statement and connection
-    $stmt->close();
-}
-$conn->close();
-?>
+            <div class="text-center">
+                <a href="#" class="text-sm text-blue-500 hover:underline">Forgot Password?</a>
+            </div>
+        </form>
+    </div>
+</body>
+</html>
