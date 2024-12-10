@@ -49,7 +49,6 @@ function registerUser($username, $email, $password, $contact) {
             email, 
             password, 
             contact, 
-            code, 
             status,
             code
         ) VALUES (
@@ -57,7 +56,6 @@ function registerUser($username, $email, $password, $contact) {
             :email, 
             :password, 
             :contact, 
-            :code, 
             0,
             NULL
         )");
@@ -68,7 +66,7 @@ function registerUser($username, $email, $password, $contact) {
             'email' => $email,
             'password' => $hashed_password,
             'contact' => $contact,
-            'verification_code' => $verification_code
+            
         ]);
 
         if ($result) {
@@ -78,9 +76,10 @@ function registerUser($username, $email, $password, $contact) {
             return [
                 'success' => true, 
                 'message' => 'Registration successful. Please check your email to verify your account.',
-                'verification_code' => $verification_code
+                
             ];
         } else {
+            error_log("SQL Error: " . implode(" ", $stmt->errorInfo()));
             return ['success' => false, 'message' => 'Registration failed'];
         }
     } catch(PDOException $e) {
@@ -147,14 +146,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
     }
 
-    // If there are errors, you would typically redirect back to the signup form
-    // with error messages. Here, you'd need to modify the previous signup.php 
-    // to handle these errors
+    // If there are errors, redirect back to the signup form with error messages
     if (!empty($errors)) {
         session_start();
         $_SESSION['signup_errors'] = $errors;
-        header("Location: signup.php");
+        header("Location: index.php");
         exit();
     }
 }
-?>
