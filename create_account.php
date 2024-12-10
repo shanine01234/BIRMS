@@ -3,6 +3,11 @@
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+
+require 'vendor/autoload.php'; // Ensure this path is correct
+
 // Database connection function
 function connectDatabase() {
     $host = '127.0.0.1';
@@ -20,9 +25,63 @@ function connectDatabase() {
     }
 }
 
-// Function to generate verification code
-function generateVerificationCode($length = 30) {
-    return bin2hex(random_bytes($length / 2));
+// Function to generate a 5-digit verification code
+function generateFiveDigitCode() {
+    return str_pad(rand(0, 99999), 5, '0', STR_PAD_LEFT);
+}
+
+// Function to send verification email
+function sendVerificationEmail($email) {
+    try {
+        // Generate and save code
+        $verificationCode = generateFiveDigitCode();
+        
+        $conn = connectDatabase();
+        $stmt = $conn->prepare("UPDATE users SET code = :code WHERE email = :email");
+        $stmt->execute([
+            'code' => $verificationCode,
+            'email' => $email
+        ]);
+
+        // Create a new PHPMailer instance
+        $mail = new PHPMailer(true);
+
+        // Server settings
+        $mail->isSMTP();
+        $mail->Host = 'smtp.gmail.com'; // Replace with your SMTP host
+        $mail->SMTPAuth = true;
+        $mail->Username = 'your-email@gmail.com'; // Replace with your email
+        $mail->Password = 'your-password'; // Replace with your email password
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+        $mail->Port = 587;
+
+        // Recipients
+        $mail->setFrom('your-email@gmail.com', 'Your Name');
+        $mail->addAddress($email);
+
+        // Content
+        $mail->isHTML(true);
+        $mail->Subject = 'Email Verification Code';
+        $mail->Body = "
+            <h2>Email Verification</h2>
+            <p>Your verification code is: <strong>$verificationCode</strong></p>
+            <p>Please use this code to verify your email address.</p>
+            <p>If you didn't request this code, please ignore this email.</p>
+        ";
+
+        $mail->send();
+        return [
+            'success' => true,
+            'message' => 'Verification code sent successfully'
+        ];
+
+    } catch (Exception $e) {
+        error_log("Email Error: " . $mail->ErrorInfo);
+        return [
+            'success' => false,
+            'message' => 'Failed to send verification code: ' . $mail->ErrorInfo
+        ];
+    }
 }
 
 // Main registration process
@@ -36,9 +95,6 @@ function registerUser($username, $email, $password, $contact) {
         if ($checkEmail->fetchColumn() > 0) {
             return ['success' => false, 'message' => 'Email already exists'];
         }
-
-        // Generate verification code
-        $verification_code = generateVerificationCode();
 
         // Hash the password
         $hashed_password = password_hash($password, PASSWORD_BCRYPT);
@@ -65,19 +121,24 @@ function registerUser($username, $email, $password, $contact) {
             'username' => $username,
             'email' => $email,
             'password' => $hashed_password,
-            'contact' => $contact,
-            
+            'contact' => $contact
         ]);
 
         if ($result) {
-            // Send verification email (you would implement this)
-            // sendVerificationEmail($email, $verification_code);
-
-            return [
-                'success' => true, 
-                'message' => 'Registration successful. Please check your email to verify your account.',
-                
-            ];
+            // Send verification email
+            $emailResult = sendVerificationEmail($email);
+            
+            if ($emailResult['success']) {
+                return [
+                    'success' => true, 
+                    'message' => 'Registration successful. Please check your email for verification code.'
+                ];
+            } else {
+                return [
+                    'success' => false,
+                    'message' => 'Registration successful but failed to send verification email.'
+                ];
+            }
         } else {
             error_log("SQL Error: " . implode(" ", $stmt->errorInfo()));
             return ['success' => false, 'message' => 'Registration failed'];
