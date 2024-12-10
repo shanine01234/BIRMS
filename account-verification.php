@@ -1,118 +1,126 @@
 <?php 
 require_once('inc/header.php');
 
+// Check if the form is submitted
 if (isset($_POST['submit'])) {
-    $verification_code = $_POST['verification_code'];
-    $email = $_POST['email'];
-    $password = $_POST['password'];
+    // Sanitize user input to avoid XSS
+    $verification_code = htmlspecialchars(trim($_POST['verification_code']));
+    $email = htmlspecialchars(trim($_POST['email']));
+    $password = trim($_POST['password']);
 
-    $stmt = $conn->query("SELECT * FROM users WHERE email = '$email'");
-    if ($stmt->num_rows) {
-        $row = $stmt->fetch_assoc();
+    // Ensure that no fields are empty
+    if (empty($verification_code) || empty($email) || empty($password)) {
+        echo "<script>alert('All fields are required!');</script>";
+    } else {
+        // Using prepared statements to prevent SQL injection
+        $stmt = $conn->prepare("SELECT * FROM users WHERE email = ?");
+        $stmt->bind_param("s", $email);
+        $stmt->execute();
+        $result = $stmt->get_result();
 
-        if (password_verify($password, $row['password'])) {
-            
-            if ($row['verification_code'] === $verification_code) {
+        if ($result->num_rows > 0) {
+            $row = $result->fetch_assoc();
 
-                $update = $conn->query("UPDATE users SET status = 2 WHERE verification_code = '$verification_code' AND email = '$email'");
+            // Check if the entered password matches the stored hash
+            if (password_verify($password, $row['password'])) {
 
-                ?>
-                    <script>
-                    document.addEventListener('DOMContentLoaded', function(){
-                        Swal.fire({
-                                position: "middle",
-                                icon: "success",
-                                title: "Account verified successfully",
+                // Verify the code
+                if ($row['verification_code'] === $verification_code) {
+                    // Update the user's status to 'verified'
+                    $update_stmt = $conn->prepare("UPDATE users SET status = 2 WHERE verification_code = ? AND email = ?");
+                    $update_stmt->bind_param("ss", $verification_code, $email);
+                    $update_stmt->execute();
+
+                    // Show success message
+                    echo "<script>
+                        document.addEventListener('DOMContentLoaded', function(){
+                            Swal.fire({
+                                position: 'middle',
+                                icon: 'success',
+                                title: 'Account verified successfully',
                                 showConfirmButton: false,
                                 timer: 1500
-                        }).then(() => {
-                            window.location.href = "login.php"
+                            }).then(() => {
+                                window.location.href = 'login.php';
+                            });
                         });
-                    })
-                    </script>
-                <?php 
-            }else{
-                ?>
-                    <script>
-                    document.addEventListener('DOMContentLoaded', function(){
-                        Swal.fire({
-                                position: "middle",
-                                icon: "error",
-                                title: "Incorrect verification code",
+                    </script>";
+
+                } else {
+                    // Incorrect verification code
+                    echo "<script>
+                        document.addEventListener('DOMContentLoaded', function(){
+                            Swal.fire({
+                                position: 'middle',
+                                icon: 'error',
+                                title: 'Incorrect verification code',
                                 showConfirmButton: false,
                                 timer: 1500
-                        }).then(() => {
-                            window.location.href = "account-verification.php"
+                            }).then(() => {
+                                window.location.href = 'account-verification.php';
+                            });
                         });
-                    })
-                    </script>
-                <?php 
-            }    
-        
-        }else{
-            ?>
-            <script>
-               document.addEventListener('DOMContentLoaded', function(){
-                Swal.fire({
-                        position: "middle",
-                        icon: "error",
-                        title: "Incorrect email or password",
+                    </script>";
+                }
+
+            } else {
+                // Incorrect password
+                echo "<script>
+                    document.addEventListener('DOMContentLoaded', function(){
+                        Swal.fire({
+                            position: 'middle',
+                            icon: 'error',
+                            title: 'Incorrect email or password',
+                            showConfirmButton: false,
+                            timer: 1500
+                        }).then(() => {
+                            window.location.href = 'account-verification.php';
+                        });
+                    });
+                </script>";
+            }
+
+        } else {
+            // User does not exist
+            echo "<script>
+                document.addEventListener('DOMContentLoaded', function(){
+                    Swal.fire({
+                        position: 'middle',
+                        icon: 'error',
+                        title: 'Incorrect email or password',
                         showConfirmButton: false,
                         timer: 1500
-                }).then(() => {
-                    window.location.href = "account-verification.php"
+                    }).then(() => {
+                        window.location.href = 'account-verification.php';
+                    });
                 });
-               })
-            </script>
-           <?php 
+            </script>";
         }
-
-    }else{
-        ?>
-        <script>
-           document.addEventListener('DOMContentLoaded', function(){
-            Swal.fire({
-                    position: "middle",
-                    icon: "error",
-                    title: "Incorrect email or password",
-                    showConfirmButton: false,
-                    timer: 1500
-            }).then(() => {
-                window.location.href = "account-verification.php"
-            });
-           })
-        </script>
-       <?php 
     }
-
 }
+
+// Redirect to remove .php from the URL if present
 $request = $_SERVER['REQUEST_URI'];
 if (substr($request, -4) == '.php') {
     $new_url = substr($request, 0, -4);
     header("Location: $new_url", true, 301);
     exit();
 }
-
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
     <meta name="author" content="">
-
     <title>Bantayan Island Restobar</title>
-
-    <!-- Custom fonts for this template-->
     <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
     <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@200..900&display=swap" rel="stylesheet">
-    <!-- Custom styles for this template-->
     <link href="css/sb-admin-2.min.css" rel="stylesheet">
     <link href="css/datatables.min.css" rel="stylesheet">
     <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -121,121 +129,16 @@ if (substr($request, -4) == '.php') {
     <style>
         body {
             font-family: "Inconsolata", monospace;
-            font-optical-sizing: auto;
-            font-weight: <weight>;
-            font-style: normal;
-            font-variation-settings: "wdth" 100;
-          
-        }
-        .cover-container {
-            position: relative;
-            width: 100%;
-            height: 400px;
-        }
-        .cover-image {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        .cover-text {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            color: black;
-            text-align: center;
-            width: 70%;
-        }
-        .card {
-            display: flex;
-            flex-direction: row;
-            width: 100%;
-            max-width: 700px;
-            margin: auto; 
-            border: 2px solid black;
-        }
-        .card img {
-            width: 50%;
-            height: auto;
-        }
-        .card-body {
-            width: 50%;
-            padding: 10px;
-        }
-        .image-container {
-            position: relative;
-            overflow: hidden;
-            width: 300px; 
-            height: 400px; 
-        }
-        .image-container img {
-            display: block;
-            width: 100%; 
-            height: 100%; 
-            object-fit: cover; 
-            transition: opacity 0.3s ease;
-        }
-        .image-container:hover img {
-            opacity: 0.3; 
-        }
-        .overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.7); 
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            text-align: center;
-            padding: 10px;
-        }
-        .image-container:hover .overlay {
-            opacity: 1;
-        }
-        .overlay-text {
-            font-size: 16px; 
-            line-height: 1.5;
-        }
-        footer {
-            background-color: #343a40;
-            color: white;
-            padding: 20px 0;
-            text-align: center;
-        }
-        footer .social-icons a {
-            color: white;
-            margin: 0 10px;
-            font-size: 20px;
-        }
-        .navbar-nav {
-            display: flex;
-            justify-content: center;
-            width: 100%;
-        }
-        .nav-item {
-            text-align: center;
-            color: black !important;
-            margin: 0 15px;
-        }
-        .nav-link, .nav-link i {
-            color: black !important;
-        }
-        .navbar-toggler-icon {
-            background-color: black; 
+            font-weight: normal;
         }
         .signup-container {
-            border: 2px solid #ddd; 
+            border: 2px solid #ddd;
             padding: 20px;
-            border-radius: 5px; 
+            border-radius: 5px;
             max-width: 400px;
-            margin: 0 auto; 
-            background-color: white; 
-            margin-top:100px;
+            margin: 0 auto;
+            background-color: white;
+            margin-top: 100px;
         }
         .btn-back {
             display: inline-block;
@@ -247,7 +150,7 @@ if (substr($request, -4) == '.php') {
             border: none;
         }
         .btn-secondary:hover {
-            background-color: #5a6268; 
+            background-color: #5a6268;
         }
     </style>
 </head>
@@ -275,8 +178,6 @@ if (substr($request, -4) == '.php') {
         </form>
     </div>
 
-    <!-- Footer -->
-
     <!-- Bootstrap core JavaScript-->
     <script src="vendor/jquery/jquery.min.js"></script>
     <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
@@ -301,5 +202,4 @@ if (substr($request, -4) == '.php') {
     <script src="js/demo/chart-pie-demo.js"></script>
 
 </body>
-
 </html>
