@@ -1,16 +1,16 @@
 <?php
-$host = "127.0.0.1";
-$db_name = "u510162695_birms_db";
+$servername = "localhost";
 $username = "u510162695_birms_db";
 $password = "1Birms_db";
+$dbname = "u510162695_birms_db";
 
-try {
-    $pdo = new PDO("mysql:host=$host;dbname=$db_name;charset=utf8", $username, $password);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-} catch (PDOException $e) {
-    die("Database Connection Failed: " . $e->getMessage());
+$conn = new mysqli($servername, $username, $password, $dbname);
+
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
 }
 ?>
+
 <?php
 // Include database connection file
 require_once 'db_connection.php';
