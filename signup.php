@@ -16,6 +16,17 @@ unset($_SESSION['signup_errors'], $_SESSION['registration_success']);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Signup Page</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        function validateNameInput(event) {
+            const input = event.target;
+            input.value = input.value.replace(/[^A-Za-z\s]/g, '');
+        }
+
+        function validateContactInput(event) {
+            const input = event.target;
+            input.value = input.value.replace(/[^0-9]/g, '');
+        }
+    </script>
 </head>
 <body class="bg-gray-100 flex items-center justify-center min-h-screen px-4">
     <div class="w-full max-w-md bg-white p-8 rounded-xl shadow-md">
@@ -43,6 +54,7 @@ unset($_SESSION['signup_errors'], $_SESSION['registration_success']);
                     value="<?php echo htmlspecialchars($name ?? ''); ?>"
                     required 
                     pattern="[A-Za-z\s]+" 
+                    oninput="validateNameInput(event)"
                     class="w-full px-3 py-2 border <?php echo isset($errors['name']) ? 'border-red-500' : 'border-gray-300'; ?> rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     placeholder="Enter your full name"
                 >
@@ -60,6 +72,7 @@ unset($_SESSION['signup_errors'], $_SESSION['registration_success']);
                     value="<?php echo htmlspecialchars($contact ?? ''); ?>"
                     required 
                     pattern="\d{10}" 
+                    oninput="validateContactInput(event)"
                     class="w-full px-3 py-2 border <?php echo isset($errors['contact']) ? 'border-red-500' : 'border-gray-300'; ?> rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     placeholder="Enter 10-digit mobile number"
                 >
