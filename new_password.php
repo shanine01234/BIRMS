@@ -1,72 +1,68 @@
 <?php
 
 require_once('inc/header.php');
-require_once('inc/function.php'); // Database connection file
+require_once('inc/conn.php'); // Include the database connection file
 require 'vendor/autoload.php';
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
-if (!isset($_GET['token']) || empty($_GET['token'])) {
-    echo "<script>
-            Swal.fire('Error', 'No token provided.', 'error').then(() => {
-                window.location.href = 'login.php';
-            });
-          </script>";
-    exit;
-}
+if (isset($_GET['token'])) {
+    $token = $_GET['token'];
 
-$token = $_GET['token'];
+    // Verify token from database
+    $stmt = $conn->prepare("SELECT * FROM users WHERE token = ?");
+    $stmt->bind_param("s", $token);
+    $stmt->execute();
+    $result = $stmt->get_result();
 
-// Verify token from database
-$stmt = $conn->prepare("SELECT * FROM users WHERE token = ?");
-$stmt->bind_param("s", $token);
-$stmt->execute();
-$result = $stmt->get_result();
+    if ($result->num_rows > 0) {
+        $row = $result->fetch_assoc();
+        $email = $row['email'];
+        $resetTokenTime = $row['reset_token_at'];
 
-if ($result->num_rows > 0) {
-    $row = $result->fetch_assoc();
-    $email = $row['email'];
-    $resetTokenTime = $row['reset_token_at'];
+        // Check if the reset token has expired (1 hour expiration)
+        if (strtotime($resetTokenTime) > time() - 3600) {
+            if (isset($_POST['reset-password'])) {
+                if (!empty(trim($_POST['new-password']))) {
+                    $new_password = password_hash(trim($_POST['new-password']), PASSWORD_DEFAULT); // Hash the new password
 
-    // Check if the reset token has expired (1 hour expiration)
-    if (strtotime($resetTokenTime) > time() - 3600) {
-        if (isset($_POST['reset-password'])) {
-            if (!empty(trim($_POST['new-password']))) {
-                $new_password = password_hash(trim($_POST['new-password']), PASSWORD_DEFAULT);
+                    // Update the user's password and reset the token
+                    $stmt = $conn->prepare("UPDATE users SET password = ?, token = NULL, reset_token_at = NULL WHERE email = ?");
+                    $stmt->bind_param("ss", $new_password, $email);
 
-                // Update the user's password and reset the token
-                $stmt = $conn->prepare("UPDATE users SET password = ?, token = NULL, reset_token_at = NULL WHERE email = ?");
-                $stmt->bind_param("ss", $new_password, $email);
-
-                if ($stmt->execute()) {
-                    echo "<script>
-                            Swal.fire('Success', 'Your password has been reset successfully. You can now log in.', 'success').then(() => {
-                                window.location.href = 'login.php';
-                            });
-                          </script>";
-                    exit;
+                    if ($stmt->execute()) {
+                        // Provide feedback to the user
+                        echo "<script>
+                                Swal.fire('Success', 'Your password has been reset successfully. You can now log in.', 'success').then(() => {
+                                    window.location.href = 'login.php'; // Redirect to login page
+                                });
+                              </script>";
+                        exit;
+                    } else {
+                        echo "<script>
+                                Swal.fire('Error', 'An error occurred while resetting your password. Please try again.', 'error');
+                              </script>";
+                    }
                 } else {
                     echo "<script>
-                            Swal.fire('Error', 'An error occurred while resetting your password. Please try again.', 'error');
+                            Swal.fire('Error', 'Password cannot be empty.', 'error');
                           </script>";
                 }
-            } else {
-                echo "<script>
-                        Swal.fire('Error', 'Password cannot be empty.', 'error');
-                      </script>";
             }
+        } else {
+            echo "<script>
+                    Swal.fire('Error', 'The password reset link has expired.', 'error');
+                  </script>";
         }
     } else {
         echo "<script>
-                Swal.fire('Error', 'The password reset link has expired.', 'error');
+                Swal.fire('Error', 'Invalid or expired token.', 'error');
               </script>";
     }
 } else {
     echo "<script>
-            Swal.fire('Error', 'Invalid or expired token.', 'error').then(() => {
-                window.location.href = 'login.php';
-            });
+            Swal.fire('Error', 'No token provided.', 'error');
           </script>";
     exit;
 }
