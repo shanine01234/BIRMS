@@ -1,15 +1,16 @@
 <?php
-require_once('inc/conn.php');
+
 require_once('inc/header.php');
+require 'vendor/autoload.php';
+
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
 
 if (isset($_GET['token'])) {
     $token = $_GET['token'];
 
-    // Check if token exists
+    // Verify token from database
     $stmt = $conn->prepare("SELECT * FROM users WHERE token = ?");
-    if (!$stmt) {
-        die("Database error: " . $conn->error);
-    }
     $stmt->bind_param("s", $token);
     $stmt->execute();
     $result = $stmt->get_result();
@@ -19,32 +20,20 @@ if (isset($_GET['token'])) {
         $email = $row['email'];
         $resetTokenTime = $row['reset_token_at'];
 
-        // Check token expiration (1 hour)
+        // Check if the reset token has expired (1 hour expiration)
         if (strtotime($resetTokenTime) > time() - 3600) {
             if (isset($_POST['reset-password'])) {
-                $new_password = $_POST['new-password'];
-                
-                // Validate password input
-                if (strlen($new_password) < 6) {
-                    echo "<script>
-                            Swal.fire('Error', 'Password must be at least 6 characters long.', 'error');
-                          </script>";
-                    exit;
-                }
+                $new_password = password_hash($_POST['new-password'], PASSWORD_DEFAULT); // Hash the new password
 
-                $hashed_password = password_hash($new_password, PASSWORD_DEFAULT);
+                // Update the user's password and reset the token
+                $stmt = $conn->prepare("UPDATE users SET password = ?, token = NULL, reset_token_at = NULL WHERE email = ?");
+                $stmt->bind_param("ss", $new_password, $email);
+                $stmt->execute();
 
-                // Update password and clear token
-                $updateStmt = $conn->prepare("UPDATE users SET password = ?, token = NULL, reset_token_at = NULL WHERE email = ?");
-                if (!$updateStmt) {
-                    die("Database error: " . $conn->error);
-                }
-                $updateStmt->bind_param("ss", $hashed_password, $email);
-                $updateStmt->execute();
-
+                // Provide feedback to the user
                 echo "<script>
-                        Swal.fire('Success', 'Password reset successful. Please log in.', 'success').then(() => {
-                            window.location.href = 'login.php';
+                        Swal.fire('Success', 'Your password has been reset successfully. You can now log in.', 'success').then(() => {
+                            window.location.href = 'login.php'; // Redirect to login page
                         });
                       </script>";
             }
@@ -55,7 +44,7 @@ if (isset($_GET['token'])) {
         }
     } else {
         echo "<script>
-                Swal.fire('Error', 'Invalid or expired reset token.', 'error');
+                Swal.fire('Error', 'Invalid or expired token.', 'error');
               </script>";
     }
 }
