@@ -1,16 +1,17 @@
 <?php
-
+require_once('inc/conn.php');
 require_once('inc/header.php');
 require 'vendor/autoload.php';
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
+// Check for token in the URL
 if (isset($_GET['token'])) {
     $token = $_GET['token'];
 
-    // Verify token from database
-    $stmt = $conn->prepare("SELECT * FROM users WHERE token = ?");
+    // Fetch user by token
+    $stmt = $conn->prepare("SELECT email, reset_token_at FROM users WHERE token = ?");
     $stmt->bind_param("s", $token);
     $stmt->execute();
     $result = $stmt->get_result();
@@ -20,33 +21,54 @@ if (isset($_GET['token'])) {
         $email = $row['email'];
         $resetTokenTime = $row['reset_token_at'];
 
-        // Check if the reset token has expired (1 hour expiration)
+        // Check if the token has expired (valid for 1 hour)
         if (strtotime($resetTokenTime) > time() - 3600) {
-            if (isset($_POST['reset-password'])) {
-                $new_password = password_hash($_POST['new-password'], PASSWORD_DEFAULT); // Hash the new password
 
-                // Update the user's password and reset the token
-                $stmt = $conn->prepare("UPDATE users SET password = ?, token = NULL, reset_token_at = NULL WHERE email = ?");
-                $stmt->bind_param("ss", $new_password, $email);
-                $stmt->execute();
+            // Handle form submission for resetting password
+            if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['new-password'])) {
+                $new_password = $_POST['new-password'];
 
-                // Provide feedback to the user
-                echo "<script>
-                        Swal.fire('Success', 'Your password has been reset successfully. You can now log in.', 'success').then(() => {
-                            window.location.href = 'login.php'; // Redirect to login page
-                        });
+                // Validate password length (optional)
+                if (strlen($new_password) < 6) {
+                    echo "<script>
+                        Swal.fire('Error', 'Password must be at least 6 characters long.', 'error');
                       </script>";
+                } else {
+                    // Hash the new password
+                    $hashed_password = password_hash($new_password, PASSWORD_DEFAULT);
+
+                    // Update the user's password and clear token
+                    $stmt = $conn->prepare("UPDATE users SET password = ?, token = NULL, reset_token_at = NULL WHERE email = ?");
+                    $stmt->bind_param("ss", $hashed_password, $email);
+                    if ($stmt->execute()) {
+                        echo "<script>
+                                Swal.fire('Success', 'Your password has been reset successfully. You can now log in.', 'success')
+                                .then(() => { window.location.href = 'login.php'; });
+                              </script>";
+                    } else {
+                        echo "<script>
+                                Swal.fire('Error', 'Failed to reset the password. Please try again.', 'error');
+                              </script>";
+                    }
+                }
             }
         } else {
             echo "<script>
-                    Swal.fire('Error', 'The password reset link has expired.', 'error');
+                    Swal.fire('Error', 'The password reset link has expired.', 'error')
+                    .then(() => { window.location.href = 'forgot_password.php'; });
                   </script>";
         }
     } else {
         echo "<script>
-                Swal.fire('Error', 'Invalid or expired token.', 'error');
+                Swal.fire('Error', 'Invalid or expired token.', 'error')
+                .then(() => { window.location.href = 'forgot_password.php'; });
               </script>";
     }
+} else {
+    echo "<script>
+            Swal.fire('Error', 'Invalid access. Token is missing.', 'error')
+            .then(() => { window.location.href = 'forgot_password.php'; });
+          </script>";
 }
 ?>
 
@@ -56,99 +78,42 @@ if (isset($_GET['token'])) {
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="">
-    <meta name="author" content="">
-
-    <title>Bantayan Island Restobar - Reset Password</title>
-    <link rel="icon" type="image/png" href="img/d3f06146-7852-4645-afea-783aef210f8a.jpg" alt="" width="30" height="24" style="border-radius: 100px;">
-    <!-- Custom fonts for this template-->
-
-    <!-- Include SweetAlert2 library -->
+    <title>Reset Password</title>
+    <link rel="icon" type="image/png" href="img/favicon.jpg" width="30" height="24" style="border-radius: 100px;">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-    <!-- Custom styles -->
     <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <link href="css/sb-admin-2.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-
     <style>
         body {
-            font-family: "Roboto", sans-serif;
             background-color: #f8f9fa;
-            color: #495057;
+            font-family: "Roboto", sans-serif;
         }
-
         .login-container {
             max-width: 400px;
             margin: 50px auto;
             padding: 20px;
-            background: #ffffff;
+            background: #fff;
             border-radius: 8px;
             box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
         }
-
-        .login-container h4 {
-            margin-bottom: 20px;
-            font-size: 24px;
-            font-weight: 700;
-            text-align: center;
-        }
-
-        .form-control {
-            border-radius: 8px;
-            box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.075);
-        }
-
         .btn-warning {
-            background-color: #f0ad4e;
-            border-color: #f0ad4e;
-            color: #ffffff;
             border-radius: 8px;
-            font-weight: 600;
-        }
-
-        .btn-warning:hover {
-            background-color: #ec971f;
-            border-color: #d58512;
-        }
-
-        .btn-back {
-            display: inline-block;
-            margin-bottom: 20px;
-        }
-
-        .btn-secondary {
-            background-color: #6c757d;
+            font-weight: bold;
             color: white;
-            border: none;
-        }
-
-        .btn-secondary:hover {
-            background-color: #5a6268;
         }
     </style>
 </head>
-
 <body>
-
-    <!-- Reset Password Form -->
     <div class="login-container">
-        
-        <h4>Set a New Password</h4>
-        <form method="post">
+        <h4 class="text-center">Set a New Password</h4>
+        <form method="POST">
             <div class="form-group">
-                <label for="new-password">Enter New Password</label>
-                <input type="password" id="new-password" name="new-password" class="form-control" required>
+                <label for="new-password">New Password</label>
+                <input type="password" id="new-password" name="new-password" class="form-control" placeholder="Enter new password" required>
             </div>
-            <button type="submit" name="reset-password" class="btn btn-warning btn-block">Reset Password</button><br>
-            <a href="index.php" class="btn btn-warning btn-back">
-                <i class="fas fa-arrow-left"></i> Back
-            </a>
+            <button type="submit" class="btn btn-warning btn-block">Reset Password</button>
+            <a href="index.php" class="btn btn-secondary btn-block">Back to Home</a>
         </form>
     </div>
-
-    <!-- Bootstrap core JavaScript-->
-    <script src="vendor/jquery/jquery.min.js"></script>
-    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
