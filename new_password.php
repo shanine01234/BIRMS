@@ -2,7 +2,6 @@
 
 require_once('inc/header.php');
 require 'vendor/autoload.php';
-require_once('sql.php');
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
