@@ -18,7 +18,7 @@ $sql = "ALTER TABLE orders ADD COLUMN proof VARCHAR(255)";
 
 // Execute the query
 if ($conn->query($sql) === TRUE) {
-    echo "Column added successfully.";
+    echo "Column 'proof' added successfully.";
 } else {
     echo "Error adding column: " . $conn->error;
 }
