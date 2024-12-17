@@ -13,6 +13,8 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
+// SQL query to add the 'proof' column to the 'orders' table
+$sql = "ALTER TABLE orders ADD COLUMN proof VARCHAR(255)";
 
 // Execute the query
 if ($conn->query($sql) === TRUE) {
