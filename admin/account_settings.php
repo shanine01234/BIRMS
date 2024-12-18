@@ -151,7 +151,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 <body>
     <!-- Back Button -->
-    <a href="admin/index.php?page=dashboard" class="back-button">Back to Dashboard</a>
+    <a href="./index.php?page=dashboard" class="back-button">Back to Dashboard</a>
     
     <div class="container">
         <h1>Change Password</h1>
