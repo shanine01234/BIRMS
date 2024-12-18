@@ -136,18 +136,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['registerOwner'])) {
                             </div>
                             <form class="user" method="POST" enctype="multipart/form-data">
                                 <div class="form-group row">
-                                    <div class="col-sm-4 mb-3 mb-sm-0">
-                                        <input type="text" name="firstname" class="form-control form-control-user" id="exampleFirstName"
-                                            placeholder="First Name" required>
-                                    </div>
-                                    <div class="col-sm-4">
-                                        <input type="text" name="middlename" class="form-control form-control-user" id="exampleLastName"
-                                            placeholder="Middle Name (Optional)">
-                                    </div>
-                                    <div class="col-sm-4">
-                                        <input type="text" name="lastname" class="form-control form-control-user" id="exampleLastName"
-                                            placeholder="Last Name" required>
-                                    </div>
+                                <div class="col-sm-4 mb-3 mb-sm-0">
+    <input type="text" name="firstname" class="form-control form-control-user" id="exampleFirstName"
+        placeholder="First Name" required oninput="validateInput(this)">
+</div>
+<div class="col-sm-4">
+    <input type="text" name="middlename" class="form-control form-control-user" id="exampleMiddleName"
+        placeholder="Middle Name (Optional)" oninput="validateInput(this)">
+</div>
+<div class="col-sm-4">
+    <input type="text" name="lastname" class="form-control form-control-user" id="exampleLastName"
+        placeholder="Last Name" required oninput="validateInput(this)">
+</div>
+
+<script>
+    function validateInput(input) {
+        // Allow letters (including ñ, accented characters) and spaces, but block symbols and numbers
+        const validCharacters = /^[a-zA-ZñÑáéíóúÁÉÍÓÚ\s]+$/;
+
+        if (!validCharacters.test(input.value)) {
+            // If invalid character entered, show an alert and clear the input field
+            alert('Please enter only letters (including ñ and accented characters) and spaces.');
+            input.value = input.value.slice(0, -1); // Remove the last entered invalid character
+        }
+    }
+</script>
                                 </div>
                                 <div class="form-group">
                                     <input type="email" name="email" class="form-control form-control-user" id="exampleInputEmail"
