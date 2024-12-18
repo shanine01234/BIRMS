@@ -172,59 +172,47 @@ if (!isset($_SESSION['owner_id'])) {
                     <!-- Content Row -->
 
                     <div class="row">
-                        <div class="col-md-3">
-                        <?php 
-									if (isset($_GET['update'])) {
-										$id = $_GET['update'];
-										$myrow = $oop->displayMenuByID($id);
-											foreach ($myrow as $rows){
-											?>
-											<form action="" method="POST" enctype="multipart/form-data">
-												<div class="card shadow p-2">
-													<span class="mb-3 text-center"><i class="align-middle" data-feather="edit"></i> Update Product</span>
-													<label>Product name</label>
-													<input type="text" name="product_name" value="<?=$rows['product_name']?>" class="form-control mb-1" required>
-													<label>Product type</label>
-													<select class="form-select mb-1" name="product_type" aria-label="Default select example" required>
-														<option value="<?=$rows['product_type']?>" selected><?=$rows['product_type']?></option>
-														<option value="Food">Food</option>
-														<option value="Drinks">Drinks</option>
-													</select>
-													<label>Price</label>
-													<input type="text" value="<?=$rows['price']?>" name="price" class="form-control mb-1" required>
-													<label>Product Photo</label>
-													<input type="text" name="id" value="<?=$rows['id']?>" style="display: none;">
-													<input type="text" name="oldProductPhoto" value="<?=$rows['product_photo']?>" style="display: none;">
-													<input type="file" accept="image/.png, .jpg, .jpeg" name="productPhoto" class="form-control mb-3">
-													<button type="submit" class="btn btn-primary mb-1" name="updateProduct"><i class="align-middle" data-feather="check-circle"></i> Save</button>
-													<a href="?" class="btn btn-info">Cancel</a>
-												</div>
-											</form>
-											<?php
-											}
-									}else {
-										?>
-										<form action="" method="POST" enctype="multipart/form-data">
-										<div class="card shadow p-2">
-											<span class="mb-3 text-center"><i class="align-middle" data-feather="plus"></i> Add to Menu</span>
-											<label>Product name</label>
-											<input type="text" name="product_name" class="form-control mb-1" required>
-											<label>Product type</label>
-											<select class="form-select mb-1" name="product_type" aria-label="Default select example" required>
-												<option value="Food">Food</option>
-												<option value="Drinks">Drinks</option>
-											</select>
-											<label>Price</label>
-											<input type="text" name="price" class="form-control mb-1" required>
-											<label>Product Photo</label>
-											<input type="file" accept="image/.png, .jpg, .jpeg" name="productPhoto" class="form-control mb-3" required>
-											<button type="submit" class="btn btn-primary" name="addProduct"><i class="align-middle" data-feather="plus"></i> Add</button>
-										</div>
-										</form>
-										<?php
-									}
-									?>
-                        </div>
+                        <!-- Add Menu Button -->
+<button type="button" class="btn btn-primary mb-4" data-toggle="modal" data-target="#addMenuModal">
+    <i class="align-middle fas fa-plus"></i> Add to Menu
+</button>
+
+<!-- Add Menu Modal -->
+<div class="modal fade" id="addMenuModal" tabindex="-1" role="dialog" aria-labelledby="addMenuModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addMenuModalLabel">Add New Product</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form action="" method="POST" enctype="multipart/form-data">
+                <div class="modal-body">
+                    <label>Product Name</label>
+                    <input type="text" name="product_name" class="form-control mb-2" required>
+                    
+                    <label>Product Type</label>
+                    <select class="form-select mb-2" name="product_type" required>
+                        <option value="Food">Food</option>
+                        <option value="Drinks">Drinks</option>
+                    </select>
+                    
+                    <label>Price</label>
+                    <input type="text" name="price" class="form-control mb-2" required>
+                    
+                    <label>Product Photo</label>
+                    <input type="file" accept="image/.png, .jpg, .jpeg" name="productPhoto" class="form-control mb-3" required>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary" name="addProduct"><i class="align-middle fas fa-plus"></i> Add</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
                         <div class="col">
                         <!-- Area Chart -->
                         <div class="card shadow mb-4 p-4 w-100">
