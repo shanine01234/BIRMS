@@ -45,7 +45,7 @@ if (!isset($_SESSION['owner_id'])) {
                 <div class="sidebar-brand-icon rotate-n-15">
                     <i class="fas fa-laugh-wink"></i>
                 </div>
-                <div class="sidebar-brand-text mx-3">BIRMS Owsner</div>
+                <div class="sidebar-brand-text mx-3">BIRMS Owner</div>
             </a>
 
             <!-- Divider -->
