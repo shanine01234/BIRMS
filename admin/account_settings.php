@@ -218,7 +218,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         .password-container i {
             position: absolute;
             right: 10px;
-            top: 50%;
+            top: 36%;
             transform: translateY(-50%);
             cursor: pointer;
         }
