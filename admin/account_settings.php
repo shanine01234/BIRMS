@@ -88,28 +88,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         /* Base styles */
         body {
             font-family: 'Arial', sans-serif;
-            background-image: url('img/profiles/OIG3.jpg');
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
+            background-color: #f4f7f6;
             margin: 0;
             padding: 0;
-            height: 100vh;
-            position: relative; /* Ensure overlay is positioned correctly */
         }
-
-        /* Overlay for better readability */
-        body::before {
-            content: ''; /* Empty content */
-            position: absolute; /* Position overlay inside the body */
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.5); /* Semi-transparent dark overlay */
-            z-index: -1; /* Ensure overlay stays behind content */
-        }
-
 
         .container {
             width: 50%;
