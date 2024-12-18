@@ -176,9 +176,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['registerOwner'])) {
 </script>
                                 </div>
                                 <div class="form-group">
-                                    <input type="email" name="email" class="form-control form-control-user" id="exampleInputEmail"
-                                        placeholder="Email Address" required>
-                                </div>
+    <input type="email" name="email" class="form-control form-control-user" id="exampleInputEmail"
+        placeholder="Email Address" required>
+    <div id="warningMessage" class="alert alert-warning mt-2" style="display: none;">Please enter a valid Gmail address (e.g., user@gmail.com).</div>
+</div>
+
+<script>
+    const emailInput = document.getElementById('exampleInputEmail');
+    const warningMessage = document.getElementById('warningMessage');
+
+    emailInput.addEventListener('input', function() {
+        const email = emailInput.value;
+        if (email && !email.endsWith('@gmail.com')) {
+            warningMessage.style.display = 'block';
+        } else {
+            warningMessage.style.display = 'none';
+        }
+    });
+</script>
+
                                 <div class="form-group row">
                                     <div class="col-sm-4">
                                         <input type="text" name="restobar" class="form-control form-control-user" id="exampleLastName"
