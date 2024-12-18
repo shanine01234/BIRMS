@@ -171,38 +171,33 @@ if (!isset($_SESSION['owner_id'])) {
 
                     <!-- Content Row -->
 
-                    <div class="row">
-                        <div class="col-md-3">
-                        <?php 
-									if (isset($_GET['update'])) {
-										$id = $_GET['update'];
-										$myrow = $oop->displayDetailsByID($id);
-											foreach ($myrow as $rows){
-											?>
-											<form action="" method="POST">
-												<div class="card shadow p-2">
-													<span class="mb-3 text-center"> Update Resto Details</span>
-													<textarea class="form-control mb-3" name="details"><?=$rows['details']?></textarea>
-                                                    <input type="text" name="id" value="<?=$rows['id']?>" style="display: none;" required>
-													<button type="submit" class="btn btn-primary mb-1" name="updateDetails"> Save</button>
-													<a href="?" class="btn btn-info">Cancel</a>
-												</div>
-											</form>
-											<?php
-											}
-									}else {
-										?>
-										<form action="" method="POST">
-										<div class="card shadow p-2">
-											<span class="mb-3 text-center"> Add to Resto Details</span>
-											<textarea class="form-control mb-3" name="details" aria-label="With textarea"></textarea>
-											<button type="submit" class="btn btn-primary" name="addDetails"> Add</button>
-										</div>
-										</form>
-										<?php
-									}
-									?>
-                        </div>
+                    <!-- Trigger Add Details Modal -->
+<button class="btn btn-primary" data-toggle="modal" data-target="#addDetailsModal">
+    Add Details
+</button>
+<!-- Add Details Modal -->
+<div class="modal fade" id="addDetailsModal" tabindex="-1" role="dialog" aria-labelledby="addDetailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addDetailsModalLabel">Add Resto Details</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form action="" method="POST">
+                <div class="modal-body">
+                    <textarea class="form-control mb-3" name="details" placeholder="Enter details here..." required></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary" name="addDetails">Add</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
                         <div class="col">
                         <!-- Area Chart -->
                         <div class="card shadow mb-4 p-4 w-100">
@@ -226,10 +221,39 @@ if (!isset($_SESSION['owner_id'])) {
                                                 <td><?=$k++?></td>
                                                 <td><?=$row['details']?></td>
                                                 <td>
-                                                    <a href="?update=<?=$row['id']?>" class="btn btn-warning "> <i class="fas fa-edit fa-sm fa-fw"></i></a>
+                                                <a href="#" data-toggle="modal" data-target="#editDetailsModal<?=$row['id']?>" class="btn btn-warning">
+                                                    <i class="fas fa-edit fa-sm fa-fw"></i>
+                                                </a>
+                                                <a href="#" data-toggle="modal" data-target="#viewDetailsModal<?=$row['id']?>" class="btn btn-info">
+                                                    <i class="fas fa-eye fa-sm fa-fw"></i>
+                                                </a>
                                                     <a href="#" data-toggle="modal" data-target="#deleteModal<?=$row['id']?>" class="btn btn-danger "> <i class="fas fa-trash fa-sm fa-fw"></i></a>
                                                 </td>
                                             </tr>
+                                            <!-- Edit Details Modal -->
+<div class="modal fade" id="editDetailsModal<?=$row['id']?>" tabindex="-1" role="dialog" aria-labelledby="editDetailsModalLabel<?=$row['id']?>" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editDetailsModalLabel<?=$row['id']?>">Edit Resto Details</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form action="" method="POST">
+                <div class="modal-body">
+                    <textarea class="form-control mb-3" name="details" required><?=$row['details']?></textarea>
+                    <input type="hidden" name="id" value="<?=$row['id']?>">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary" name="updateDetails">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
                                             <!-- View Modal -->
                                             <div class="modal fade" id="viewModal<?=$row['id']?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                                                 <div class="modal-dialog" role="document">
