@@ -283,13 +283,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 <label for="confirm_password">Confirm New Password:</label>
                 <input type="password" name="confirm_password" id="confirm_password" required>
-                <i class="fas fa-eye" id="toggle_confirm_password" style="
-                    position: absolute;
-                    transform: translateY(-144px);
-                    right: 27px;
-                    top: 100.5%;
-                    cursor: pointer;
-                "></i><div class="match-bar" id="match-bar"><div></div></div><br>
+                <i class="fas fa-eye" id="toggle_confirm_password" style="position: absolute; transform: translateY(-50px); right: 369px; top: 100.5%; cursor: pointer;"></i>
+                <div class="match-bar" id="match-bar"><div></div></div><br>
+
+                <!-- Add the alert message container -->
+                <div id="password-mismatch-alert" style="color: red; font-size: 14px; display: none;">
+                    <p>Passwords do not match. Please make sure the new password and confirm password match.</p>
+                </div>
+
 
 
                 <button type="submit" class="btn-grad1">Update Account</button>
@@ -363,28 +364,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         });
 
-        // Confirm new password match indicator
-        document.getElementById('confirm_password').addEventListener('input', function() {
-            const matchBar = document.getElementById('match-bar').firstElementChild;
-            const newPassword = document.getElementById('new_password').value;
-            const confirmPassword = this.value;
+        /// Confirm new password match indicator and mismatch alert
+document.getElementById('confirm_password').addEventListener('input', function() {
+    const matchBar = document.getElementById('match-bar').firstElementChild;
+    const newPassword = document.getElementById('new_password').value;
+    const confirmPassword = this.value;
+    const mismatchAlert = document.getElementById('password-mismatch-alert');  // Get the mismatch alert container
 
-            if (newPassword === confirmPassword) {
-                matchBar.style.width = '100%';
-                matchBar.style.backgroundColor = 'green';
-            } else {
-                matchBar.style.width = '0';
-            }
+    // Check if passwords match
+    if (newPassword === confirmPassword) {
+        matchBar.style.width = '100%';
+        matchBar.style.backgroundColor = 'green';
+        mismatchAlert.style.display = 'none'; // Hide the mismatch alert if passwords match
+    } else {
+        matchBar.style.width = '0';
+        mismatchAlert.style.display = 'block'; // Show the mismatch alert if passwords do not match
+    }
+});
 
-            // Alert if passwords don't match
-            if (newPassword !== confirmPassword && confirmPassword !== '') {
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'Passwords do not match',
-                    text: 'Please make sure the new password and confirm password match.',
-                });
-            }
-        });
     </script>
 </body>
 </html>
