@@ -176,7 +176,13 @@
 
                 <label for="confirm_password">Confirm New Password:</label>
                 <input type="password" name="confirm_password" id="confirm_password" required>
-                <i class="fas fa-eye" id="toggle_confirm_password"></i>
+                <i class="fas fa-eye" id="toggle_confirm_password" style="
+                    position: absolute;
+                    transform: translateY(-50px);
+                    right: 369px;
+                    top: 100.5%;
+                    cursor: pointer;
+                "></i>
                 <div class="match-bar" id="match-bar"><div></div></div><br>
 
                 <button type="submit">Update Account</button>
