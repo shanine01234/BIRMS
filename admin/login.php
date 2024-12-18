@@ -2,51 +2,6 @@
 require_once('../inc/function.php');
 require_once('process/loginAdmin.php');
 
-
-
-// Initialize login attempt tracking if not set
-if (!isset($_SESSION['login_attempts'])) {
-    $_SESSION['login_attempts'] = 0;
-    $_SESSION['first_attempt_time'] = time();
-}
-
-// Define constants for login attempts and lockout time
-define('MAX_LOGIN_ATTEMPTS', 5);
-define('LOCKOUT_TIME', 1); // Lockout time in minutes
-
-// Check if user is locked out
-if ($_SESSION['login_attempts'] >= MAX_LOGIN_ATTEMPTS) {
-    $lockout_time_left = LOCKOUT_TIME * 60 - (time() - $_SESSION['first_attempt_time']);
-    if ($lockout_time_left > 0) {
-        echo "<script>swal('Too Many Attempts!', 'Please try again in " . ceil($lockout_time_left / 60) . " minutes.', 'error');</script>";
-        die();
-    } else {
-        // Reset login attempts after lockout time passes
-        $_SESSION['login_attempts'] = 0;
-    }
-}
-
-// Track failed login attempts by IP address
-if (!isset($_SESSION['failed_attempts'])) {
-    $_SESSION['failed_attempts'] = [];
-}
-
-// Handle IP blocking for excessive failed attempts
-$ip_address = $_SERVER['REMOTE_ADDR'];
-$max_attempts = 5;
-$block_duration = 30 * 60; // Block for 30 minutes
-
-if (isset($_SESSION['failed_attempts'][$ip_address]) && $_SESSION['failed_attempts'][$ip_address]['count'] >= $max_attempts) {
-    $time_left = $block_duration - (time() - $_SESSION['failed_attempts'][$ip_address]['timestamp']);
-    if ($time_left > 0) {
-        echo "<script>swal('IP Blocked!', 'Your IP has been temporarily blocked. Please try again in " . ceil($time_left / 60) . " minutes.', 'error');</script>";
-        die();
-    } else {
-        // Reset the failed attempts after block duration has passed
-        $_SESSION['failed_attempts'][$ip_address] = ['count' => 0, 'timestamp' => time()];
-    }
-}
-
 // Verify reCAPTCHA response
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['loginAdmin'])) {
     $recaptchaSecret = '6Ldz7JIqAAAAAIp9MiVvQepNEFe9o0GywFAnBH95'; // Replace with your reCAPTCHA v3 secret key
@@ -54,48 +9,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['loginAdmin'])) {
     
     // Make a POST request to Google's reCAPTCHA verification API
     $response = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret={$recaptchaSecret}&response={$recaptchaResponse}");
-    $responseKeys = json_decode($response, true);
-
-    // Check if CAPTCHA validation is successful
-    if ($responseKeys['success'] && $_SERVER['REQUEST_METHOD'] === 'POST') {
-        // Process login logic
-        if (isset($_POST['username']) && isset($_POST['password'])) {
-            // Assume login logic here, replace with actual password check
-            $username = $_POST['username'];
-            $password = $_POST['password'];
-
-            // Example hash check
-            $storedPasswordHash = 'hashed_password_from_db'; // Fetch this from the database
-
-            // Verify password securely using password_verify
-            if (password_verify($password, $storedPasswordHash)) {
-                // Success: Proceed with login
-                $_SESSION['login_attempts'] = 0; // Reset attempts on successful login
-                // Redirect to admin dashboard or other page
-                echo "<script>swal('Success!', 'You have successfully logged in.', 'success');</script>";
-                header("Location: dashboard.php");
-                exit();
-            } else {
-                // Failed login: Increment failed attempts
-                log_failed_attempt($username);
-                $_SESSION['login_attempts'] += 1;
-                echo "<script>swal('Login Failed!', 'Incorrect username or password.', 'error');</script>";
-            }
-        }
-    } else {
-        echo "<script>swal('reCAPTCHA Failed!', 'Please complete the CAPTCHA verification.', 'error');</script>";
-    }
 }
-
-// Track failed login attempts and log them
-function log_failed_attempt($username) {
-    $logfile = 'failed_login_attempts.log';
-    $log = "Failed login attempt: " . $username . " - IP: " . $_SERVER['REMOTE_ADDR'] . " - Time: " . date('Y-m-d H:i:s') . "\n";
-    file_put_contents($logfile, $log, FILE_APPEND);
-}
-
-// Check for request URI for redirection to prevent .php extension in URL
-$request = $_SERVER['REQUEST_URI'];
+    $request = $_SERVER['REQUEST_URI'];
 if (substr($request, -4) == '.php') {
     $new_url = substr($request, 0, -4);
     header("Location: $new_url", true, 301);
@@ -105,6 +20,7 @@ if (substr($request, -4) == '.php') {
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -122,12 +38,8 @@ if (substr($request, -4) == '.php') {
     <!-- Custom styles for this template-->
     <link href="../css/sb-admin-2.min.css" rel="stylesheet">
 
-    <!-- SweetAlert CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.5.0/dist/sweetalert2.min.css" rel="stylesheet">
-    
     <!-- reCAPTCHA script -->
     <script src="https://www.google.com/recaptcha/api.js?render=6Ldz7JIqAAAAALCcq3dDLQBNAyHnlcVKyFzuxxBg"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.5.0/dist/sweetalert2.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             grecaptcha.ready(function () {
@@ -147,14 +59,15 @@ if (substr($request, -4) == '.php') {
             font-family: 'Nunito', sans-serif;
         }
         form.user .form-control {
-            font-size: 1rem;  /* Adjust font size */
-            padding: 10px;    /* Adjust padding */
-        }
+    font-size: 1rem;  /* Adjust font size */
+    padding: 10px;    /* Adjust padding */
+}
 
-        form.user .btn-user {
-            font-size: 1rem;  /* Adjust button font size */
-            padding: 10px 20px;  /* Adjust button padding */
-        }
+form.user .btn-user {
+    font-size: 1rem;  /* Adjust button font size */
+    padding: 10px 20px;  /* Adjust button padding */
+}
+
     </style>
 </head>
 
@@ -205,4 +118,5 @@ if (substr($request, -4) == '.php') {
     <!-- Custom scripts for all pages-->
     <script src="../js/sb-admin-2.min.js"></script>
 </body>
+
 </html>
