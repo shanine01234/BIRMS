@@ -349,16 +349,127 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </script>
 
                                 <div class="form-group row">
-                                    <div class="col-sm-6 mb-3 mb-sm-0 password-container">
-                                        <input type="password" name="password" class="form-control form-control-user"
-                                            id="exampleInputPassword" placeholder="Password" required>
-                                        <i class="far fa-eye" id="togglePassword"></i>
-                                    </div>
-                                    <div class="col-sm-6 password-container">
-                                        <input type="password" name="cpassword" class="form-control form-control-user"
-                                            id="exampleRepeatPassword" placeholder="Repeat Password" required>
-                                        <i class="far fa-eye" id="toggleRepeatPassword"></i>
-                                    </div>
+                                <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+                                !-- Password Field -->
+        <div class="col-sm-6 mb-3 mb-sm-0 password-container">
+            <input type="password" name="password" class="form-control form-control-user"
+                   id="exampleInputPassword" placeholder="Password" required>
+            <i class="far fa-eye" id="togglePassword"></i>
+            <div id="strengthBar" class="progress">
+                <div class="progress-bar" id="passwordStrengthBar"></div>
+            </div>
+            <small id="passwordStrengthText"></small>
+        </div>
+        <!-- Repeat Password Field -->
+        <div class="col-sm-6 password-container">
+            <input type="password" name="cpassword" class="form-control form-control-user"
+                   id="exampleRepeatPassword" placeholder="Repeat Password" required>
+            <i class="far fa-eye" id="toggleRepeatPassword"></i>
+            <div id="matchBar" class="progress">
+                <div class="progress-bar bg-success" id="passwordMatchBar"></div>
+            </div>
+            <small id="passwordMatchText"></small>
+        </div>
+    </div>
+</div>
+
+<script>
+    const passwordInput = document.getElementById('exampleInputPassword');
+    const repeatPasswordInput = document.getElementById('exampleRepeatPassword');
+    const togglePassword = document.getElementById('togglePassword');
+    const toggleRepeatPassword = document.getElementById('toggleRepeatPassword');
+    const strengthBar = document.getElementById('passwordStrengthBar');
+    const strengthText = document.getElementById('passwordStrengthText');
+    const matchBar = document.getElementById('passwordMatchBar');
+    const matchText = document.getElementById('passwordMatchText');
+
+    // Function to toggle visibility of password
+    function toggleVisibility(input, icon) {
+        const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
+        input.setAttribute('type', type);
+        icon.classList.toggle('fa-eye-slash');
+    }
+
+    // Event Listeners for Toggle Password
+    togglePassword.addEventListener('click', () => toggleVisibility(passwordInput, togglePassword));
+    toggleRepeatPassword.addEventListener('click', () => toggleVisibility(repeatPasswordInput, toggleRepeatPassword));
+
+    // Password Strength Checker
+    passwordInput.addEventListener('input', () => {
+        const password = passwordInput.value;
+        const regex = /^[a-zA-Z0-9]+$/; // Only letters and numbers
+        if (!regex.test(password)) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Invalid Input',
+                text: 'Password must contain only letters and numbers.',
+            });
+            passwordInput.value = '';
+            strengthBar.style.width = '0%';
+            strengthText.textContent = '';
+            return;
+        }
+        checkPasswordStrength(password);
+        checkPasswordMatch();
+    });
+
+    // Repeat Password Checker
+    repeatPasswordInput.addEventListener('input', () => {
+        const password = passwordInput.value;
+        const repeatPassword = repeatPasswordInput.value;
+        if (!/^[a-zA-Z0-9]+$/.test(repeatPassword)) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Invalid Input',
+                text: 'Password must contain only letters and numbers.',
+            });
+            repeatPasswordInput.value = '';
+            matchBar.style.width = '0%';
+            matchText.textContent = '';
+            return;
+        }
+        checkPasswordMatch();
+    });
+
+    // Function to Check Password Strength
+    function checkPasswordStrength(password) {
+        let strength = 0;
+        if (password.length >= 8) strength++;
+        if (/[A-Z]/.test(password)) strength++;
+        if (/[a-z]/.test(password)) strength++;
+        if (/[0-9]/.test(password)) strength++;
+
+        let width = (strength / 4) * 100;
+        let color = strength < 2 ? 'bg-danger' : strength < 4 ? 'bg-warning' : 'bg-success';
+
+        strengthBar.style.width = width + '%';
+        strengthBar.className = `progress-bar ${color}`;
+
+        strengthText.textContent = strength < 2 ? 'Weak' : strength < 4 ? 'Moderate' : 'Strong';
+    }
+
+    // Function to Check Password Match
+    function checkPasswordMatch() {
+        const password = passwordInput.value;
+        const repeatPassword = repeatPasswordInput.value;
+
+        if (password === '' || repeatPassword === '') {
+            matchBar.style.width = '0%';
+            matchText.textContent = '';
+            return;
+        }
+
+        if (password === repeatPassword) {
+            matchBar.style.width = '100%';
+            matchBar.className = 'progress-bar bg-success';
+            matchText.textContent = 'Passwords Match!';
+        } else {
+            matchBar.style.width = '100%';
+            matchBar.className = 'progress-bar bg-danger';
+            matchText.textContent = 'Passwords Do Not Match!';
+        }
+    }
+</script>
                                 </div>
                                 <div class="form-group">
                                     <span>Gcash Number</span>
@@ -383,6 +494,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
         </div>
     </div>
+    <style>
+        .password-container {
+            position: relative;
+        }
+        .password-container i {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+        }
+        #strengthBar {
+            height: 8px;
+            margin-top: 5px;
+        }
+    </style>
 
     <script src="../vendor/jquery/jquery.min.js"></script>
     <script src="../vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
