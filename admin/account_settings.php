@@ -159,7 +159,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 <body>
     <!-- Back Button -->
-    <a href="./index.php?page=dashboard" class="btn-grad" style="width: 100px;">Back to Dashboard</a>
+    <a href="./index.php?page=dashboard" class="btn-grad" style="width: 150px;">Back to Dashboard</a>
     
     <div class="container">
         <h1>Change Password</h1>
