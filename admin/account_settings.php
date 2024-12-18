@@ -196,6 +196,53 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
         }
 
+        /* Password strength bar styling */
+        .strength-bar {
+            height: 8px;
+            margin-top: 5px;
+            width: 100%;
+            background-color: #ddd;
+            border-radius: 5px;
+            display: none;
+        }
+
+        .strength-bar div {
+            height: 100%;
+            border-radius: 5px;
+        }
+
+        .strength-weak {
+            background-color: #ff4d4d;
+            width: 33%;
+        }
+
+        .strength-medium {
+            background-color: #ffcc00;
+            width: 66%;
+        }
+
+        .strength-strong {
+            background-color: #28a745;
+            width: 100%;
+        }
+
+        /* Match bar for confirm password */
+        .match-bar {
+            height: 8px;
+            margin-top: 5px;
+            width: 100%;
+            background-color: #ddd;
+            border-radius: 5px;
+            display: none;
+        }
+
+        .match-bar.match {
+            background-color: #28a745;
+        }
+
+        .match-bar.no-match {
+            background-color: #dc3545;
+        }
     </style>
 </head>
 <body>
@@ -213,18 +260,74 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <input type="text" name="username" id="username" value="<?= htmlspecialchars($userDetails['username'] ?? '') ?>" required><br>
 
                 <label for="current_password">Current Password:</label>
-                <input type="password" name="current_password" id="current_password" required><br>
+                <div style="position: relative;">
+                    <input type="password" name="current_password" id="current_password" required><br>
+                    <img src="https://img.icons8.com/?size=100&id=LKTmVnYtDvRk&format=png&color=000000" alt="Show Password" onclick="togglePassword('current_password')" style="position: absolute; right: 10px; top: 10px; cursor: pointer;">
+                </div>
 
                 <label for="new_password">New Password:</label>
-                <input type="password" name="new_password" id="new_password" required><br>
+                <input type="password" name="new_password" id="new_password" required oninput="checkPasswordStrength()"><br>
+                <div class="strength-bar" id="passwordStrengthBar"></div>
 
                 <label for="confirm_password">Confirm New Password:</label>
-                <input type="password" name="confirm_password" id="confirm_password" required><br>
+                <input type="password" name="confirm_password" id="confirm_password" required oninput="checkPasswordMatch()"><br>
+                <div class="match-bar" id="passwordMatchBar"></div>
 
                 <button type="submit">Update Account</button>
             </form>
         </div>
     </div>
+
+    <script>
+        // Function to toggle password visibility
+        function togglePassword(id) {
+            const passwordField = document.getElementById(id);
+            if (passwordField.type === "password") {
+                passwordField.type = "text";
+            } else {
+                passwordField.type = "password";
+            }
+        }
+
+        // Function to check password strength
+        function checkPasswordStrength() {
+            const password = document.getElementById('new_password').value;
+            const strengthBar = document.getElementById('passwordStrengthBar');
+            let strength = 0;
+
+            if (password.length >= 8) {
+                strength++;
+                if (/[A-Z]/.test(password)) strength++;
+                if (/[0-9]/.test(password)) strength++;
+                if (/[^A-Za-z0-9]/.test(password)) strength++;
+            }
+
+            strengthBar.style.display = 'block';
+
+            if (strength === 1) {
+                strengthBar.innerHTML = '<div class="strength-weak"></div>';
+            } else if (strength === 2) {
+                strengthBar.innerHTML = '<div class="strength-medium"></div>';
+            } else if (strength >= 3) {
+                strengthBar.innerHTML = '<div class="strength-strong"></div>';
+            }
+        }
+
+        // Function to check if passwords match
+        function checkPasswordMatch() {
+            const password = document.getElementById('new_password').value;
+            const confirmPassword = document.getElementById('confirm_password').value;
+            const matchBar = document.getElementById('passwordMatchBar');
+
+            if (password === confirmPassword && confirmPassword !== "") {
+                matchBar.style.display = 'block';
+                matchBar.className = "match-bar match";
+            } else {
+                matchBar.style.display = 'block';
+                matchBar.className = "match-bar no-match";
+            }
+        }
+    </script>
 </body>
 </html>
 
