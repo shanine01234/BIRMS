@@ -350,7 +350,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                                 <div class="form-group row">
                                 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-                                !-- Password Field -->
         <div class="col-sm-6 mb-3 mb-sm-0 password-container">
             <input type="password" name="password" class="form-control form-control-user"
                    id="exampleInputPassword" placeholder="Password" required>
