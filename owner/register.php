@@ -2,168 +2,86 @@
 require_once('../inc/function.php');
 require_once('process/registerOwner.php');
 
-// Enhanced input sanitization and validation function
-function sanitizeInput($data, $type = 'string') {
-    // Trim whitespace
-    $data = trim($data);
-    
-    // Remove backslashes
-    $data = stripslashes($data);
-    
-    // Encode special characters for HTML output
-    $data = htmlspecialchars($data, ENT_QUOTES, 'UTF-8');
-    
-    // Additional type-specific validation
-    switch ($type) {
-        case 'email':
-            $data = filter_var($data, FILTER_SANITIZE_EMAIL);
-            if (!filter_var($data, FILTER_VALIDATE_EMAIL)) {
-                throw new Exception("Invalid email format");
-            }
-            break;
-        
-        case 'phone':
-            // Remove non-digit characters
-            $data = preg_replace('/[^0-9]/', '', $data);
-            
-            // Validate Philippine mobile number format
-            if (!preg_match('/^(09|\+639)\d{9}$/', $data)) {
-                throw new Exception("Invalid phone number format");
-            }
-            break;
-        
-        case 'name':
-            // Allow only letters, spaces, and hyphens
-            if (!preg_match('/^[A-Za-z\s\-\']+$/', $data)) {
-                throw new Exception("Invalid name format");
-            }
-            break;
-        
-        case 'text':
-            // Remove any potentially dangerous HTML or script tags
-            $data = strip_tags($data);
-            break;
-    }
-    
-    return $data;
+// Function to sanitize input
+function sanitizeInput($data) {
+    return htmlspecialchars(trim($data));
 }
 
-// Secure file upload function with enhanced validation
-function uploadFile($file, $targetDir, $fileNamePrefix, $allowedTypes = ['image/jpeg', 'image/png', 'image/gif']) {
-    // Ensure directory exists and is writable
-    if (!is_dir($targetDir)) {
-        mkdir($targetDir, 0755, true);
+// Ensure directory exists and has proper permissions
+function ensureUploadDir($directory) {
+    if (!is_dir($directory)) {
+        mkdir($directory, 0755, true); // Recursively create the directory
     }
-    
-    // Validate file upload
-    if ($file['error'] !== UPLOAD_ERR_OK) {
-        throw new Exception("File upload failed. Error code: " . $file['error']);
+}
+
+// Function to handle file uploads safely
+function uploadFile($file, $targetDir, $fileNamePrefix) {
+    ensureUploadDir($targetDir); // Ensure directory exists
+
+    $tmpName = $file['tmp_name'];
+    $originalName = basename($file['name']);
+    $newFileName = $fileNamePrefix . "_" . time() . "_" . $originalName;
+    $targetPath = $targetDir . $newFileName;
+
+    // Validate if the file is an image
+    $mimeType = @mime_content_type($tmpName);
+    if ($mimeType === false || strpos($mimeType, 'image/') === false) {
+        throw new Exception("Invalid file type. Only image files are allowed.");
     }
-    
-    // Check file type
-    $finfo = finfo_open(FILEINFO_MIME_TYPE);
-    $mimeType = finfo_file($finfo, $file['tmp_name']);
-    finfo_close($finfo);
-    
-    if (!in_array($mimeType, $allowedTypes)) {
-        throw new Exception("Invalid file type. Only JPEG, PNG, and GIF images are allowed.");
+
+    // Move the file to the target directory
+    if (!move_uploaded_file($tmpName, $targetPath)) {
+        throw new Exception("Failed to upload file: " . $originalName);
     }
-    
-    // Generate a secure filename
-    $fileExt = pathinfo($file['name'], PATHINFO_EXTENSION);
-    $secureFileName = $fileNamePrefix . '_' . bin2hex(random_bytes(8)) . '.' . $fileExt;
-    $targetPath = $targetDir . $secureFileName;
-    
-    // Move uploaded file securely
-    if (!move_uploaded_file($file['tmp_name'], $targetPath)) {
-        throw new Exception("Failed to move uploaded file");
-    }
-    
+
     return $targetPath;
 }
 
-// Secure owner registration function
-function registerOwner($conn, $data) {
-    // Prepare SQL statement with parameterized queries
-    $stmt = $conn->prepare("INSERT INTO owners (
-        firstname, middlename, lastname, email, restobar, 
-        contact_num, address, password, gcash_num, 
-        restobar_photo, gcash_qr_path
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-    
-    // Hash password with strong algorithm
-    $hashedPassword = password_hash($data['password'], PASSWORD_ARGON2ID);
-    
-    // Bind parameters
-    $stmt->bind_param(
-        "sssssssssss", 
-        $data['firstname'], 
-        $data['middlename'], 
-        $data['lastname'], 
-        $data['email'], 
-        $data['restobar'], 
-        $data['contact_num'], 
-        $data['address'], 
-        $hashedPassword,
-        $data['gcash_num'],
-        $data['restobar_photo'],
-        $data['gcash_qr_path']
-    );
-    
-    // Execute and check for errors
-    if (!$stmt->execute()) {
-        throw new Exception("Registration failed: " . $stmt->error);
-    }
-    
+// Function to register owner securely
+function registerOwner($conn, $firstname, $middlename, $lastname, $email, $restobar, $contact_num, $address, $password) {
+    $stmt = $conn->prepare("INSERT INTO owners (firstname, middlename, lastname, email, restobar, contact_num, address, password) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+    $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
+    $stmt->bind_param("ssssssss", $firstname, $middlename, $lastname, $email, $restobar, $contact_num, $address, $hashedPassword);
+    $stmt->execute();
     $stmt->close();
 }
 
-// Main form handling with comprehensive error handling
+// Main form handling
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['registerOwner'])) {
+    $firstname = sanitizeInput($_POST['firstname']);
+    $middlename = sanitizeInput($_POST['middlename']);
+    $lastname = sanitizeInput($_POST['lastname']);
+    $email = sanitizeInput($_POST['email']);
+    $restobar = sanitizeInput($_POST['restobar']);
+    $contact_num = sanitizeInput($_POST['contact_num']);
+    $address = sanitizeInput($_POST['address']);
+    $password = sanitizeInput($_POST['password']);
+    $cpassword = sanitizeInput($_POST['cpassword']);
+    $gcash_num = sanitizeInput($_POST['gcash_num']);
+
     try {
-        // Sanitize and validate all inputs
-        $formData = [
-            'firstname' => sanitizeInput($_POST['firstname'], 'name'),
-            'middlename' => !empty($_POST['middlename']) ? sanitizeInput($_POST['middlename'], 'name') : '',
-            'lastname' => sanitizeInput($_POST['lastname'], 'name'),
-            'email' => sanitizeInput($_POST['email'], 'email'),
-            'restobar' => sanitizeInput($_POST['restobar'], 'text'),
-            'contact_num' => sanitizeInput($_POST['contact_num'], 'phone'),
-            'address' => sanitizeInput($_POST['address'], 'text'),
-            'gcash_num' => sanitizeInput($_POST['gcash_num'], 'phone')
-        ];
+        if ($password === $cpassword) {
+            // Handle Restobar Photo Upload
+            if (isset($_FILES['restoPhoto']) && $_FILES['restoPhoto']['error'] === UPLOAD_ERR_OK) {
+                $restoPhotoPath = uploadFile($_FILES['restoPhoto'], 'uploads/restobar_images/', 'restoPhoto');
+            }
 
-        // Password validation
-        if ($_POST['password'] !== $_POST['cpassword']) {
-            throw new Exception("Passwords do not match");
+            // Handle Gcash QR Upload
+            if (isset($_FILES['gcash_qr']) && $_FILES['gcash_qr']['error'] === UPLOAD_ERR_OK) {
+                $gcashQrPath = uploadFile($_FILES['gcash_qr'], 'uploads/gcash_qr_codes/', 'gcashQR');
+            }
+
+            // Register Owner
+            registerOwner($conn, $firstname, $middlename, $lastname, $email, $restobar, $contact_num, $address, $password);
+            $msgAlert = "Registration successful!";
+        } else {
+            $msgAlert = "Passwords do not match!";
         }
-        $formData['password'] = $_POST['password']; // Store for hashing later
-
-        // File uploads with validation
-        $formData['restobar_photo'] = uploadFile(
-            $_FILES['restoPhoto'], 
-            'uploads/restobar_images/', 
-            'restobar'
-        );
-
-        $formData['gcash_qr_path'] = uploadFile(
-            $_FILES['gcash_qr'], 
-            'uploads/gcash_qr_codes/', 
-            'gcash_qr'
-        );
-
-        // Register owner
-        registerOwner($conn, $formData);
-        
-        $msgAlert = "Registration successful!";
     } catch (Exception $e) {
-        // Log the full error for admin (in a real-world scenario)
-        error_log($e->getMessage());
-        
-        // Show a generic error to the user
-        $msgAlert = "Registration failed. Please check your inputs and try again.";
+        $msgAlert = $e->getMessage(); // Display any errors encountered during file upload or registration
     }
 }
+
 ?>
 
 
