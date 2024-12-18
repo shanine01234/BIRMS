@@ -139,6 +139,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['registerOwner'])) {
 <!-- Include SweetAlert CDN -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+<!-- Include SweetAlert CDN -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 <div class="col-sm-4 mb-3 mb-sm-0">
     <input type="text" name="firstname" class="form-control form-control-user" id="exampleFirstName"
         placeholder="First Name" required oninput="validateInput(this)">
@@ -167,13 +170,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['registerOwner'])) {
                 customClass: {
                     confirmButton: 'btn btn-warning'
                 }
+            }).then(() => {
+                // Clear the input field after the alert is closed
+                input.value = '';
             });
-            
-            // Remove the last entered invalid character
-            input.value = input.value.slice(0, -1);
         }
     }
 </script>
+
                                 </div>
                                 <!-- Include SweetAlert2 CSS -->
 <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.5.3/dist/sweetalert2.min.css" rel="stylesheet">
