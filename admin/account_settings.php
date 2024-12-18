@@ -261,8 +261,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <input type="password" name="confirm_password" id="confirm_password" required>
                 <i class="fas fa-eye" id="toggle_confirm_password" style="
                     position: absolute;
-                    transform: translateY(-50px);
-                    right: 369px;
+                    transform: translateY(-144px);
+                    right: 27px;
                     top: 100.5%;
                     cursor: pointer;
                 "></i><div class="match-bar" id="match-bar"><div></div></div><br>
