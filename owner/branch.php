@@ -204,57 +204,93 @@ if (!isset($_SESSION['owner_id'])) {
                         <div class="card shadow mb-4 p-4 w-100">
                             <?=$msgAlert?>
                             <div class="data_table">
-                                <table id="dashprint" class="table table-striped table-bordered">
-                                    <thead class="table">
-                                        <tr>
-                                            <th>#</th>
-                                            <th>Branch</th>
-                                            <th>Location</th>
-                                            <th >Action</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <?php 
-                                        $myrow = $oop->displayBranches($_SESSION['owner_id']);
-                                        $l = 1;
-                                        foreach($myrow as $row){
-                                            ?>
-                                            <tr>
-                                                <td><?=$l++?></td>
-                                                <td><?=$row['branch']?></td>
-                                                <td><?=$row['location']?></td>
-                                                <td>
-                                                    <a href="?update=<?=$row['id']?>" class="btn btn-warning "> <i class="fas fa-edit fa-sm fa-fw"></i></a>
-                                                    <a href="#" data-toggle="modal" data-target="#deleteModal<?=$row['id']?>" class="btn btn-danger "> <i class="fas fa-trash fa-sm fa-fw"></i></a>
-                                                </td>
-                                            </tr>
-                                             <!-- Delete Modal -->
-                                             <div class="modal fade" id="deleteModal<?=$row['id']?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                                <div class="modal-dialog" role="document">
-                                                    <div class="modal-content">
-                                                    <div class="modal-header">
-                                                        <h5 class="modal-title" id="exampleModalLabel">Delete</h5>
-                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                        <span aria-hidden="true">&times;</span>
-                                                        </button>
-                                                    </div>
-                                                    <div class="modal-body">
-                                                        <p>Are you sure you want to delete this branch?</p>
-                                                    <div class="modal-footer">
-                                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                                        <form action="" method="POST"> 			
-                                                        <input type="text" value="<?= $row['id']?>" name="id" style="display:none;">													
-                                                        <button type="submit" name="deleteBranch" class="btn btn-danger"><i class="align-middle" data-feather="trash"></i> Yes</button>
-                                                        </form>
-                                                    </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <?php
-                                        }
-                                        ?>
-                                    </tbody>
-                                </table>
+                            <table id="dashprint" class="table table-striped table-bordered">
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>Branch</th>
+            <th>Location</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php 
+        $myrow = $oop->displayBranches($_SESSION['owner_id']);
+        $l = 1;
+        foreach($myrow as $row) {
+        ?>
+        <tr>
+            <td><?=$l++?></td>
+            <td><?=$row['branch']?></td>
+            <td><?=$row['location']?></td>
+            <td>
+                <!-- Edit Button -->
+                <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#editBranchModal<?=$row['id']?>">
+                    <i class="fas fa-edit fa-sm fa-fw"></i>
+                </button>
+                
+                <!-- Delete Button -->
+                <a href="#" data-toggle="modal" data-target="#deleteModal<?=$row['id']?>" class="btn btn-danger">
+                    <i class="fas fa-trash fa-sm fa-fw"></i>
+                </a>
+            </td>
+        </tr>
+
+        <!-- Edit Branch Modal -->
+        <div class="modal fade" id="editBranchModal<?=$row['id']?>" tabindex="-1" role="dialog" aria-labelledby="editBranchModalLabel<?=$row['id']?>" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="editBranchModalLabel<?=$row['id']?>">Edit Branch</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <form action="" method="POST">
+                        <div class="modal-body">
+                            <input type="hidden" name="id" value="<?=$row['id']?>">
+                            <label>Branch</label>
+                            <input type="text" name="branch" class="form-control mb-2" value="<?=$row['branch']?>" required>
+                            <label>Location</label>
+                            <input type="text" name="location" class="form-control" value="<?=$row['location']?>" required>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary" name="updateBranch">Save Changes</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Delete Confirmation Modal -->
+        <div class="modal fade" id="deleteModal<?=$row['id']?>" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel<?=$row['id']?>" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="deleteModalLabel<?=$row['id']?>">Delete Branch</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        Are you sure you want to delete this branch?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <form action="" method="POST">
+                            <input type="hidden" name="id" value="<?=$row['id']?>">
+                            <button type="submit" name="deleteBranch" class="btn btn-danger">Yes, Delete</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <?php 
+        }
+        ?>
+    </tbody>
+</table>
                             </div>
                         </div>
                         </div>
