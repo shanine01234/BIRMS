@@ -350,6 +350,64 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                                 <div class="form-group row">
                                 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+                                    <!-- Password Field -->
+                                    <div class="col-sm-6 mb-3 mb-sm-0 password-container">
+                                        <input type="password" name="password" class="form-control form-control-user"
+                                            id="exampleInputPassword" placeholder="Password" required>
+                                        <i class="far fa-eye" id="togglePassword"></i>
+                                        <div id="strengthBar" class="progress">
+                                            <div class="progress-bar" id="passwordStrengthBar"></div>
+                                        </div>
+                                        <small id="passwordStrengthText"></small>
+                                    </div>
+                                    <!-- Repeat Password Field -->
+                                    <div class="col-sm-6 password-container">
+                                        <input type="password" name="cpassword" class="form-control form-control-user"
+                                            id="exampleRepeatPassword" placeholder="Repeat Password" required>
+                                        <i class="far fa-eye" id="toggleRepeatPassword"></i>
+                                        <div id="matchBar" class="progress">
+                                            <div class="progress-bar bg-success" id="passwordMatchBar"></div>
+                                        </div>
+                                        <small id="passwordMatchText"></small>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <span>Gcash Number</span>
+                                    <input type="tel" name="gcash_num" pattern="[0-9]{11}" class="form-control form-control-user" id="exampleInputEmail"
+                                        placeholder="09000000000" minlength="11" maxlength="11" required>
+                                </div>
+                                <div class="form-group">
+                                    <span>Gcash QR Code</span>
+                                    <input type="file" name="gcash_qr" class="form-control form-control-user" id="exampleInputEmail"
+                                        placeholder="Gcash QR Code" required>
+                                </div>
+                                <button type="submit" name="registerOwner" class="btn btn-primary btn-user btn-block">Register Account</button>
+                                <hr>
+                            </form>
+                            <hr>
+                            <div class="text-center">
+                                <a class="small" href="login.php">Already have an account? Login!</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <style>
+        .password-container {
+            position: relative;
+        }
+        .password-container i {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+        }
+        #strengthBar {
+            height: 8px;
+            margin-top: 5px;<!-- Password Field -->
         <div class="col-sm-6 mb-3 mb-sm-0 password-container">
             <input type="password" name="password" class="form-control form-control-user"
                    id="exampleInputPassword" placeholder="Password" required>
@@ -369,11 +427,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
             <small id="passwordMatchText"></small>
         </div>
-    </div>
-</div>
+        }
+    </style>
 
-<script>
-    const passwordInput = document.getElementById('exampleInputPassword');
+    <script src="../vendor/jquery/jquery.min.js"></script>
+    <script src="../vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="../vendor/jquery-easing/jquery.easing.min.js"></script>
+
+    <script>
+        const passwordInput = document.getElementById('exampleInputPassword');
     const repeatPasswordInput = document.getElementById('exampleRepeatPassword');
     const togglePassword = document.getElementById('togglePassword');
     const toggleRepeatPassword = document.getElementById('toggleRepeatPassword');
@@ -468,66 +530,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             matchText.textContent = 'Passwords Do Not Match!';
         }
     }
-</script>
-                                </div>
-                                <div class="form-group">
-                                    <span>Gcash Number</span>
-                                    <input type="tel" name="gcash_num" pattern="[0-9]{11}" class="form-control form-control-user" id="exampleInputEmail"
-                                        placeholder="09000000000" minlength="11" maxlength="11" required>
-                                </div>
-                                <div class="form-group">
-                                    <span>Gcash QR Code</span>
-                                    <input type="file" name="gcash_qr" class="form-control form-control-user" id="exampleInputEmail"
-                                        placeholder="Gcash QR Code" required>
-                                </div>
-                                <button type="submit" name="registerOwner" class="btn btn-primary btn-user btn-block">Register Account</button>
-                                <hr>
-                            </form>
-                            <hr>
-                            <div class="text-center">
-                                <a class="small" href="login.php">Already have an account? Login!</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <style>
-        .password-container {
-            position: relative;
-        }
-        .password-container i {
-            position: absolute;
-            right: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            cursor: pointer;
-        }
-        #strengthBar {
-            height: 8px;
-            margin-top: 5px;
-        }
-    </style>
-
-    <script src="../vendor/jquery/jquery.min.js"></script>
-    <script src="../vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-    <script src="../vendor/jquery-easing/jquery.easing.min.js"></script>
-
-    <script>
-        document.getElementById("togglePassword").addEventListener("click", function () {
-            var password = document.getElementById("exampleInputPassword");
-            var type = password.type === "password" ? "text" : "password";
-            password.type = type;
-            this.classList.toggle("fa-eye-slash");
-        });
-
-        document.getElementById("toggleRepeatPassword").addEventListener("click", function () {
-            var password = document.getElementById("exampleRepeatPassword");
-            var type = password.type === "password" ? "text" : "password";
-            password.type = type;
-            this.classList.toggle("fa-eye-slash");
-        });
     </script>
     <script>
     document.getElementById("restoPhoto").addEventListener("change", function() {
