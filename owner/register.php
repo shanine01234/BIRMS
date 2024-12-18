@@ -136,7 +136,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['registerOwner'])) {
                             </div>
                             <form class="user" method="POST" enctype="multipart/form-data">
                                 <div class="form-group row">
-                                <div class="col-sm-4 mb-3 mb-sm-0">
+<!-- Include SweetAlert CDN -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<div class="col-sm-4 mb-3 mb-sm-0">
     <input type="text" name="firstname" class="form-control form-control-user" id="exampleFirstName"
         placeholder="First Name" required oninput="validateInput(this)">
 </div>
@@ -155,9 +158,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['registerOwner'])) {
         const validCharacters = /^[a-zA-ZñÑáéíóúÁÉÍÓÚ\s]+$/;
 
         if (!validCharacters.test(input.value)) {
-            // If invalid character entered, show an alert and clear the input field
-            alert('Please enter only letters (including ñ and accented characters) and spaces.');
-            input.value = input.value.slice(0, -1); // Remove the last entered invalid character
+            // Use SweetAlert to show a warning instead of a default alert
+            Swal.fire({
+                icon: 'warning',
+                title: 'Invalid Input',
+                text: 'Please enter only letters (including ñ and accented characters) and spaces.',
+                confirmButtonText: 'OK',
+                customClass: {
+                    confirmButton: 'btn btn-warning'
+                }
+            });
+            
+            // Remove the last entered invalid character
+            input.value = input.value.slice(0, -1);
         }
     }
 </script>
