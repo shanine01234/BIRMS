@@ -237,8 +237,8 @@ if (substr($request, -4) == '.php') {
         <a class="dropdown-item" href="account_settings.php">
             <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i> Account Settings
         </a>
-        <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
-        <a href="#" class="btn btn-primary" id="logoutButton">Logout</a>
+        <a class="dropdown-item" href="#" id="logoutButton">
+            <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i> Logout
         </a>
     </div>
 </li>
