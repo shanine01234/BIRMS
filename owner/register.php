@@ -372,9 +372,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <span>Gcash Number</span>
-                                    <input type="tel" name="gcash_num" pattern="[0-9]{11}" class="form-control form-control-user" id="exampleInputEmail"
-                                        placeholder="09000000000" minlength="11" maxlength="11" required>
+                                    <span>GCash Number</span>
+                                    <input type="tel" name="gcash_num" pattern="[0-9]{11}" class="form-control form-control-user" 
+                                        id="gcashInput" placeholder="09000000000" minlength="11" maxlength="11" required>
                                 </div>
                                 <div class="form-group">
                                     <span>Gcash QR Code</span>
@@ -409,11 +409,51 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             height: 8px;
             margin-top: 5px;
         }
+        /* Basic form styling */
+        .form-group {
+            margin: 20px;
+            font-family: Arial, sans-serif;
+        }
+
+        .form-group span {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 8px;
+            font-size: 16px;
+        }
     </style>
 
     <script src="../vendor/jquery/jquery.min.js"></script>
     <script src="../vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="../vendor/jquery-easing/jquery.easing.min.js"></script>
+
+    <script>
+        document.getElementById('gcashInput').addEventListener('blur', function() {
+            const gcashInput = this.value;
+
+            // Regular Expression to check if input starts with '09' and has 11 digits
+            const gcashRegex = /^09\d{9}$/;
+
+            if (!gcashRegex.test(gcashInput)) {
+                // Trigger SweetAlert warning
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Invalid GCash Number',
+                    text: 'GCash number must start with 09 and be 11 digits long!',
+                    confirmButtonColor: '#3085d6',
+                });
+
+                // Clear the input field
+                this.value = '';
+            }
+        });
+    </script>
 
     <script>
         const passwordInput = document.getElementById('exampleInputPassword');
