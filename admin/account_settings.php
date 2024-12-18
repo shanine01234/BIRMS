@@ -254,7 +254,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 <label for="new_password">New Password:</label>
                 <input type="password" name="new_password" id="new_password" required>
-                <i class="fas fa-eye" id="toggle_new_password" style="position: absolute;right: 369px;top: 83%;transform: translateY(-50px);cursor: pointer;"></i>
+                <i class="fas fa-eye" id="toggle_new_password" style="position: absolute;right: 29px;top: 83%;transform: translateY(-172px);cursor: pointer;"></i>
                 <div class="strength-bar" id="strength-bar"><div></div></div><br>
 
                 <label for="confirm_password">Confirm New Password:</label>
