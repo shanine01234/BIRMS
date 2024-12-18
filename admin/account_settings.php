@@ -134,24 +134,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             background-color: #dc3545;
             color: white;
         }
-        .back-button {
-            display: inline-block;
-            margin-bottom: 20px;
-            padding: 10px 20px;
-            background-color: #6c757d;
-            color: white;
+        
+        /* Button Design */
+        .btn-grad {
+            background-image: linear-gradient(to right, #f7ff00 0%, #db36a4  51%, #f7ff00  100%);
+            margin: 10px;
+            padding: 15px 45px;
+            text-align: center;
+            text-transform: uppercase;
+            transition: 0.5s;
+            background-size: 200% auto;
+            color: white;            
+            box-shadow: 0 0 20px #eee;
+            border-radius: 10px;
+            display: block;
             text-decoration: none;
-            border-radius: 4px;
-            font-size: 16px;
         }
-        .back-button:hover {
-            background-color: #5a6268;
+
+        .btn-grad:hover {
+            background-position: right center; /* change the direction of the change here */
+            color: #fff;
         }
     </style>
 </head>
 <body>
     <!-- Back Button -->
-    <a href="./index.php?page=dashboard" class="back-button">Back to Dashboard</a>
+    <a href="./index.php?page=dashboard" class="btn-grad">Back to Dashboard</a>
     
     <div class="container">
         <h1>Change Password</h1>
