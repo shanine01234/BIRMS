@@ -179,7 +179,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['registerOwner'])) {
 </script>
 
                                 </div>
-                                <!-- Include SweetAlert2 CSS -->
+<!-- Include SweetAlert2 CSS -->
 <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.5.3/dist/sweetalert2.min.css" rel="stylesheet">
 
 <div class="form-group">
@@ -203,6 +203,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['registerOwner'])) {
                 title: 'Invalid Email Format',
                 text: 'Please enter a valid Gmail address (e.g., user@gmail.com).',
                 confirmButtonText: 'OK'
+            }).then(() => {
+                // Clear the input field after the alert is closed
+                emailInput.value = '';
             });
         }
     });
