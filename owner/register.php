@@ -212,8 +212,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['registerOwner'])) {
 </script>
 
                                 <div class="form-group row">
-                                <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-                                <div class="col-sm-4">
+                                    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+                                    <div class="col-sm-4">
         <input type="text" name="restobar" class="form-control form-control-user" id="restobarName"
             placeholder="Restobar Name" required>
     </div>
@@ -227,46 +227,64 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['registerOwner'])) {
     </div>
 
     <script>
+        let showWarning = false; // Flag to prevent repeated SweetAlert triggers
+
         // Restobar Name Validation
-        document.getElementById('restobarName').addEventListener('blur', function () {
+        document.getElementById('restobarName').addEventListener('input', function () {
             const regex = /^[a-zA-ZñÑ\s]+$/;
             if (!regex.test(this.value)) {
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'Invalid Input!',
-                    text: 'Restobar Name can only contain letters and "ñ".',
-                });
-                this.value = ''; // Clear input
+                if (!showWarning) {
+                    showWarning = true;
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Invalid Input!',
+                        text: 'Restobar Name can only contain letters and "ñ".',
+                    }).then(() => {
+                        this.value = this.value.replace(/[^a-zA-ZñÑ\s]/g, ''); // Remove invalid characters
+                        showWarning = false;
+                    });
+                }
             }
         });
 
         // Restobar Contact Validation
-        document.getElementById('restobarContact').addEventListener('blur', function () {
-            const regex = /^\+63[0-9]{10}$/;
+        document.getElementById('restobarContact').addEventListener('input', function () {
+            const regex = /^\+63[0-9]{0,10}$/;
             if (!regex.test(this.value)) {
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'Invalid Contact!',
-                    text: 'Contact must start with +63 and have 10 digits after it.',
-                });
-                this.value = ''; // Clear input
+                if (!showWarning) {
+                    showWarning = true;
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Invalid Contact!',
+                        text: 'Contact must start with +63 and have 10 digits after it.',
+                    }).then(() => {
+                        this.value = this.value.replace(/[^\d\+]/g, '').substring(0, 13); // Enforce valid format
+                        showWarning = false;
+                    });
+                }
             }
         });
 
         // Restobar Location Validation
-        document.getElementById('restobarLocation').addEventListener('blur', function () {
+        document.getElementById('restobarLocation').addEventListener('input', function () {
             const commaCount = this.value.split(',').length - 1;
-            if (commaCount !== 3) {
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'Invalid Format!',
-                    text: 'Location must contain exactly three commas.',
-                });
-                this.value = ''; // Clear input
+            if (commaCount > 3 || this.value.includes(',,,')) {
+                if (!showWarning) {
+                    showWarning = true;
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Invalid Format!',
+                        text: 'Location must contain exactly three commas.',
+                    }).then(() => {
+                        const parts = this.value.split(',').slice(0, 4).join(','); // Keep valid format
+                        this.value = parts;
+                        showWarning = false;
+                    });
+                }
             }
         });
     </script>
-                                </div>
+</body>                                </div>
                                 <div class="form-group">
                                     <span>Restobar Photo</span>
                                     <input type="file" name="restoPhoto" class="form-control form-control-user" id="exampleInputEmail"
