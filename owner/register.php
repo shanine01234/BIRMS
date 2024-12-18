@@ -82,6 +82,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['registerOwner'])) {
     }
 }
 
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (isset($_FILES['restoPhoto'])) {
+        $file = $_FILES['restoPhoto'];
+        $allowedTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+        $fileType = mime_content_type($file['tmp_name']);
+
+        if (!in_array($fileType, $allowedTypes)) {
+            echo "<script>
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Invalid File!',
+                    text: 'Only JPG, JPEG, and PNG images are allowed.',
+                    confirmButtonText: 'OK'
+                });
+            </script>";
+            exit();
+        }
+
+        // Move uploaded file if valid
+        $uploadDir = "uploads/";
+        move_uploaded_file($file['tmp_name'], $uploadDir . basename($file['name']));
+        echo "File uploaded successfully!";
+    }
+}
+
 ?>
 
 
@@ -285,11 +310,36 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['registerOwner'])) {
         });
     </script>
 </body>                                </div>
-                                <div class="form-group">
-                                    <span>Restobar Photo</span>
-                                    <input type="file" name="restoPhoto" class="form-control form-control-user" id="exampleInputEmail"
-                                        placeholder="Restobar Photo" required>
-                                </div>
+                               <!-- Include SweetAlert CDN -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<div class="form-group">
+    <span>Restobar Photo</span>
+    <input type="file" name="restoPhoto" class="form-control form-control-user" id="restoPhoto" required>
+</div>
+
+<script>
+    document.getElementById("restoPhoto").addEventListener("change", function () {
+        const fileInput = this;
+        const file = fileInput.files[0]; // Get the file
+        const allowedTypes = ["image/jpeg", "image/jpg", "image/png"];
+
+        // Validate file type
+        if (file && !allowedTypes.includes(file.type)) {
+            // Show warning using SweetAlert
+            Swal.fire({
+                icon: "warning",
+                title: "Invalid File!",
+                text: "Only JPG, JPEG, and PNG images are allowed.",
+                confirmButtonText: "OK"
+            });
+
+            // Clear the file input
+            fileInput.value = "";
+        }
+    });
+</script>
+
                                 <div class="form-group row">
                                     <div class="col-sm-6 mb-3 mb-sm-0 password-container">
                                         <input type="password" name="password" class="form-control form-control-user"
