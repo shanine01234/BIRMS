@@ -23,18 +23,14 @@ try {
 // Initialize dataOperation with the database connection
 $dataOperation = new dataOperation($pdo);
 
-// Check if the form is submitted for account settings (e.g., password update)
+// Check if the form is submitted for account settings (e.g., username and password update)
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Make sure to validate and sanitize input data (e.g., for password)
-    if (isset($_POST['current_password'], $_POST['new_password'], $_POST['confirm_password'])) {
-        $currentPassword = $_POST['current_password'];
-        $newPassword = $_POST['new_password'];
-        $confirmPassword = $_POST['confirm_password'];
-
-        // Sanitize inputs to prevent SQL injection
-        $currentPassword = trim($currentPassword);
-        $newPassword = trim($newPassword);
-        $confirmPassword = trim($confirmPassword);
+    // Validate and sanitize input data (username, current password, new password, confirm password)
+    if (isset($_POST['username'], $_POST['current_password'], $_POST['new_password'], $_POST['confirm_password'])) {
+        $username = trim($_POST['username']);
+        $currentPassword = trim($_POST['current_password']);
+        $newPassword = trim($_POST['new_password']);
+        $confirmPassword = trim($_POST['confirm_password']);
 
         // Check if the new password and confirm password match
         if ($newPassword === $confirmPassword) {
@@ -49,12 +45,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 // If the password is correct, update it
                 $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
 
-                // Update password in the database
-                $stmt = $pdo->prepare("UPDATE admin SET password = :password WHERE id = :id");
-                $stmt->execute(['password' => $hashedPassword, 'id' => $userId]);
+                // Update both the username and password in the database
+                $stmt = $pdo->prepare("UPDATE admin SET username = :username, password = :password WHERE id = :id");
+                $stmt->execute([
+                    'username' => $username, 
+                    'password' => $hashedPassword, 
+                    'id' => $userId
+                ]);
 
                 // Success message
-                echo "<div class='message success'>Password updated successfully!</div>";
+                echo "<div class='message success'>Account updated successfully!</div>";
             } else {
                 echo "<div class='message error'>Current password is incorrect.</div>";
             }
@@ -106,7 +106,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             color: #555;
         }
 
-        input[type="password"] {
+        input[type="text"], input[type="password"] {
             width: 100%;
             padding: 12px;
             margin-bottom: 20px;
@@ -116,7 +116,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             font-size: 14px;
         }
 
-        input[type="password"]:focus {
+        input[type="text"]:focus, input[type="password"]:focus {
             border-color: #007BFF;
             outline: none;
         }
@@ -200,9 +200,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </a>
 
     <div class="container">
-        <h1>Change Your Password</h1>
+        <h1>Change Your Account Details</h1>
         <div class="form-container">
             <form method="POST">
+                <label for="username">Username:</label>
+                <input type="text" name="username" id="username" value="<?= htmlspecialchars($_SESSION['username'] ?? '') ?>" required><br>
+
                 <label for="current_password">Current Password:</label>
                 <input type="password" name="current_password" id="current_password" required><br>
 
@@ -212,7 +215,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <label for="confirm_password">Confirm New Password:</label>
                 <input type="password" name="confirm_password" id="confirm_password" required><br>
 
-                <button type="submit">Update Password</button>
+                <button type="submit">Update Account</button>
             </form>
         </div>
     </div>
