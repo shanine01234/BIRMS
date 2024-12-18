@@ -221,13 +221,20 @@ if (!isset($_SESSION['owner_id'])) {
                                                 <td><?=$k++?></td>
                                                 <td><?=$row['details']?></td>
                                                 <td>
-                                                <a href="#" data-toggle="modal" data-target="#editDetailsModal<?=$row['id']?>" class="btn btn-warning">
-                                                    <i class="fas fa-edit fa-sm fa-fw"></i>
-                                                </a>
-                                                <a href="#" data-toggle="modal" data-target="#viewDetailsModal<?=$row['id']?>" class="btn btn-info">
-                                                    <i class="fas fa-eye fa-sm fa-fw"></i>
-                                                </a>
-                                                    <a href="#" data-toggle="modal" data-target="#deleteModal<?=$row['id']?>" class="btn btn-danger "> <i class="fas fa-trash fa-sm fa-fw"></i></a>
+                                                    <!-- View Button -->
+                                                    <a href="#" data-toggle="modal" data-target="#viewDetailsModal<?=$row['id']?>" class="btn btn-info">
+                                                        <i class="fas fa-eye fa-sm fa-fw"></i>
+                                                    </a>
+                                                    
+                                                    <!-- Edit Button -->
+                                                    <a href="#" data-toggle="modal" data-target="#editDetailsModal<?=$row['id']?>" class="btn btn-warning">
+                                                        <i class="fas fa-edit fa-sm fa-fw"></i>
+                                                    </a>
+                                                    
+                                                    <!-- Delete Button -->
+                                                    <a href="#" data-toggle="modal" data-target="#deleteModal<?=$row['id']?>" class="btn btn-danger">
+                                                        <i class="fas fa-trash fa-sm fa-fw"></i>
+                                                    </a>
                                                 </td>
                                             </tr>
                                             <!-- Edit Details Modal -->
@@ -254,41 +261,26 @@ if (!isset($_SESSION['owner_id'])) {
     </div>
 </div>
 
-                                            <!-- View Modal -->
-                                            <div class="modal fade" id="viewModal<?=$row['id']?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                                <div class="modal-dialog" role="document">
-                                                    <div class="modal-content">
-                                                    <div class="modal-header">
-                                                        <h5 class="modal-title" id="exampleModalLabel">View</h5>
-                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                        <span aria-hidden="true">&times;</span>
-                                                        </button>
-                                                    </div>
-                                                    <div class="modal-body">
-                                                    <div class="row">
-                                                            <div class="row p-4">
-                                                               <center>
-                                                               <img src="../img/product/<?=$row['product_photo']?>" style="width: 100%; height: 300px;">
-                                                               </center> 
-                                                            </div>
-                                                            <div class="col mt-2 detail-title">
-                                                                <p>Product Name:</p>
-                                                                <p>Product Type:</p>
-                                                                <p>Price:</p>
-                                                            </div>
-                                                            <div class="col mt-2 details">
-                                                                <p><?= $row['product_name']?></p>
-                                                                <p><?= $row['product_type']?></p>
-                                                                <p><?= $row['price']?></p>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="modal-footer">
-                                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                                    </div>
-                                                    </div>
-                                                </div>
-                                            </div>
+                                            <!-- View Details Modal -->
+<div class="modal fade" id="viewDetailsModal<?=$row['id']?>" tabindex="-1" role="dialog" aria-labelledby="viewDetailsModalLabel<?=$row['id']?>" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="viewDetailsModalLabel<?=$row['id']?>">View Resto Details</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p><?=$row['details']?></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
                                              <!-- Delete Modal -->
                                              <div class="modal fade" id="deleteModal<?=$row['id']?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                                                 <div class="modal-dialog" role="document">
