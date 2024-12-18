@@ -219,31 +219,60 @@ if (!isset($_SESSION['owner_id'])) {
                             <div class="data_table">
                                 <table id="dashprint" class="table table-striped table-bordered">
                                     <thead class="table">
-                                        <tr>
-                                            <th>#</th>
-                                            <th>Product Name</th>
-                                            <th>Product Type</th>
-                                            <th>Price</th>
-                                            <th>Action</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <?php 
-                                        $myrow = $oop->displayMenu($_SESSION['owner_id']);
-                                        $k = 1;
-                                        foreach($myrow as $row){
-                                            ?>
-                                            <tr>
-                                                <td><?=$k++?></td>
-                                                <td><?=$row['product_name']?></td>
-                                                <td><?=$row['product_type']?></td>
-                                                <td>₱<?=$row['price']?></td>
-                                                <td>
-                                                    <a href="#" data-toggle="modal" data-target="#viewModal<?=$row['id']?>" class="btn btn-info "> <i class="fas fa-eye fa-sm fa-fw"></i></a>
-                                                    <a href="?update=<?=$row['id']?>" class="btn btn-warning "> <i class="fas fa-edit fa-sm fa-fw"></i></a>
-                                                    <a href="#" data-toggle="modal" data-target="#deleteModal<?=$row['id']?>" class="btn btn-danger "> <i class="fas fa-trash fa-sm fa-fw"></i></a>
-                                                </td>
-                                            </tr>
+                                    <tr>
+    <td><?=$k++?></td>
+    <td><?=$row['product_name']?></td>
+    <td><?=$row['product_type']?></td>
+    <td>₱<?=$row['price']?></td>
+    <td>
+        <a href="#" class="btn btn-warning" data-toggle="modal" data-target="#editMenuModal<?=$row['id']?>"> 
+            <i class="fas fa-edit fa-sm fa-fw"></i>
+        </a>
+        <a href="#" class="btn btn-danger" data-toggle="modal" data-target="#deleteModal<?=$row['id']?>"> 
+            <i class="fas fa-trash fa-sm fa-fw"></i>
+        </a>
+    </td>
+</tr>
+
+<!-- Edit Menu Modal -->
+<div class="modal fade" id="editMenuModal<?=$row['id']?>" tabindex="-1" role="dialog" aria-labelledby="editMenuModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editMenuModalLabel">Edit Product</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form action="" method="POST" enctype="multipart/form-data">
+                <div class="modal-body">
+                    <input type="hidden" name="id" value="<?=$row['id']?>">
+                    <input type="hidden" name="oldProductPhoto" value="<?=$row['product_photo']?>">
+                    
+                    <label>Product Name</label>
+                    <input type="text" name="product_name" value="<?=$row['product_name']?>" class="form-control mb-2" required>
+                    
+                    <label>Product Type</label>
+                    <select class="form-select mb-2" name="product_type" required>
+                        <option value="<?=$row['product_type']?>" selected><?=$row['product_type']?></option>
+                        <option value="Food">Food</option>
+                        <option value="Drinks">Drinks</option>
+                    </select>
+                    
+                    <label>Price</label>
+                    <input type="text" value="<?=$row['price']?>" name="price" class="form-control mb-2" required>
+                    
+                    <label>Product Photo</label>
+                    <input type="file" accept="image/.png, .jpg, .jpeg" name="productPhoto" class="form-control mb-3">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary" name="updateProduct"><i class="align-middle fas fa-save"></i> Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
                                             <!-- View Modal -->
                                             <div class="modal fade" id="viewModal<?=$row['id']?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                                                 <div class="modal-dialog" role="document">
