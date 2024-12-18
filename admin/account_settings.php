@@ -134,9 +134,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             background-color: #dc3545;
             color: white;
         }
+        .back-button {
+            display: inline-block;
+            margin-bottom: 20px;
+            padding: 10px 20px;
+            background-color: #6c757d;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        .back-button:hover {
+            background-color: #5a6268;
+        }
     </style>
 </head>
 <body>
+    <!-- Back Button -->
+    <a href="admin/index.php?page=dashboard" class="back-button">Back to Dashboard</a>
+    
     <div class="container">
         <h1>Change Password</h1>
         <form method="POST">
