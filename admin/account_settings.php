@@ -32,34 +32,39 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $newPassword = trim($_POST['new_password']);
         $confirmPassword = trim($_POST['confirm_password']);
 
-        // Check if the new password and confirm password match
-        if ($newPassword === $confirmPassword) {
-            // Check if the current password is correct (e.g., for a logged-in user)
-            $userId = $_SESSION['id']; // Assume the user ID is stored in session
-            
-            // Assuming a method in dataOperation to fetch the user's current password
-            $existingPassword = $dataOperation->getUserPasswordById($userId);
-
-            // Verify the current password (you should use password_verify for hashed passwords)
-            if (password_verify($currentPassword, $existingPassword)) {
-                // If the password is correct, update it
-                $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
-
-                // Update both the username and password in the database
-                $stmt = $pdo->prepare("UPDATE admin SET username = :username, password = :password WHERE id = :id");
-                $stmt->execute([
-                    'username' => $username, 
-                    'password' => $hashedPassword, 
-                    'id' => $userId
-                ]);
-
-                // Success message
-                echo "<div class='message success'>Account updated successfully!</div>";
-            } else {
-                echo "<div class='message error'>Current password is incorrect.</div>";
-            }
+        // Password length validation (minimum 8 characters)
+        if (strlen($newPassword) < 8) {
+            echo "<div class='message error'>New password must be at least 8 characters long.</div>";
         } else {
-            echo "<div class='message error'>New password and confirm password do not match.</div>";
+            // Check if the new password and confirm password match
+            if ($newPassword === $confirmPassword) {
+                // Check if the current password is correct (e.g., for a logged-in user)
+                $userId = $_SESSION['id']; // Assume the user ID is stored in session
+                
+                // Assuming a method in dataOperation to fetch the user's current password
+                $existingPassword = $dataOperation->getUserPasswordById($userId);
+
+                // Verify the current password (you should use password_verify for hashed passwords)
+                if (password_verify($currentPassword, $existingPassword)) {
+                    // If the password is correct, update it
+                    $hashedPassword = password_hash($newPassword, PASSWORD_ARGON2I);
+
+                    // Update both the username and password in the database
+                    $stmt = $pdo->prepare("UPDATE admin SET username = :username, password = :password WHERE id = :id");
+                    $stmt->execute([
+                        'username' => $username, 
+                        'password' => $hashedPassword, 
+                        'id' => $userId
+                    ]);
+
+                    // Success message
+                    echo "<div class='message success'>Account updated successfully!</div>";
+                } else {
+                    echo "<div class='message error'>Current password is incorrect.</div>";
+                }
+            } else {
+                echo "<div class='message error'>New password and confirm password do not match.</div>";
+            }
         }
     } else {
         echo "<div class='message error'>All fields are required.</div>";
