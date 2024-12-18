@@ -173,7 +173,7 @@ if (!isset($_SESSION['owner_id'])) {
 
                     <!-- Add Menu Button -->
 <!-- Add Menu Button -->
-<button type="button" class="btn btn-primary mb-3" data-toggle="modal" data-target="#addMenuModal" style="width: 950px;">
+<button type="button" class="btn btn-primary mb-3" data-toggle="modal" data-target="#addMenuModal" style="margin-left: 950px;">
     <i class="fas fa-plus"></i> Add to Menu
 </button>
 
