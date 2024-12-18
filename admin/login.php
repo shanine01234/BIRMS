@@ -3,6 +3,7 @@ require_once('../inc/function.php');
 require_once('process/loginAdmin.php');
 
 
+
 // Initialize login attempt tracking if not set
 if (!isset($_SESSION['login_attempts'])) {
     $_SESSION['login_attempts'] = 0;
@@ -11,13 +12,14 @@ if (!isset($_SESSION['login_attempts'])) {
 
 // Define constants for login attempts and lockout time
 define('MAX_LOGIN_ATTEMPTS', 5);
-define('LOCKOUT_TIME', 30); // Lockout time in minutes
+define('LOCKOUT_TIME', 1); // Lockout time in minutes
 
 // Check if user is locked out
 if ($_SESSION['login_attempts'] >= MAX_LOGIN_ATTEMPTS) {
     $lockout_time_left = LOCKOUT_TIME * 60 - (time() - $_SESSION['first_attempt_time']);
     if ($lockout_time_left > 0) {
-        die("You have been locked out. Please try again in " . ceil($lockout_time_left / 60) . " minutes.");
+        echo "<script>swal('Too Many Attempts!', 'Please try again in " . ceil($lockout_time_left / 60) . " minutes.', 'error');</script>";
+        die();
     } else {
         // Reset login attempts after lockout time passes
         $_SESSION['login_attempts'] = 0;
@@ -37,7 +39,8 @@ $block_duration = 30 * 60; // Block for 30 minutes
 if (isset($_SESSION['failed_attempts'][$ip_address]) && $_SESSION['failed_attempts'][$ip_address]['count'] >= $max_attempts) {
     $time_left = $block_duration - (time() - $_SESSION['failed_attempts'][$ip_address]['timestamp']);
     if ($time_left > 0) {
-        die("Your IP has been temporarily blocked. Please try again in " . ceil($time_left / 60) . " minutes.");
+        echo "<script>swal('IP Blocked!', 'Your IP has been temporarily blocked. Please try again in " . ceil($time_left / 60) . " minutes.', 'error');</script>";
+        die();
     } else {
         // Reset the failed attempts after block duration has passed
         $_SESSION['failed_attempts'][$ip_address] = ['count' => 0, 'timestamp' => time()];
@@ -69,16 +72,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['loginAdmin'])) {
                 // Success: Proceed with login
                 $_SESSION['login_attempts'] = 0; // Reset attempts on successful login
                 // Redirect to admin dashboard or other page
+                echo "<script>swal('Success!', 'You have successfully logged in.', 'success');</script>";
                 header("Location: dashboard.php");
                 exit();
             } else {
                 // Failed login: Increment failed attempts
                 log_failed_attempt($username);
                 $_SESSION['login_attempts'] += 1;
+                echo "<script>swal('Login Failed!', 'Incorrect username or password.', 'error');</script>";
             }
         }
     } else {
-        die("reCAPTCHA validation failed. Please try again.");
+        echo "<script>swal('reCAPTCHA Failed!', 'Please complete the CAPTCHA verification.', 'error');</script>";
     }
 }
 
@@ -117,8 +122,12 @@ if (substr($request, -4) == '.php') {
     <!-- Custom styles for this template-->
     <link href="../css/sb-admin-2.min.css" rel="stylesheet">
 
+    <!-- SweetAlert CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.5.0/dist/sweetalert2.min.css" rel="stylesheet">
+    
     <!-- reCAPTCHA script -->
     <script src="https://www.google.com/recaptcha/api.js?render=6Ldz7JIqAAAAALCcq3dDLQBNAyHnlcVKyFzuxxBg"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.5.0/dist/sweetalert2.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             grecaptcha.ready(function () {
