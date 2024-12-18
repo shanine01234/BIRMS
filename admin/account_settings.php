@@ -54,15 +54,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $stmt->execute(['password' => $hashedPassword, 'id' => $userId]);
 
                 // Success message
-                echo "Password updated successfully!";
+                echo "<div class='message success'>Password updated successfully!</div>";
             } else {
-                echo "Current password is incorrect.";
+                echo "<div class='message error'>Current password is incorrect.</div>";
             }
         } else {
-            echo "New password and confirm password do not match.";
+            echo "<div class='message error'>New password and confirm password do not match.</div>";
         }
     } else {
-        echo "All fields are required.";
+        echo "<div class='message error'>All fields are required.</div>";
     }
 }
 
@@ -74,21 +74,84 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Account Settings</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f7f6;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 50%;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            margin-top: 50px;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        label {
+            font-size: 16px;
+            margin-bottom: 8px;
+            display: block;
+        }
+        input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .message {
+            text-align: center;
+            padding: 10px;
+            margin-top: 20px;
+            border-radius: 4px;
+        }
+        .message.success {
+            background-color: #28a745;
+            color: white;
+        }
+        .message.error {
+            background-color: #dc3545;
+            color: white;
+        }
+    </style>
 </head>
 <body>
-    <h1>Change Password</h1>
-    <form method="POST">
-        <label for="current_password">Current Password:</label>
-        <input type="password" name="current_password" id="current_password" required><br>
+    <div class="container">
+        <h1>Change Password</h1>
+        <form method="POST">
+            <label for="current_password">Current Password:</label>
+            <input type="password" name="current_password" id="current_password" required><br>
 
-        <label for="new_password">New Password:</label>
-        <input type="password" name="new_password" id="new_password" required><br>
+            <label for="new_password">New Password:</label>
+            <input type="password" name="new_password" id="new_password" required><br>
 
-        <label for="confirm_password">Confirm New Password:</label>
-        <input type="password" name="confirm_password" id="confirm_password" required><br>
+            <label for="confirm_password">Confirm New Password:</label>
+            <input type="password" name="confirm_password" id="confirm_password" required><br>
 
-        <button type="submit">Update Password</button>
-    </form>
+            <button type="submit">Update Password</button>
+        </form>
+    </div>
 </body>
 </html>
 
