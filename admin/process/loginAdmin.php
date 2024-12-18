@@ -3,41 +3,12 @@
 if (isset($_POST['loginAdmin'])) {
     $result = $oop->loginAdmin($_POST['username'] ,$_POST['password']);
     if ($result == 1) {
-        $msgAlert = 'Login successfully';
-        ?>
-        <script>
-            Swal.fire({
-                icon: 'success',
-                title: 'Login successfully',
-                showConfirmButton: false,
-                timer: 2000
-            }).then(function() {
-                window.location = "index.php?page=dashboard";
-            });
-        </script>
-        <?php
-    } elseif ($result == 10) {
-        $msgAlert = 'Username doesn\'t exist';
-        ?>
-        <script>
-            Swal.fire({
-                icon: 'error',
-                title: 'Username doesn\'t exist',
-                showConfirmButton: true
-            });
-        </script>
-        <?php
-    } elseif ($result == 20) {
-        $msgAlert = 'Incorrect password';
-        ?>
-        <script>
-            Swal.fire({
-                icon: 'error',
-                title: 'Incorrect password',
-                showConfirmButton: true
-            });
-        </script>
-        <?php
+        $msgAlert = $oop->alert('Login successfully','warning','check-circle');?>
+        <script>function redirect(){window.location = "index.php?page=dashboard";} setTimeout(redirect, 2000);</script><?php
+    }elseif ($result == 10) {
+        $msgAlert = $oop->alert('Username does\'t exist','danger','x-circle');
+    }
+    elseif ($result == 20) {
+        $msgAlert = $oop->alert('Incorrect password','danger','x-circle');
     }
 }
-?>
