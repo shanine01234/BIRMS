@@ -143,23 +143,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             background-color: #0056b3;
         }
 
-        .message {
-            text-align: center;
-            padding: 10px;
-            margin-top: 20px;
-            border-radius: 4px;
-        }
-
-        .message.success {
-            background-color: #28a745;
-            color: white;
-        }
-
-        .message.error {
-            background-color: #dc3545;
-            color: white;
-        }
-
         /* Button Design */
         .btn-grad {
             background-image: linear-gradient(to right, #f7ff00 0%, #db36a4 51%, #f7ff00 100%);
@@ -225,6 +208,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             border-radius: 2px;
         }
 
+        /* Positioning of the eye icon */
+        .password-container {
+            position: relative;
+        }
+
+        .password-container i {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -242,8 +237,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <input type="text" name="username" id="username" value="<?= htmlspecialchars($userDetails['username'] ?? '') ?>" required><br>
 
                 <label for="current_password">Current Password:</label>
-                <input type="password" name="current_password" id="current_password" required>
-                <input type="checkbox" id="show_current_password"> Show password<br>
+                <div class="password-container">
+                    <input type="password" name="current_password" id="current_password" required>
+                    <i class="fas fa-eye" id="toggle_current_password"></i>
+                </div><br>
 
                 <label for="new_password">New Password:</label>
                 <input type="password" name="new_password" id="new_password" required>
@@ -259,10 +256,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </div>
 
     <script>
-        // Show password functionality
-        document.getElementById('show_current_password').addEventListener('change', function() {
+        // Toggle password visibility
+        document.getElementById('toggle_current_password').addEventListener('click', function() {
             const passwordField = document.getElementById('current_password');
-            passwordField.type = this.checked ? 'text' : 'password';
+            const type = passwordField.type === 'password' ? 'text' : 'password';
+            passwordField.type = type;
+            this.classList.toggle('fa-eye-slash');
         });
 
         // New password strength indicator
@@ -315,6 +314,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </script>
 </body>
 </html>
+
 <!-- Include SweetAlert2 CDN -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
