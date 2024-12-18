@@ -311,11 +311,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </script>
 </body>                                </div>
                                <!-- Include SweetAlert CDN -->
+<!-- Include SweetAlert CDN -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <div class="form-group">
     <span>Restobar Photo</span>
-    <input type="file" name="restoPhoto" class="form-control form-control-user" id="restoPhoto" required>
+    <!-- Use the 'accept' attribute to allow only jpg, jpeg, and png files -->
+    <input 
+        type="file" 
+        name="restoPhoto" 
+        class="form-control form-control-user" 
+        id="restoPhoto" 
+        accept="image/jpeg, image/jpg, image/png" 
+        required>
 </div>
 
 <script>
