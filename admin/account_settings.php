@@ -143,7 +143,7 @@
         .password-container i {
             position: absolute;
             right: 10px;
-            top: 50%;
+            top: 36%;
             transform: translateY(-50%);
             cursor: pointer;
         }
@@ -166,7 +166,7 @@
                 <label for="current_password">Current Password:</label>
                 <div class="password-container">
                     <input type="password" name="current_password" id="current_password" required>
-                    <i class="fas fa-eye" id="toggle_current_password"></i>
+                    <i class="fas fa-eye" id="toggle_current_password" style=""> </i>
                 </div><br>
 
                 <label for="new_password">New Password:</label>
