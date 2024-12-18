@@ -170,44 +170,35 @@ if (!isset($_SESSION['owner_id'])) {
 
                     <!-- Content Row -->
 
-                    <div class="row">
-                        <div class="col-md-3">
-                        <?php 
-                        if (isset($_GET['update'])) {
-                            $id = $_GET['update'];
-                            $myrow = $oop->displayBranchesByID($id);
-                                foreach ($myrow as $row){
-                                ?>
-                                <form action="" method="POST">
-                                <div class="card shadow p-3">
-                                    <span class="mb-3 text-center"> Update Branch</span>
-                                    <label>Branch</label>
-                                    <input type="text" name="branch" value="<?=$row['branch']?>" class="form-control mb-1" required>
-                                    <label>Location</label>
-                                    <input type="text" name="location" value="<?=$row['location']?>" class="form-control mb-3" required>
-                                    <input type="text" name="id" value="<?=$row['id']?>" class="form-control mb-3" style="display: none;" required>
-                                    <button type="submit" class="btn btn-primary mb-2" name="updateBranch"> Save</button>
-                                    <a href="?" class="btn btn-info">Cancel</a>
-                                </div>
-                                </form>
-                                <?php
-                                }
-                        }else {
-                            ?>
-                            <form action="" method="POST">
-                            <div class="card shadow p-3">
-                                <span class="mb-3 text-center"> Add Branch</span>
-                                <label>Branch</label>
-                                <input type="text" name="branch" class="form-control mb-1" required>
-                                <label>Location</label>
-                                <input type="text" name="location" class="form-control mb-3" required>
-                                <button type="submit" class="btn btn-primary" name="addBranch"> Add</button>
-                            </div>
-                            </form>
-                            <?php
-                        }
-                        ?>
-                        </div>
+                    <button type="button" class="btn btn-primary mb-3" data-toggle="modal" data-target="#addBranchModal">
+    Add Branch
+</button>
+
+<!-- Add Branch Modal -->
+<div class="modal fade" id="addBranchModal" tabindex="-1" role="dialog" aria-labelledby="addBranchModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addBranchModalLabel">Add Branch</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form action="" method="POST">
+                <div class="modal-body">
+                    <label>Branch</label>
+                    <input type="text" name="branch" class="form-control mb-2" required>
+                    <label>Location</label>
+                    <input type="text" name="location" class="form-control" required>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary" name="addBranch">Add</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
                         <div class="col">
                         <!-- Area Chart -->
                         <div class="card shadow mb-4 p-4 w-100">
@@ -279,7 +270,7 @@ if (!isset($_SESSION['owner_id'])) {
             <footer class="sticky-footer bg-white">
                 <div class="container my-auto">
                     <div class="copyright text-center my-auto">
-                        <span>Group &copy; BSIT</span>
+                        <span>Shanine Zaspa &copy; 2024</span>
                     </div>
                 </div>
             </footer>
