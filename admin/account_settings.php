@@ -81,6 +81,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <title>Account Settings</title>
     <!-- Include Font Awesome for the icon -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
         /* Base styles */
         body {
@@ -196,53 +197,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
         }
 
-        /* Password strength bar styling */
+        /* Password strength bar */
         .strength-bar {
-            height: 8px;
+            height: 5px;
             margin-top: 5px;
-            width: 100%;
             background-color: #ddd;
-            border-radius: 5px;
-            display: none;
+            border-radius: 2px;
         }
 
         .strength-bar div {
             height: 100%;
-            border-radius: 5px;
+            width: 0;
+            border-radius: 2px;
         }
 
-        .strength-weak {
-            background-color: #ff4d4d;
-            width: 33%;
-        }
-
-        .strength-medium {
-            background-color: #ffcc00;
-            width: 66%;
-        }
-
-        .strength-strong {
-            background-color: #28a745;
-            width: 100%;
-        }
-
-        /* Match bar for confirm password */
+        /* Password match bar */
         .match-bar {
-            height: 8px;
+            height: 5px;
             margin-top: 5px;
-            width: 100%;
             background-color: #ddd;
-            border-radius: 5px;
-            display: none;
+            border-radius: 2px;
         }
 
-        .match-bar.match {
-            background-color: #28a745;
+        .match-bar div {
+            height: 100%;
+            width: 0;
+            border-radius: 2px;
         }
 
-        .match-bar.no-match {
-            background-color: #dc3545;
-        }
     </style>
 </head>
 <body>
@@ -260,18 +242,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <input type="text" name="username" id="username" value="<?= htmlspecialchars($userDetails['username'] ?? '') ?>" required><br>
 
                 <label for="current_password">Current Password:</label>
-                <div style="position: relative;">
-                    <input type="password" name="current_password" id="current_password" required><br>
-                    <img src="https://img.icons8.com/?size=100&id=LKTmVnYtDvRk&format=png&color=000000" alt="Show Password" onclick="togglePassword('current_password')" style="position: absolute; right: 10px; top: 10px; cursor: pointer;">
-                </div>
+                <input type="password" name="current_password" id="current_password" required>
+                <input type="checkbox" id="show_current_password"> Show password<br>
 
                 <label for="new_password">New Password:</label>
-                <input type="password" name="new_password" id="new_password" required oninput="checkPasswordStrength()"><br>
-                <div class="strength-bar" id="passwordStrengthBar"></div>
+                <input type="password" name="new_password" id="new_password" required>
+                <div class="strength-bar" id="strength-bar"><div></div></div><br>
 
                 <label for="confirm_password">Confirm New Password:</label>
-                <input type="password" name="confirm_password" id="confirm_password" required oninput="checkPasswordMatch()"><br>
-                <div class="match-bar" id="passwordMatchBar"></div>
+                <input type="password" name="confirm_password" id="confirm_password" required>
+                <div class="match-bar" id="match-bar"><div></div></div><br>
 
                 <button type="submit">Update Account</button>
             </form>
@@ -279,53 +259,58 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </div>
 
     <script>
-        // Function to toggle password visibility
-        function togglePassword(id) {
-            const passwordField = document.getElementById(id);
-            if (passwordField.type === "password") {
-                passwordField.type = "text";
+        // Show password functionality
+        document.getElementById('show_current_password').addEventListener('change', function() {
+            var currentPasswordField = document.getElementById('current_password');
+            currentPasswordField.type = this.checked ? 'text' : 'password';
+        });
+
+        document.getElementById('show_new_password').addEventListener('change', function() {
+            var newPasswordField = document.getElementById('new_password');
+            newPasswordField.type = this.checked ? 'text' : 'password';
+        });
+
+        document.getElementById('show_confirm_password').addEventListener('change', function() {
+            var confirmPasswordField = document.getElementById('confirm_password');
+            confirmPasswordField.type = this.checked ? 'text' : 'password';
+        });
+
+        // Password strength indicator
+        document.getElementById('new_password').addEventListener('input', function() {
+            var strengthBar = document.getElementById('strength-bar').firstElementChild;
+            var strength = getPasswordStrength(this.value);
+            strengthBar.style.width = strength + '%';
+            if (strength < 30) {
+                strengthBar.style.backgroundColor = 'red';
+            } else if (strength < 60) {
+                strengthBar.style.backgroundColor = 'yellow';
             } else {
-                passwordField.type = "password";
+                strengthBar.style.backgroundColor = 'green';
             }
-        }
+        });
 
-        // Function to check password strength
-        function checkPasswordStrength() {
-            const password = document.getElementById('new_password').value;
-            const strengthBar = document.getElementById('passwordStrengthBar');
-            let strength = 0;
-
-            if (password.length >= 8) {
-                strength++;
-                if (/[A-Z]/.test(password)) strength++;
-                if (/[0-9]/.test(password)) strength++;
-                if (/[^A-Za-z0-9]/.test(password)) strength++;
-            }
-
-            strengthBar.style.display = 'block';
-
-            if (strength === 1) {
-                strengthBar.innerHTML = '<div class="strength-weak"></div>';
-            } else if (strength === 2) {
-                strengthBar.innerHTML = '<div class="strength-medium"></div>';
-            } else if (strength >= 3) {
-                strengthBar.innerHTML = '<div class="strength-strong"></div>';
-            }
-        }
-
-        // Function to check if passwords match
-        function checkPasswordMatch() {
-            const password = document.getElementById('new_password').value;
-            const confirmPassword = document.getElementById('confirm_password').value;
-            const matchBar = document.getElementById('passwordMatchBar');
-
-            if (password === confirmPassword && confirmPassword !== "") {
-                matchBar.style.display = 'block';
-                matchBar.className = "match-bar match";
+        // Password match indicator
+        document.getElementById('confirm_password').addEventListener('input', function() {
+            var matchBar = document.getElementById('match-bar').firstElementChild;
+            var newPassword = document.getElementById('new_password').value;
+            var confirmPassword = this.value;
+            if (newPassword === confirmPassword) {
+                matchBar.style.width = '100%';
+                matchBar.style.backgroundColor = 'green';
             } else {
-                matchBar.style.display = 'block';
-                matchBar.className = "match-bar no-match";
+                matchBar.style.width = '0';
             }
+        });
+
+        // Function to calculate password strength
+        function getPasswordStrength(password) {
+            var strength = 0;
+            if (password.length > 6) strength += 20;
+            if (password.match(/[A-Z]/)) strength += 20;
+            if (password.match(/[0-9]/)) strength += 20;
+            if (password.match(/[^A-Za-z0-9]/)) strength += 20;
+            if (password.length > 12) strength += 20;
+            return strength;
         }
     </script>
 </body>
