@@ -108,7 +108,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             box-sizing: border-box;
         }
         button {
-            width: 100%;
+            width: 50%;
             padding: 12px;
             background-color: #007BFF;
             color: white;
