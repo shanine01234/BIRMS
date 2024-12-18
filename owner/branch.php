@@ -160,7 +160,7 @@ if (!isset($_SESSION['owner_id'])) {
                 <!-- End of Topbar -->
 
                 <!-- Begin Page Content -->
-                <div class="container-fluid">
+                <div class="container-fluid d-flex justify-content-center align-items-center min-vh-100">
 
                     <!-- Page Heading -->
                     <div class="d-sm-flex align-items-center justify-content-between mb-4">
@@ -201,7 +201,7 @@ if (!isset($_SESSION['owner_id'])) {
 </div>
                         <div class="col">
                         <!-- Area Chart -->
-                        <div class="card shadow mb-4 p-4 w-100">
+                        <div class="card shadow mb-4 p-4 w-100" style="max-width: 800px;">
                             <?=$msgAlert?>
                             <div class="data_table">
                             <table id="dashprint" class="table table-striped table-bordered">
