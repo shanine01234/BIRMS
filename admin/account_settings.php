@@ -23,7 +23,10 @@ try {
 // Initialize dataOperation with the database connection
 $dataOperation = new dataOperation($pdo);
 
-// Check if the form is submitted for account settings (e.g., username and password update)
+// Fetch user details (username) when the page loads
+$userId = $_SESSION['id']; // Assume the user ID is stored in session
+$userDetails = $dataOperation->getUserDetailsById($userId);
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Validate and sanitize input data (username, current password, new password, confirm password)
     if (isset($_POST['username'], $_POST['current_password'], $_POST['new_password'], $_POST['confirm_password'])) {
@@ -39,9 +42,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // Check if the new password and confirm password match
             if ($newPassword === $confirmPassword) {
                 // Check if the current password is correct (e.g., for a logged-in user)
-                $userId = $_SESSION['id']; // Assume the user ID is stored in session
-                
-                // Assuming a method in dataOperation to fetch the user's current password
                 $existingPassword = $dataOperation->getUserPasswordById($userId);
 
                 // Verify the current password (you should use password_verify for hashed passwords)
@@ -208,8 +208,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <h1>Change Your Account Details</h1>
         <div class="form-container">
             <form method="POST">
+                <!-- Display the current username in the input field -->
                 <label for="username">Username:</label>
-                <input type="text" name="username" id="username" value="<?= htmlspecialchars($_SESSION['username'] ?? '') ?>" required><br>
+                <input type="text" name="username" id="username" value="<?= htmlspecialchars($userDetails['username'] ?? '') ?>" required><br>
 
                 <label for="current_password">Current Password:</label>
                 <input type="password" name="current_password" id="current_password" required><br>
@@ -235,6 +236,13 @@ class dataOperation {
     // Constructor accepts a PDO object for DB operations
     public function __construct($pdo) {
         $this->pdo = $pdo;
+    }
+
+    // Fetch user details (username) by user ID
+    public function getUserDetailsById($userId) {
+        $stmt = $this->pdo->prepare("SELECT username, password FROM admin WHERE id = :id");
+        $stmt->execute(['id' => $userId]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
     // Fetch user password by user ID
