@@ -45,28 +45,32 @@ class Order {
 $order = new Order($oop->conn); // Assuming $oop->conn is your database connection
 
 // Handle the status update request
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-
-    if (isset($_POST['update_stat'])) {
-        
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_stat'])) {
     $order_id = (int)$_POST['order_id'];
-    $status = $_POST['status'];
+    $status = (int)$_POST['status'];
 
-    if (is_numeric($order_id) && in_array($status, [1, 2, 3])) {
+    // Ensure order ID and status are valid
+    if ($order_id > 0 && in_array($status, [1, 2, 3])) {
         $sql = "UPDATE orders SET status = ? WHERE id = ?";
         $stmt = $oop->conn->prepare($sql);
-        $stmt->bind_param("ii", $status, $order_id);
 
-        if ($stmt->execute()) {
-            // header('Location: orders.php'); // Redirect back to orders page
-            // exit();
+        if ($stmt) {
+            $stmt->bind_param("ii", $status, $order_id);
+
+            if ($stmt->execute()) {
+                // Redirect back to orders page to reflect updated status
+                header('Location: order.php?page=' . $page);
+                exit();
+            } else {
+                $error_message = "Failed to update status: " . $stmt->error;
+            }
         } else {
-            $error_message = "Error updating status: " . $stmt->error;
+            $error_message = "Database error: " . $oop->conn->error;
         }
     } else {
-        $error_message = "Invalid data provided.";
+        $error_message = "Invalid order ID or status provided.";
     }
-    }
+
 
 }
 
