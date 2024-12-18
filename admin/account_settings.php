@@ -1,3 +1,78 @@
+<?php
+// Start the session (only if not already started)
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
+
+// Database connection setup using provided credentials
+$host = '127.0.0.1';
+$username = 'u510162695_birms_db';
+$password = '1Birms_db';  // Replace with the actual password
+$dbname = 'u510162695_birms_db';
+
+try {
+    // Establish PDO connection
+    $pdo = new PDO("mysql:host=$host;dbname=$dbname", $username, $password);
+    // Set the PDO error mode to exception
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+} catch (PDOException $e) {
+    // Handle connection errors
+    die("Connection failed: " . $e->getMessage());
+}
+
+// Initialize dataOperation with the database connection
+$dataOperation = new dataOperation($pdo);
+
+// Fetch user details (username) when the page loads
+$userId = $_SESSION['id']; // Assume the user ID is stored in session
+$userDetails = $dataOperation->getUserDetailsById($userId);
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Validate and sanitize input data (username, current password, new password, confirm password)
+    if (isset($_POST['username'], $_POST['current_password'], $_POST['new_password'], $_POST['confirm_password'])) {
+        $username = trim($_POST['username']);
+        $currentPassword = trim($_POST['current_password']);
+        $newPassword = trim($_POST['new_password']);
+        $confirmPassword = trim($_POST['confirm_password']);
+
+        // Password length validation (minimum 8 characters)
+        if (strlen($newPassword) < 8) {
+            echo "<script>Swal.fire('Error', 'New password must be at least 8 characters long.', 'error');</script>";
+        } else {
+            // Check if the new password and confirm password match
+            if ($newPassword === $confirmPassword) {
+                // Check if the current password is correct (e.g., for a logged-in user)
+                $existingPassword = $dataOperation->getUserPasswordById($userId);
+
+                // Verify the current password (you should use password_verify for hashed passwords)
+                if (password_verify($currentPassword, $existingPassword)) {
+                    // If the password is correct, update it
+                    $hashedPassword = password_hash($newPassword, PASSWORD_ARGON2I);
+
+                    // Update both the username and password in the database
+                    $stmt = $pdo->prepare("UPDATE admin SET username = :username, password = :password WHERE id = :id");
+                    $stmt->execute([
+                        'username' => $username, 
+                        'password' => $hashedPassword, 
+                        'id' => $userId
+                    ]);
+
+                    // Success message
+                    echo "<script>Swal.fire('Success', 'Account updated successfully!', 'success');</script>";
+                } else {
+                    echo "<script>Swal.fire('Error', 'Current password is incorrect.', 'error');</script>";
+                }
+            } else {
+                echo "<script>Swal.fire('Error', 'New password and confirm password do not match.', 'error');</script>";
+            }
+        }
+    } else {
+        echo "<script>Swal.fire('Error', 'All fields are required.', 'error');</script>";
+    }
+}
+
+// Example of the form for account settings
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -143,7 +218,7 @@
         .password-container i {
             position: absolute;
             right: 10px;
-            top: 36%;
+            top: 50%;
             transform: translateY(-50%);
             cursor: pointer;
         }
@@ -166,7 +241,7 @@
                 <label for="current_password">Current Password:</label>
                 <div class="password-container">
                     <input type="password" name="current_password" id="current_password" required>
-                    <i class="fas fa-eye" id="toggle_current_password" style=""> </i>
+                    <i class="fas fa-eye" id="toggle_current_password"></i>
                 </div><br>
 
                 <label for="new_password">New Password:</label>
@@ -183,7 +258,6 @@
                     top: 100.5%;
                     cursor: pointer;
                 "></i>
-                <div class="match-bar" id="match-bar"><div></div></div><br>
 
                 <button type="submit">Update Account</button>
             </form>
@@ -198,6 +272,7 @@
             passwordField.type = type;
             this.classList.toggle('fa-eye-slash');
         });
+
         document.getElementById('toggle_new_password').addEventListener('click', function() {
             const passwordField = document.getElementById('new_password');
             const type = passwordField.type === 'password' ? 'text' : 'password';
@@ -210,6 +285,7 @@
             passwordField.type = type;
             this.classList.toggle('fa-eye-slash');
         });
+
         // New password strength indicator
         document.getElementById('new_password').addEventListener('input', function() {
             const strengthBar = document.getElementById('strength-bar').firstElementChild;
@@ -220,6 +296,15 @@
             if (/[A-Z]/.test(password)) strength++;
             if (/[0-9]/.test(password)) strength++;
             if (/[^A-Za-z0-9]/.test(password)) strength++;
+
+            if (/[^\w\s]/.test(password)) {
+                // Show SweetAlert if invalid characters are found
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Invalid characters!',
+                    text: 'Password contains disallowed symbols. Only letters, numbers, and basic symbols are allowed.',
+                });
+            }
 
             switch (strength) {
                 case 1:
@@ -255,6 +340,15 @@
                 matchBar.style.backgroundColor = 'green';
             } else {
                 matchBar.style.width = '0';
+            }
+
+            // Alert if passwords don't match
+            if (newPassword !== confirmPassword && confirmPassword !== '') {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Passwords do not match',
+                    text: 'Please make sure the new password and confirm password match.',
+                });
             }
         });
     </script>
