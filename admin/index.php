@@ -500,26 +500,30 @@ if (substr($request, -4) == '.php') {
     <a class="scroll-to-top rounded" href="#page-top">
         <i class="fas fa-angle-up"></i>
     </a>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-    <!-- Logout Modal-->
-    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
-                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">×</span>
-                    </button>
-                </div>
-                <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
-                <div class="modal-footer">
-                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                    <a class="btn btn-primary" href="process/logout.php">Logout</a>
-                </div>
-            </div>
-        </div>
-    </div>
+    <!-- Logout Button -->
+<a href="#" class="btn btn-primary" id="logoutButton">Logout</a>
+
+<!-- SweetAlert Script -->
+<script>
+    document.getElementById('logoutButton').addEventListener('click', function(e) {
+        e.preventDefault();  // Prevent the default link behavior
+        Swal.fire({
+            title: 'Is it time to say goodbye?',
+            text: "Are you sure you want to log out?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, log me out!',
+            cancelButtonText: 'Cancel',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = 'process/logout.php'; // Redirect to the logout page
+            }
+        });
+    });
+</script>
+
 
     <!-- Bootstrap core JavaScript-->
     <script src="../vendor/jquery/jquery.min.js"></script>
