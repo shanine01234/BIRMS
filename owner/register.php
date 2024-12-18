@@ -434,18 +434,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <script src="../vendor/jquery-easing/jquery.easing.min.js"></script>
 
     <script>
-        document.getElementById('gcashInput').addEventListener('blur', function() {
-            const gcashInput = this.value;
+        const gcashInput = document.getElementById('gcashInput');
 
-            // Regular Expression to check if input starts with '09' and has 11 digits
-            const gcashRegex = /^09\d{9}$/;
+        gcashInput.addEventListener('input', function () {
+            const value = this.value;
 
-            if (!gcashRegex.test(gcashInput)) {
-                // Trigger SweetAlert warning
+            // Allow only numbers (sanitize input)
+            this.value = value.replace(/[^0-9]/g, '');
+
+            // Check if the value starts with "09" and is up to 11 digits
+            if (this.value.length >= 2 && !this.value.startsWith('09')) {
                 Swal.fire({
                     icon: 'warning',
                     title: 'Invalid GCash Number',
-                    text: 'GCash number must start with 09 and be 11 digits long!',
+                    text: 'GCash number must start with "09"!',
                     confirmButtonColor: '#3085d6',
                 });
 
