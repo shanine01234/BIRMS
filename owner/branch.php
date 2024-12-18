@@ -170,7 +170,7 @@ if (!isset($_SESSION['owner_id'])) {
 
                     <!-- Content Row -->
 
-                    <button type="button" class="btn btn-primary mb-3" data-toggle="modal" data-target="#addBranchModal" style="margin-left: 1100px;">
+                    <button type="button" class="btn btn-primary mb-3" data-toggle="modal" data-target="#addBranchModal" style="margin-left: 850px;">
                         Add Branch
                     </button>
 
