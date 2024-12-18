@@ -171,10 +171,12 @@
 
                 <label for="new_password">New Password:</label>
                 <input type="password" name="new_password" id="new_password" required>
+                <i class="fas fa-eye" id="toggle_current_password"></i>
                 <div class="strength-bar" id="strength-bar"><div></div></div><br>
 
                 <label for="confirm_password">Confirm New Password:</label>
                 <input type="password" name="confirm_password" id="confirm_password" required>
+                <i class="fas fa-eye" id="toggle_current_password"></i>
                 <div class="match-bar" id="match-bar"><div></div></div><br>
 
                 <button type="submit">Update Account</button>
