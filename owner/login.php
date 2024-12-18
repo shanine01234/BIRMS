@@ -2,11 +2,55 @@
 require_once('../inc/function.php');
 require_once('process/loginOwner.php');
 
+// Enforce HTTPS
+if ($_SERVER["HTTPS"] != "on") {
+    header("Location: https://" . $_SERVER["HTTP_HOST"] . $_SERVER["REQUEST_URI"]);
+    exit();
+}
+
+// Start session for CSRF protection and session management
+session_start();
+
+// Generate and store a CSRF token for the form
+if (!isset($_SESSION['csrf_token'])) {
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+}
+
 $request = $_SERVER['REQUEST_URI'];
 if (substr($request, -4) == '.php') {
     $new_url = substr($request, 0, -4);
     header("Location: $new_url", true, 301);
     exit();
+}
+
+// CSRF Token validation (in process/loginOwner.php, to be handled during form submission)
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (isset($_POST['csrf_token']) && $_POST['csrf_token'] === $_SESSION['csrf_token']) {
+        // CSRF Token is valid, proceed with login processing
+        $owner_email = filter_var($_POST['owner_email'], FILTER_SANITIZE_EMAIL);
+        if (!filter_var($owner_email, FILTER_VALIDATE_EMAIL)) {
+            $msgAlert = "Invalid email format.";
+            exit();
+        }
+
+        // Assuming a PDO connection to the database
+        $stmt = $pdo->prepare("SELECT * FROM owners WHERE email = :email LIMIT 1");
+        $stmt->bindParam(':email', $owner_email, PDO::PARAM_STR);
+        $stmt->execute();
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($user && password_verify($_POST['password'], $user['password'])) {
+            // Valid login, set session variables
+            $_SESSION['owner_id'] = $user['id'];
+            $_SESSION['owner_email'] = $user['email'];
+            header('Location: dashboard.php');
+            exit();
+        } else {
+            $msgAlert = "Invalid credentials!";
+        }
+    } else {
+        $msgAlert = "Invalid CSRF token.";
+    }
 }
 ?>
 
@@ -47,33 +91,32 @@ if (substr($request, -4) == '.php') {
 
         /* Gradient Background */
         body {
-        background: 
-            linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), /* Gradient overlay for fade effect */
-            url('../img/photos/own.jpg'); /* Background image path */
-        background-size: cover; /* Cover the entire viewport */
-        background-position: center; /* Center the image */
-        background-repeat: no-repeat; /* Prevent repeating */
-        height: 90vh; /* Full height of viewport */
-        margin: 0; /* Remove default margin */
-    }
+            background: 
+                linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), /* Gradient overlay for fade effect */
+                url('../img/photos/own.jpg'); /* Background image path */
+            background-size: cover; /* Cover the entire viewport */
+            background-position: center; /* Center the image */
+            background-repeat: no-repeat; /* Prevent repeating */
+            height: 90vh; /* Full height of viewport */
+            margin: 0; /* Remove default margin */
+        }
 
-    /* Resize form */
-    .user-form {
-        max-width: 350px; /* Maximum width for form */
-        margin: 0 auto; /* Center the form */
-        padding: 30px; /* Add some padding */
-    }
+        /* Resize form */
+        .user-form {
+            max-width: 350px; /* Maximum width for form */
+            margin: 0 auto; /* Center the form */
+            padding: 30px; /* Add some padding */
+        }
 
-    .form-group input {
-        padding: 10px;
-        font-size: 16px; /* Resize input text */
-        
-    }
+        .form-group input {
+            padding: 10px;
+            font-size: 16px; /* Resize input text */
+        }
 
-    .btn-user {
-        padding: 10px 20px; /* Resize the button */
-        font-size: 16px; /* Resize the button text */
-    }
+        .btn-user {
+            padding: 10px 20px; /* Resize the button */
+            font-size: 16px; /* Resize the button text */
+        }
     </style>
 </head>
 
@@ -97,6 +140,9 @@ if (substr($request, -4) == '.php') {
                                         <?=$msgAlert?>
                                     </div>
                                     <form class="user" method="POST">
+                                        <!-- CSRF Token -->
+                                        <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
+
                                         <div class="form-group">
                                             <input type="text" name="owner_email" class="form-control form-control-user"
                                                 id="exampleInputEmail" aria-describedby="emailHelp"
