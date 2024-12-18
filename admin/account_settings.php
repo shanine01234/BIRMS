@@ -178,9 +178,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         .form-container {
             background-color: #fff;
             padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); /* Darker shadow for depth */
+            transform-style: preserve-3d; /* Enable 3D space */
+            transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth transition on hover */
         }
+
+        .form-container:hover {
+            transform: translateY(-5px) rotateX(5deg) rotateY(5deg); /* Slight rotation for 3D effect */
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2); /* Deeper shadow on hover */
+        }
+
 
         /* Password strength bar */
         .strength-bar {
