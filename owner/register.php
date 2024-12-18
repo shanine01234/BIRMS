@@ -175,22 +175,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['registerOwner'])) {
     }
 </script>
                                 </div>
-                                <div class="form-group">
+                                <!-- Include SweetAlert2 CSS -->
+<link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.5.3/dist/sweetalert2.min.css" rel="stylesheet">
+
+<div class="form-group">
     <input type="email" name="email" class="form-control form-control-user" id="exampleInputEmail"
         placeholder="Email Address" required>
-    <div id="warningMessage" class="alert alert-warning mt-2" style="display: none;">Please enter a valid Gmail address (e.g., user@gmail.com).</div>
 </div>
+
+<!-- Include SweetAlert2 JS -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.5.3/dist/sweetalert2.all.min.js"></script>
 
 <script>
     const emailInput = document.getElementById('exampleInputEmail');
-    const warningMessage = document.getElementById('warningMessage');
 
     emailInput.addEventListener('input', function() {
         const email = emailInput.value;
+        // Check if the email ends with '@gmail.com'
         if (email && !email.endsWith('@gmail.com')) {
-            warningMessage.style.display = 'block';
-        } else {
-            warningMessage.style.display = 'none';
+            // Show a SweetAlert2 warning if the email is not a Gmail address
+            Swal.fire({
+                icon: 'warning',
+                title: 'Invalid Email Format',
+                text: 'Please enter a valid Gmail address (e.g., user@gmail.com).',
+                confirmButtonText: 'OK'
+            });
         }
     });
 </script>
