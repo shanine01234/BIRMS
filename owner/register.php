@@ -381,8 +381,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 
                                 <div class="form-group">
                                     <span>Gcash QR Code</span>
-                                    <input type="file" name="gcash_qr" class="form-control form-control-user" id="exampleInputEmail"
-                                        placeholder="Gcash QR Code" required>
+                                    <!-- Accept only image files (PNG, JPG, JPEG) -->
+                                    <input type="file" name="gcash_qr" class="form-control form-control-user" id="gcashQr" placeholder="Gcash QR Code" accept="image/png, image/jpeg, image/jpg" required>
                                 </div>
                                 <!-- SweetAlert JS -->
                                 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
@@ -442,21 +442,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <script>
 document.getElementById('gcashQr').addEventListener('change', function (e) {
     const file = e.target.files[0];
-    const validMimeTypes = ['image/png', 'image/jpeg', 'image/jpg'];  // Accept only images
     const validFileName = /gcash_qr/i;  // Regex pattern to match "gcash_qr" in the filename
 
     if (!file) return;  // No file selected
 
-    // Check if the file is an image and has a "gcash_qr" in the filename
-    if (!validMimeTypes.includes(file.type) || !validFileName.test(file.name)) {
-        // Clear the input fields if invalid file
+    // Check if the file name contains "gcash_qr"
+    if (!validFileName.test(file.name)) {
+        // Clear the input field if invalid file
         e.target.value = '';
 
         // Trigger a SweetAlert warning to the user
         Swal.fire({
             icon: 'error',
             title: 'Invalid file!',
-            text: 'Only GCash QR code images are allowed. Please upload a valid QR code image with a correct name (e.g., gcash_qr.png).',
+            text: 'Only GCash QR code images with the name "gcash_qr" are allowed. Please upload a valid QR code image.',
         });
 
         // Optionally clear all other input fields if needed
