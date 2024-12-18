@@ -230,20 +230,15 @@ if (substr($request, -4) == '.php') {
     <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
         data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         <span class="mr-2 d-none d-lg-inline text-gray-600 small">Administrator</span>
-        <img class="img-profile rounded-circle"
-            src="../img/shanine.jpg.jpg">
+        <img class="img-profile rounded-circle" src="../img/shanine.jpg.jpg">
     </a>
     <!-- Dropdown - User Information -->
-    <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
-        aria-labelledby="userDropdown">
-        <!-- Add Account Settings Link -->
+    <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
         <a class="dropdown-item" href="account_settings.php">
-            <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
-            Account Settings
+            <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i> Account Settings
         </a>
         <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
-            <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
-            Logout
+            <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i> Logout
         </a>
     </div>
 </li>

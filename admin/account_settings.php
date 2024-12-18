@@ -2,44 +2,48 @@
 require_once('../inc/function.php');
 session_start();
 
+// Check if the user is logged in
 if (!isset($_SESSION['id'])) {
-    header('Location: login.php');
+    header('location: login.php');
     exit();
 }
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    // Validate input
-    $new_name = trim($_POST['name']);
-    $new_password = trim($_POST['password']);
-
-    if (!empty($new_name)) {
-        // Update name in the database
-        $stmt = $oop->pdo->prepare("UPDATE users SET name = :name WHERE id = :id");
-        $stmt->bindParam(':name', $new_name);
-        $stmt->bindParam(':id', $_SESSION['id']);
-        $stmt->execute();
-    }
-
-    if (!empty($new_password)) {
-        // Hash the new password using Argon2i
-        $hashed_password = password_hash($new_password, PASSWORD_ARGON2I);
-
-        // Update password in the database
-        $stmt = $oop->pdo->prepare("UPDATE users SET password = :password WHERE id = :id");
-        $stmt->bindParam(':password', $hashed_password);
-        $stmt->bindParam(':id', $_SESSION['id']);
-        $stmt->execute();
-    }
-
-    header('Location: account_settings.php'); // Redirect after update
-    exit();
-}
-
-// Fetch the current name for pre-filling the form
-$stmt = $oop->pdo->prepare("SELECT name FROM users WHERE id = :id");
-$stmt->bindParam(':id', $_SESSION['id']);
+// Fetch current user information
+$userId = $_SESSION['id'];
+$query = "SELECT * FROM admin WHERE id = :id";
+$stmt = $oop->pdo->prepare($query);
+$stmt->bindParam(':id', $userId);
 $stmt->execute();
 $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+// Handle form submission
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $username = $_POST['username'];
+    $newPassword = $_POST['new_password'];
+    $confirmPassword = $_POST['confirm_password'];
+
+    // Check if the new password and confirm password match
+    if ($newPassword === $confirmPassword) {
+        // Hash the new password with Argon2i
+        $hashedPassword = password_hash($newPassword, PASSWORD_ARGON2I);
+
+        // Update the username and password in the database
+        $updateQuery = "UPDATE admin SET username = :username, password = :password WHERE id = :id";
+        $updateStmt = $oop->pdo->prepare($updateQuery);
+        $updateStmt->bindParam(':username', $username);
+        $updateStmt->bindParam(':password', $hashedPassword);
+        $updateStmt->bindParam(':id', $userId);
+
+        if ($updateStmt->execute()) {
+            // Password updated successfully
+            $successMessage = "Account settings updated successfully!";
+        } else {
+            $errorMessage = "Failed to update account settings.";
+        }
+    } else {
+        $errorMessage = "Passwords do not match.";
+    }
+}
 ?>
 
 <!DOCTYPE html>
@@ -49,32 +53,35 @@ $user = $stmt->fetch(PDO::FETCH_ASSOC);
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Account Settings</title>
-    <link href="../css/sb-admin-2.min.css" rel="stylesheet">
+    <!-- Add your stylesheets here -->
 </head>
 <body>
+    <div class="container">
+        <h2>Account Settings</h2>
 
-    <div class="container mt-4">
-        <h1 class="h3 mb-4 text-gray-800">Account Settings</h1>
+        <!-- Display success or error message -->
+        <?php if (isset($successMessage)): ?>
+            <div class="alert alert-success"><?= $successMessage ?></div>
+        <?php elseif (isset($errorMessage)): ?>
+            <div class="alert alert-danger"><?= $errorMessage ?></div>
+        <?php endif; ?>
 
-        <form method="POST" action="account_settings.php">
-            <!-- Name Field -->
+        <!-- Account Settings Form -->
+        <form method="POST" action="">
             <div class="form-group">
-                <label for="name">Name</label>
-                <input type="text" class="form-control" id="name" name="name" value="<?= htmlspecialchars($user['name']) ?>" required>
+                <label for="username">Username</label>
+                <input type="text" class="form-control" id="username" name="username" value="<?= $user['username'] ?>" required>
             </div>
-
-            <!-- Password Field -->
             <div class="form-group">
-                <label for="password">New Password</label>
-                <input type="password" class="form-control" id="password" name="password" placeholder="Enter new password">
-                <small class="form-text text-muted">Leave blank if you don't want to change the password.</small>
+                <label for="new_password">New Password</label>
+                <input type="password" class="form-control" id="new_password" name="new_password" required>
             </div>
-
-            <button type="submit" class="btn btn-primary">Save Changes</button>
+            <div class="form-group">
+                <label for="confirm_password">Confirm Password</label>
+                <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Update Account</button>
         </form>
     </div>
-
-    <script src="../vendor/jquery/jquery.min.js"></script>
-    <script src="../vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
