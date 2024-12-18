@@ -96,11 +96,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         .container {
             width: 50%;
             margin: 50px auto;
-            background-color: white;
+            position: relative; /* Enable stacking context for overlay */
+            background-image: url('img/profiles/OIG3.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
             padding: 30px;
             border-radius: 8px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
         }
+
+        /* Overlay */
+        .container::before {
+            content: ''; /* Empty content */
+            position: absolute; /* Position overlay inside container */
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5); /* Dark overlay with 50% opacity */
+            border-radius: 8px; /* Match container's rounded corners */
+            z-index: -1; /* Ensure the overlay is behind the content */
+        }
+
 
         h1 {
             text-align: center;
