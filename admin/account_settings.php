@@ -230,6 +230,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             transform: translateY(-50%);
             cursor: pointer;
         }
+
+        /* Gradient button style */
+        .btn-grad1 {
+            background-image: linear-gradient(to right, #EF3B36 0%, #FFFFFF 51%, #EF3B36 100%);
+            margin: 10px;
+            padding: 15px 45px;
+            text-align: center;
+            text-transform: uppercase;
+            transition: 0.5s;
+            background-size: 200% auto;
+            color: white;
+            box-shadow: 0 0 20px #eee;
+            border-radius: 10px;
+            display: block;
+        }
+
+        .btn-grad1:hover {
+            background-position: right center; /* change the direction of the gradient on hover */
+            color: #fff;
+            text-decoration: none;
+        }
+
+
     </style>
 </head>
 <body>
@@ -268,7 +291,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 "></i><div class="match-bar" id="match-bar"><div></div></div><br>
 
 
-                <button type="submit">Update Account</button>
+                <button type="submit" class="btn-grad1">Update Account</button>
+
             </form>
         </div>
     </div>
