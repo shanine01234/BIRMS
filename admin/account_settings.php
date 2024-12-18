@@ -74,6 +74,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Account Settings</title>
+    <!-- Include Font Awesome for the icon -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -144,23 +146,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             text-transform: uppercase;
             transition: 0.5s;
             background-size: 200% auto;
-            color: black;      
-            font-weight: bolder;      
+            color: black;
+            font-weight: border: ;            
             box-shadow: 0 0 20px #eee;
             border-radius: 10px;
             display: block;
             text-decoration: none;
+            font-size: 16px;
         }
 
         .btn-grad:hover {
             background-position: right center; /* change the direction of the change here */
             color: #fff;
         }
+
+        /* Icon Style */
+        .btn-grad i {
+            margin-right: 8px;  /* Space between icon and text */
+        }
     </style>
 </head>
 <body>
-    <!-- Back Button -->
-    <a href="./index.php?page=dashboard" class="btn-grad" style="width: 150px;">Back to Dashboard</a>
+    <!-- Back Button with Icon -->
+    <a href="./index.php?page=dashboard" class="btn-grad">
+        <i class="fas fa-arrow-left"></i> Back to Dashboard
+    </a>
     
     <div class="container">
         <h1>Change Password</h1>
