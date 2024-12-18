@@ -160,7 +160,7 @@ if (!isset($_SESSION['owner_id'])) {
                 <!-- End of Topbar -->
 
                 <!-- Begin Page Content -->
-                <div class="container-fluid d-flex justify-content-center align-items-center min-vh-100">
+                <div class="container-fluid">
 
                     <!-- Page Heading -->
                     <div class="d-sm-flex align-items-center justify-content-between mb-4">
