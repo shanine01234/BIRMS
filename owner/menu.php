@@ -219,7 +219,21 @@ if (!isset($_SESSION['owner_id'])) {
                             <div class="data_table">
                                 <table id="dashprint" class="table table-striped table-bordered">
                                     <thead class="table">
-                                    <tr>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Product Name</th>
+                                            <th>Product Type</th>
+                                            <th>Price</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php 
+                                        $myrow = $oop->displayMenu($_SESSION['owner_id']);
+                                        $k = 1;
+                                        foreach($myrow as $row){
+                                            ?>
+                                            <tr>
     <td><?=$k++?></td>
     <td><?=$row['product_name']?></td>
     <td><?=$row['product_type']?></td>
@@ -272,8 +286,7 @@ if (!isset($_SESSION['owner_id'])) {
             </form>
         </div>
     </div>
-</div>
-                                            <!-- View Modal -->
+</div>                                            <!-- View Modal -->
                                             <div class="modal fade" id="viewModal<?=$row['id']?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                                                 <div class="modal-dialog" role="document">
                                                     <div class="modal-content">
