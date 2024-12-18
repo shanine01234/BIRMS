@@ -170,9 +170,9 @@ if (!isset($_SESSION['owner_id'])) {
 
                     <!-- Content Row -->
 
-                    <button type="button" class="btn btn-primary mb-3" data-toggle="modal" data-target="#addBranchModal">
-    Add Branch
-</button>
+                    <button type="button" class="btn btn-primary mb-3" data-toggle="modal" data-target="#addBranchModal" style="margin-left: 100px;">
+                        Add Branch
+                    </button>
 
 <!-- Add Branch Modal -->
 <div class="modal fade" id="addBranchModal" tabindex="-1" role="dialog" aria-labelledby="addBranchModalLabel" aria-hidden="true">
