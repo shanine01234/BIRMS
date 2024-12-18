@@ -72,7 +72,7 @@ function displayTables($conn) {
                 echo "<td>
                     <form method='POST' style='display: inline;'>
                         <input type='hidden' name='table' value='$tableName'>
-                        <input type='hidden' name='id' value='" . $row['order_item_id'] . "'>
+                        <input type='hidden' name='id' value='" . $row['id'] . "'>
                         <button type='submit' name='delete'>Delete</button>
                     </form>
                 </td>";
