@@ -455,42 +455,52 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     togglePassword.addEventListener('click', () => toggleVisibility(passwordInput, togglePassword));
     toggleRepeatPassword.addEventListener('click', () => toggleVisibility(repeatPasswordInput, toggleRepeatPassword));
 
-    // Password Strength Checker
+    // Password Strength and Validation
     passwordInput.addEventListener('input', () => {
         const password = passwordInput.value;
         const regex = /^[a-zA-Z0-9]+$/; // Only letters and numbers
+
         if (!regex.test(password)) {
-            Swal.fire({
-                icon: 'warning',
-                title: 'Invalid Input',
-                text: 'Password must contain only letters and numbers.',
-            });
-            passwordInput.value = '';
-            strengthBar.style.width = '0%';
-            strengthText.textContent = '';
+            showWarningAndClearFields('Password must contain only letters and numbers.');
             return;
         }
+
         checkPasswordStrength(password);
         checkPasswordMatch();
     });
 
-    // Repeat Password Checker
+    // Repeat Password Validation
     repeatPasswordInput.addEventListener('input', () => {
-        const password = passwordInput.value;
         const repeatPassword = repeatPasswordInput.value;
+
         if (!/^[a-zA-Z0-9]+$/.test(repeatPassword)) {
-            Swal.fire({
-                icon: 'warning',
-                title: 'Invalid Input',
-                text: 'Password must contain only letters and numbers.',
-            });
-            repeatPasswordInput.value = '';
-            matchBar.style.width = '0%';
-            matchText.textContent = '';
+            showWarningAndClearFields('Password must contain only letters and numbers.');
             return;
         }
+
         checkPasswordMatch();
     });
+
+    // Function to Show Warning and Clear Fields
+    function showWarningAndClearFields(message) {
+        Swal.fire({
+            icon: 'warning',
+            title: 'Invalid Input',
+            text: message,
+        });
+        passwordInput.value = '';
+        repeatPasswordInput.value = '';
+        resetIndicators();
+    }
+
+    // Function to Reset Indicators
+    function resetIndicators() {
+        strengthBar.style.width = '0%';
+        strengthBar.className = 'progress-bar';
+        strengthText.textContent = '';
+        matchBar.style.width = '0%';
+        matchText.textContent = '';
+    }
 
     // Function to Check Password Strength
     function checkPasswordStrength(password) {
