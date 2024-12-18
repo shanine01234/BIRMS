@@ -216,32 +216,37 @@ $order = new Order($oop->conn); // Assuming $oop->conn is your database connecti
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <?php 
-                                            $orders = $order->displayOrders($_SESSION['owner_id']);
-                                            $i = 1;
-                                            foreach($orders as $order){
-                                                ?>
-                                                <tr>
-                                                    <td><?=$i++?></td>
-                                                    <td><?=$order['user_id']?></td>
-                                                    <td>₱<?=$order['total_price']?></td>
-                                                    <td><?=$order['created_at']?></td>
-                                                    <td>
-                                                        <?php
-                                                        switch($order['status']){
-                                                            case 1: echo "Pending"; break;
-                                                            case 2: echo "Confirmed"; break;
-                                                            case 3: echo "Finished"; break;
-                                                            default: echo "Unknown"; break;
-                                                        }
-                                                        ?>
-                                                        
-                                                    </td>
-                                                </tr>
-                                                <?php
-                                            }
-                                            ?>
-                                        </tbody>
+    <?php 
+    $orders = $order->displayOrders($_SESSION['owner_id']);
+    $i = 1;
+    foreach($orders as $order):
+        $statusText = '';
+        switch ($order['status']) {
+            case 1: $statusText = 'Pending'; break;
+            case 2: $statusText = 'Confirmed'; break;
+            case 3: $statusText = 'Finished'; break;
+            default: $statusText = 'Unknown'; break;
+        }
+    ?>
+    <tr>
+        <td><?=$i++?></td>
+        <td><?=$order['user_id']?></td>
+        <td>₱<?=$order['total_price']?></td>
+        <td><?=$order['created_at']?></td>
+        <td id="status-<?=$order['id']?>"><?=$statusText?></td>
+        <td>
+            <button 
+                id="update-status-btn-<?=$order['id']?>" 
+                class="btn btn-warning btn-sm update-status-btn" 
+                data-order-id="<?=$order['id']?>" 
+                data-current-status="<?=$order['status']?>">
+                Update Status
+            </button>
+        </td>
+    </tr>
+    <?php endforeach; ?>
+</tbody>
+
                                     </table>
                                 </div>
                             </div>
@@ -323,6 +328,64 @@ $order = new Order($oop->conn); // Assuming $oop->conn is your database connecti
             printWindow.print();
         }
     </script>
+    <script>
+    $(document).ready(function() {
+        $('#ordersTable').DataTable();
+
+        // Handle status update via AJAX
+        $('body').on('click', '.update-status-btn', function() {
+            var orderId = $(this).data('order-id');
+            var currentStatus = $(this).data('current-status');
+            var newStatus = getNextStatus(currentStatus); // Logic to determine next status
+
+            $.ajax({
+                url: 'update_order_status.php', // PHP script to handle the update
+                type: 'POST',
+                data: {
+                    order_id: orderId,
+                    status: newStatus
+                },
+                success: function(response) {
+                    if (response.success) {
+                        // Update the status text in the table row
+                        var statusCell = $('#status-' + orderId);
+                        statusCell.text(response.new_status_text);
+                        // Update the status button's data-status and text
+                        var button = $('#update-status-btn-' + orderId);
+                        button.data('current-status', newStatus);
+                        button.text('Update to ' + getNextStatusText(newStatus));
+                    } else {
+                        alert('Failed to update status');
+                    }
+                },
+                error: function() {
+                    alert('Error occurred while updating the status');
+                }
+            });
+        });
+
+        function getNextStatus(currentStatus) {
+            // Logic to return the next status value
+            switch (currentStatus) {
+                case 1: return 2; // Pending -> Confirmed
+                case 2: return 3; // Confirmed -> Finished
+                case 3: return 1; // Finished -> Pending
+                default: return 1; // Default to Pending
+            }
+        }
+
+        function getNextStatusText(status) {
+            // Logic to return the next status text
+            switch (status) {
+                case 1: return "Pending";
+                case 2: return "Confirmed";
+                case 3: return "Finished";
+                default: return "Unknown";
+            }
+        }
+    });
+</script>
+
 </body>
 
 </html>
