@@ -172,16 +172,18 @@ if (!isset($_SESSION['owner_id'])) {
                     <!-- Content Row -->
 
                     <!-- Add Menu Button -->
-<button type="button" class="btn btn-primary mb-4" data-toggle="modal" data-target="#addMenuModal">
-    <i class="align-middle fas fa-plus"></i> Add to Menu
+<!-- Add Menu Button -->
+<button type="button" class="btn btn-primary mb-3" data-toggle="modal" data-target="#addMenuModal">
+    <i class="fas fa-plus"></i> Add to Menu
 </button>
 
+
 <!-- Add Menu Modal -->
-<div class="modal fade" id="addMenuModal" tabindex="-1" role="dialog" aria-labelledby="addMenuModalLabel" aria-hidden="true">
+<div class="modal fade" id="addMenuModal" tabindex="-1" role="dialog" aria-labelledby="addMenuLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="addMenuModalLabel">Add New Product</h5>
+                <h5 class="modal-title" id="addMenuLabel">Add Product</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -190,22 +192,19 @@ if (!isset($_SESSION['owner_id'])) {
                 <div class="modal-body">
                     <label>Product Name</label>
                     <input type="text" name="product_name" class="form-control mb-2" required>
-                    
                     <label>Product Type</label>
-                    <select class="form-select mb-2" name="product_type" required>
+                    <select name="product_type" class="form-control mb-2" required>
                         <option value="Food">Food</option>
                         <option value="Drinks">Drinks</option>
                     </select>
-                    
                     <label>Price</label>
                     <input type="text" name="price" class="form-control mb-2" required>
-                    
                     <label>Product Photo</label>
-                    <input type="file" accept="image/.png, .jpg, .jpeg" name="productPhoto" class="form-control mb-3" required>
+                    <input type="file" name="productPhoto" class="form-control mb-2" accept="image/.png, .jpg, .jpeg" required>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-primary" name="addProduct"><i class="align-middle fas fa-plus"></i> Add</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary" name="addProduct">Add</button>
                 </div>
             </form>
         </div>
@@ -240,91 +239,81 @@ if (!isset($_SESSION['owner_id'])) {
                                                 <td><?=$row['product_type']?></td>
                                                 <td>₱<?=$row['price']?></td>
                                                 <td>
-                                                <a href="#" data-toggle="modal" data-target="#viewModal<?=$row['id']?>" class="btn btn-info "> <i class="fas fa-eye fa-sm fa-fw"></i></a>
-                                                    <a href="#" class="btn btn-warning" data-toggle="modal" data-target="#editMenuModal<?=$row['id']?>"> 
-                                                        <i class="fas fa-edit fa-sm fa-fw"></i>
-                                                    </a>
-                                                    <a href="#" class="btn btn-danger" data-toggle="modal" data-target="#deleteModal<?=$row['id']?>"> 
-                                                        <i class="fas fa-trash fa-sm fa-fw"></i>
+                                                    <button class="btn btn-info" data-toggle="modal" data-target="#viewModal<?=$row['id']?>">
+                                                        <i class="fas fa-eye"></i>
+                                                    </button>
+                                                    <button class="btn btn-warning" data-toggle="modal" data-target="#editModal<?=$row['id']?>">
+                                                        <i class="fas fa-edit"></i>
+                                                    </button>
+                                                    <a href="#" data-toggle="modal" data-target="#deleteModal<?=$row['id']?>" class="btn btn-danger">
+                                                        <i class="fas fa-trash"></i>
                                                     </a>
                                                 </td>
+
                                             </tr>
 
                                             <!-- Edit Menu Modal -->
-                                            <div class="modal fade" id="editMenuModal<?=$row['id']?>" tabindex="-1" role="dialog" aria-labelledby="editMenuModalLabel" aria-hidden="true">
-                                                <div class="modal-dialog" role="document">
-                                                    <div class="modal-content">
-                                                        <div class="modal-header">
-                                                            <h5 class="modal-title" id="editMenuModalLabel">Edit Product</h5>
-                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                                <span aria-hidden="true">&times;</span>
-                                                            </button>
-                                                        </div>
-                                                        <form action="" method="POST" enctype="multipart/form-data">
-                                                            <div class="modal-body">
-                                                                <input type="hidden" name="id" value="<?=$row['id']?>">
-                                                                <input type="hidden" name="oldProductPhoto" value="<?=$row['product_photo']?>">
-                                                                
-                                                                <label>Product Name</label>
-                                                                <input type="text" name="product_name" value="<?=$row['product_name']?>" class="form-control mb-2" required>
-                                                                
-                                                                <label>Product Type</label>
-                                                                <select class="form-select mb-2" name="product_type" required>
-                                                                    <option value="<?=$row['product_type']?>" selected><?=$row['product_type']?></option>
-                                                                    <option value="Food">Food</option>
-                                                                    <option value="Drinks">Drinks</option>
-                                                                </select>
-                                                                
-                                                                <label>Price</label>
-                                                                <input type="text" value="<?=$row['price']?>" name="price" class="form-control mb-2" required>
-                                                                
-                                                                <label>Product Photo</label>
-                                                                <input type="file" accept="image/.png, .jpg, .jpeg" name="productPhoto" class="form-control mb-3">
-                                                            </div>
-                                                            <div class="modal-footer">
-                                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                                                                <button type="submit" class="btn btn-primary" name="updateProduct"><i class="align-middle fas fa-save"></i> Save</button>
-                                                            </div>
-                                                        </form>
-                                                    </div>
-                                                </div>
-                                            </div>
+<div class="modal fade" id="editModal<?=$row['id']?>" tabindex="-1" role="dialog" aria-labelledby="editMenuLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editMenuLabel">Edit Product</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form action="" method="POST" enctype="multipart/form-data">
+                <div class="modal-body">
+                    <input type="hidden" name="id" value="<?=$row['id']?>">
+                    <input type="hidden" name="oldProductPhoto" value="<?=$row['product_photo']?>">
+                    <label>Product Name</label>
+                    <input type="text" name="product_name" class="form-control mb-2" value="<?=$row['product_name']?>" required>
+                    <label>Product Type</label>
+                    <select name="product_type" class="form-control mb-2" required>
+                        <option value="<?=$row['product_type']?>" selected><?=$row['product_type']?></option>
+                        <option value="Food">Food</option>
+                        <option value="Drinks">Drinks</option>
+                    </select>
+                    <label>Price</label>
+                    <input type="text" name="price" class="form-control mb-2" value="<?=$row['price']?>" required>
+                    <label>Product Photo</label>
+                    <input type="file" name="productPhoto" class="form-control mb-2" accept="image/.png, .jpg, .jpeg">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary" name="updateProduct">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 
-                                            <!-- View Modal -->
-                                            <div class="modal fade" id="viewModal<?=$row['id']?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                                <div class="modal-dialog" role="document">
-                                                    <div class="modal-content">
-                                                    <div class="modal-header">
-                                                        <h5 class="modal-title" id="exampleModalLabel">View</h5>
-                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                        <span aria-hidden="true">&times;</span>
-                                                        </button>
-                                                    </div>
-                                                    <div class="modal-body">
-                                                    <div class="row">
-                                                            <div class="row p-4">
-                                                               <center>
-                                                               <img src="../img/product/<?=$row['product_photo']?>" style="width: 100%; height: 300px;">
-                                                               </center> 
-                                                            </div>
-                                                            <div class="col-md-5 mt-2 detail-title">
-                                                                <p>Product Name:</p>
-                                                                <p>Product Type:</p>
-                                                                <p>Price:</p>
-                                                            </div>
-                                                            <div class="col mt-2 details">
-                                                                <p><?= $row['product_name']?></p>
-                                                                <p><?= $row['product_type']?></p>
-                                                                <p><?= $row['price']?></p>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="modal-footer">
-                                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                                    </div>
-                                                    </div>
-                                                </div>
-                                            </div>
+
+                                            <!-- View Menu Modal -->
+<div class="modal fade" id="viewModal<?=$row['id']?>" tabindex="-1" role="dialog" aria-labelledby="viewMenuLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="viewMenuLabel">Product Details</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="text-center">
+                    <img src="../img/product/<?=$row['product_photo']?>" class="img-fluid mb-3" alt="Product Image">
+                </div>
+                <p><strong>Product Name:</strong> <?=$row['product_name']?></p>
+                <p><strong>Product Type:</strong> <?=$row['product_type']?></p>
+                <p><strong>Price:</strong> ₱<?=$row['price']?></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
                                              <!-- Delete Modal -->
                                              <div class="modal fade" id="deleteModal<?=$row['id']?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                                                 <div class="modal-dialog" role="document">
