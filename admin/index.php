@@ -510,11 +510,11 @@ if (substr($request, -4) == '.php') {
         e.preventDefault();  // Prevent the default link behavior
         Swal.fire({
             title: 'Is it time to say goodbye?',
-            text: "Are you sure you want to log out?",
+            text: "Time to say goodbye, until we meet again!",
             icon: 'warning',
             showCancelButton: true,
-            confirmButtonText: 'Yes, log me out!',
-            cancelButtonText: 'Cancel',
+            confirmButtonText: 'Yes, send me off!',
+            cancelButtonText: 'No, I’m not ready!',
         }).then((result) => {
             if (result.isConfirmed) {
                 window.location.href = 'process/logout.php'; // Redirect to the logout page
