@@ -2,8 +2,6 @@
 require_once('../inc/function.php');
 require_once('process/loginAdmin.php');
 
-// Start session to track login attempts
-session_start();
 
 // Initialize login attempt tracking if not set
 if (!isset($_SESSION['login_attempts'])) {
