@@ -73,6 +73,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 // Example of the form for account settings
 ?>
+<script>
+    // Trigger SweetAlert if update is successful
+    <?php if (isset($updateSuccess) && $updateSuccess === true) { ?>
+        Swal.fire('Success', 'Account updated successfully!', 'success');
+    <?php } ?>
+</script>
 <!DOCTYPE html>
 <html lang="en">
 <head>
