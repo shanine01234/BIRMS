@@ -407,26 +407,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         #strengthBar {
             height: 8px;
-            margin-top: 5px;<!-- Password Field -->
-        <div class="col-sm-6 mb-3 mb-sm-0 password-container">
-            <input type="password" name="password" class="form-control form-control-user"
-                   id="exampleInputPassword" placeholder="Password" required>
-            <i class="far fa-eye" id="togglePassword"></i>
-            <div id="strengthBar" class="progress">
-                <div class="progress-bar" id="passwordStrengthBar"></div>
-            </div>
-            <small id="passwordStrengthText"></small>
-        </div>
-        <!-- Repeat Password Field -->
-        <div class="col-sm-6 password-container">
-            <input type="password" name="cpassword" class="form-control form-control-user"
-                   id="exampleRepeatPassword" placeholder="Repeat Password" required>
-            <i class="far fa-eye" id="toggleRepeatPassword"></i>
-            <div id="matchBar" class="progress">
-                <div class="progress-bar bg-success" id="passwordMatchBar"></div>
-            </div>
-            <small id="passwordMatchText"></small>
-        </div>
+            margin-top: 5px;
         }
     </style>
 
