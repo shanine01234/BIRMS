@@ -37,7 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         // Password length validation (minimum 8 characters)
         if (strlen($newPassword) < 8) {
-            echo "<div class='message error'>New password must be at least 8 characters long.</div>";
+            echo "<script>Swal.fire('Error', 'New password must be at least 8 characters long.', 'error');</script>";
         } else {
             // Check if the new password and confirm password match
             if ($newPassword === $confirmPassword) {
@@ -58,16 +58,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     ]);
 
                     // Success message
-                    echo "<div class='message success'>Account updated successfully!</div>";
+                    echo "<script>Swal.fire('Success', 'Account updated successfully!', 'success');</script>";
                 } else {
-                    echo "<div class='message error'>Current password is incorrect.</div>";
+                    echo "<script>Swal.fire('Error', 'Current password is incorrect.', 'error');</script>";
                 }
             } else {
-                echo "<div class='message error'>New password and confirm password do not match.</div>";
+                echo "<script>Swal.fire('Error', 'New password and confirm password do not match.', 'error');</script>";
             }
         }
     } else {
-        echo "<div class='message error'>All fields are required.</div>";
+        echo "<script>Swal.fire('Error', 'All fields are required.', 'error');</script>";
     }
 }
 
@@ -79,8 +79,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Account Settings</title>
-    <!-- Include Font Awesome for the icon -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <!-- Include SweetAlert2 CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
         /* Base styles */
@@ -261,39 +261,50 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <script>
         // Show password functionality
         document.getElementById('show_current_password').addEventListener('change', function() {
-            var currentPasswordField = document.getElementById('current_password');
-            currentPasswordField.type = this.checked ? 'text' : 'password';
+            const passwordField = document.getElementById('current_password');
+            passwordField.type = this.checked ? 'text' : 'password';
         });
 
-        document.getElementById('show_new_password').addEventListener('change', function() {
-            var newPasswordField = document.getElementById('new_password');
-            newPasswordField.type = this.checked ? 'text' : 'password';
-        });
-
-        document.getElementById('show_confirm_password').addEventListener('change', function() {
-            var confirmPasswordField = document.getElementById('confirm_password');
-            confirmPasswordField.type = this.checked ? 'text' : 'password';
-        });
-
-        // Password strength indicator
+        // New password strength indicator
         document.getElementById('new_password').addEventListener('input', function() {
-            var strengthBar = document.getElementById('strength-bar').firstElementChild;
-            var strength = getPasswordStrength(this.value);
-            strengthBar.style.width = strength + '%';
-            if (strength < 30) {
-                strengthBar.style.backgroundColor = 'red';
-            } else if (strength < 60) {
-                strengthBar.style.backgroundColor = 'yellow';
-            } else {
-                strengthBar.style.backgroundColor = 'green';
+            const strengthBar = document.getElementById('strength-bar').firstElementChild;
+            const password = this.value;
+            let strength = 0;
+
+            if (password.length >= 8) strength++;
+            if (/[A-Z]/.test(password)) strength++;
+            if (/[0-9]/.test(password)) strength++;
+            if (/[^A-Za-z0-9]/.test(password)) strength++;
+
+            switch (strength) {
+                case 1:
+                    strengthBar.style.width = '25%';
+                    strengthBar.style.backgroundColor = 'red';
+                    break;
+                case 2:
+                    strengthBar.style.width = '50%';
+                    strengthBar.style.backgroundColor = 'orange';
+                    break;
+                case 3:
+                    strengthBar.style.width = '75%';
+                    strengthBar.style.backgroundColor = 'yellow';
+                    break;
+                case 4:
+                    strengthBar.style.width = '100%';
+                    strengthBar.style.backgroundColor = 'green';
+                    break;
+                default:
+                    strengthBar.style.width = '0';
+                    break;
             }
         });
 
-        // Password match indicator
+        // Confirm new password match indicator
         document.getElementById('confirm_password').addEventListener('input', function() {
-            var matchBar = document.getElementById('match-bar').firstElementChild;
-            var newPassword = document.getElementById('new_password').value;
-            var confirmPassword = this.value;
+            const matchBar = document.getElementById('match-bar').firstElementChild;
+            const newPassword = document.getElementById('new_password').value;
+            const confirmPassword = this.value;
+
             if (newPassword === confirmPassword) {
                 matchBar.style.width = '100%';
                 matchBar.style.backgroundColor = 'green';
@@ -301,20 +312,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 matchBar.style.width = '0';
             }
         });
-
-        // Function to calculate password strength
-        function getPasswordStrength(password) {
-            var strength = 0;
-            if (password.length > 6) strength += 20;
-            if (password.match(/[A-Z]/)) strength += 20;
-            if (password.match(/[0-9]/)) strength += 20;
-            if (password.match(/[^A-Za-z0-9]/)) strength += 20;
-            if (password.length > 12) strength += 20;
-            return strength;
-        }
     </script>
 </body>
 </html>
+<!-- Include SweetAlert2 CDN -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 
 <?php
 // Data operation class that handles the DB logic
