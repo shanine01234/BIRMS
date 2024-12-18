@@ -201,7 +201,7 @@ if (!isset($_SESSION['owner_id'])) {
 </div>
                         <div class="col">
                         <!-- Area Chart -->
-                        <div class="card shadow mb-4 p-4 w-100"">
+                        <div class="card shadow mb-4 p-4 w-100">
                             <?=$msgAlert?>
                             <div class="data_table">
                             <table id="dashprint" class="table table-striped table-bordered">
@@ -303,13 +303,7 @@ if (!isset($_SESSION['owner_id'])) {
             <!-- End of Main Content -->
 
             <!-- Footer -->
-            <footer class="sticky-footer bg-white">
-                <div class="container my-auto">
-                    <div class="copyright text-center my-auto">
-                        <span>Shanine Zaspa &copy; 2024</span>
-                    </div>
-                </div>
-            </footer>
+            
             <!-- End of Footer -->
 
         </div>
