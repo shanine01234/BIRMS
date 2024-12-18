@@ -8,8 +8,6 @@ if ($_SERVER["HTTPS"] != "on") {
     exit();
 }
 
-// Start session for CSRF protection and session management
-session_start();
 
 // Generate and store a CSRF token for the form
 if (!isset($_SESSION['csrf_token'])) {
