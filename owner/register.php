@@ -212,18 +212,60 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['registerOwner'])) {
 </script>
 
                                 <div class="form-group row">
-                                    <div class="col-sm-4">
-                                        <input type="text" name="restobar" class="form-control form-control-user" id="exampleLastName"
-                                            placeholder="Restobar Name" required>
-                                    </div>
-                                    <div class="col-sm-4">
-                                        <input type="text" name="contact_num" class="form-control form-control-user" id="exampleLastName" 
-                                            placeholder="Restobar Contact #"  maxlength="11" required>
-                                    </div>
-                                    <div class="col-sm-4">
-                                        <input type="text" name="address" class="form-control form-control-user" id="exampleLastName"
-                                            placeholder="Restobar Location" required>
-                                    </div>
+                                <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+                                <div class="col-sm-4">
+        <input type="text" name="restobar" class="form-control form-control-user" id="restobarName"
+            placeholder="Restobar Name" required>
+    </div>
+    <div class="col-sm-4">
+        <input type="text" name="contact_num" class="form-control form-control-user" id="restobarContact" 
+            placeholder="Restobar Contact #" maxlength="13" required>
+    </div>
+    <div class="col-sm-4">
+        <input type="text" name="address" class="form-control form-control-user" id="restobarLocation"
+            placeholder="Restobar Location" required>
+    </div>
+
+    <script>
+        // Restobar Name Validation
+        document.getElementById('restobarName').addEventListener('blur', function () {
+            const regex = /^[a-zA-ZñÑ\s]+$/;
+            if (!regex.test(this.value)) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Invalid Input!',
+                    text: 'Restobar Name can only contain letters and "ñ".',
+                });
+                this.value = ''; // Clear input
+            }
+        });
+
+        // Restobar Contact Validation
+        document.getElementById('restobarContact').addEventListener('blur', function () {
+            const regex = /^\+63[0-9]{10}$/;
+            if (!regex.test(this.value)) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Invalid Contact!',
+                    text: 'Contact must start with +63 and have 10 digits after it.',
+                });
+                this.value = ''; // Clear input
+            }
+        });
+
+        // Restobar Location Validation
+        document.getElementById('restobarLocation').addEventListener('blur', function () {
+            const commaCount = this.value.split(',').length - 1;
+            if (commaCount !== 3) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Invalid Format!',
+                    text: 'Location must contain exactly three commas.',
+                });
+                this.value = ''; // Clear input
+            }
+        });
+    </script>
                                 </div>
                                 <div class="form-group">
                                     <span>Restobar Photo</span>
