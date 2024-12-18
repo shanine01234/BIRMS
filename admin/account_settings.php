@@ -39,7 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Check if the new password and confirm password match
         if ($newPassword === $confirmPassword) {
             // Check if the current password is correct (e.g., for a logged-in user)
-            $userId = $_SESSION['user_id']; // Assume the user ID is stored in session
+            $userId = $_SESSION['id']; // Assume the user ID is stored in session
             
             // Assuming a method in dataOperation to fetch the user's current password
             $existingPassword = $dataOperation->getUserPasswordById($userId);
