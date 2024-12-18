@@ -240,7 +240,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             text-transform: uppercase;
             transition: 0.5s;
             background-size: 200% auto;
-            color: white;
+            color: darkslategrey;
             box-shadow: 0 0 20px #eee;
             border-radius: 10px;
             display: block;
