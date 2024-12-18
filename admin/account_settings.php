@@ -257,7 +257,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     right: 369px;
                     top: 100.5%;
                     cursor: pointer;
-                "></i>
+                "></i><div class="match-bar" id="match-bar"><div></div></div><br>
+
 
                 <button type="submit">Update Account</button>
             </form>
