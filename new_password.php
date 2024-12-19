@@ -38,8 +38,8 @@ if (isset($_GET['token'])) {
                 if (strlen($new_password_raw) < 6) {
                     echo "<script>Swal.fire('Error', 'Password must be at least 6 characters long.', 'error');</script>";
                 } else {
-                    // Hash the password securely
-                    $new_password = password_hash($new_password_raw, PASSWORD_DEFAULT);
+                    // Hash the password securely using Argon2i
+                    $new_password = password_hash($new_password_raw, PASSWORD_ARGON2I);
 
                     // Update the user's password and reset the token
                     $update_stmt = $conn->prepare("UPDATE users SET password = ?, token = NULL, reset_token_at = NULL WHERE email = ?");
