@@ -228,7 +228,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             Swal.fire({
                 icon: 'warning',
                 title: 'Invalid Email Format',
-                text: 'Please enter a valid Gmail address (e.g., user@gmail.com).',
+                text: 'Make sure to enter a valid Gmail address (e.g., user@gmail.com).',
                 confirmButtonText: 'OK'
             }).then(() => {
                 // Clear the input field after the alert is closed
