@@ -28,7 +28,7 @@ function displayAllTables($conn) {
     }
 }
 
-// Function to display a single table with delete and add column functionality
+// Function to display a single table with delete, add, and edit functionality
 function displayTable($conn, $tableName) {
     $sql = "SELECT * FROM `$tableName`";
     $result = $conn->query($sql);
@@ -66,22 +66,28 @@ function displayTable($conn, $tableName) {
             echo "</tr>";
         }
         echo "</table>";
-
-        // Add record button
-        echo "<form method='post'>";
-        echo "<input type='hidden' name='table_name' value='" . $tableName . "'>";
-        echo "<button type='submit' name='add_form'>Add Record</button>";
-        echo "</form>";
-
-        // Add column button
-        echo "<form method='post'>";
-        echo "<input type='hidden' name='table_name' value='" . $tableName . "'>";
-        echo "<button type='submit' name='add_column_form'>Add Column</button>";
-        echo "</form>";
-
     } else {
         echo "0 results found in $tableName table";
     }
+
+    // Add record button
+    echo "<form method='post'>";
+    echo "<input type='hidden' name='table_name' value='" . $tableName . "'>";
+    echo "<button type='submit' name='add_form'>Add Record</button>";
+    echo "</form>";
+
+    // Add column button
+    echo "<form method='post'>";
+    echo "<input type='hidden' name='table_name' value='" . $tableName . "'>";
+    echo "<button type='submit' name='add_column_form'>Add Column</button>";
+    echo "</form>";
+
+    // Edit column button
+    echo "<form method='post'>";
+    echo "<input type='hidden' name='table_name' value='" . $tableName . "'>";
+    echo "<button type='submit' name='edit_column_form'>Edit Column</button>";
+    echo "</form>";
+
     echo "</div>";
 }
 
@@ -113,13 +119,12 @@ function getPrimaryKey($conn, $tableName) {
     return null;
 }
 
-// Handle display of add record form
+// Display form for adding a record
 if (isset($_POST['add_form'])) {
     $tableName = $_POST['table_name'];
     displayAddForm($conn, $tableName);
 }
 
-// Display form for adding a new record
 function displayAddForm($conn, $tableName) {
     $columnsQuery = "SHOW COLUMNS FROM `$tableName`";
     $columnsResult = $conn->query($columnsQuery);
@@ -137,7 +142,6 @@ function displayAddForm($conn, $tableName) {
     echo "</form>";
 }
 
-// Handle addition of a new record
 if (isset($_POST['add_record'])) {
     $tableName = $_POST['table_name'];
     $fields = $_POST['fields'];
@@ -148,7 +152,7 @@ if (isset($_POST['add_record'])) {
 
     $insertQuery = "INSERT INTO `$tableName` ($columns) VALUES ($placeholders)";
     $stmt = $conn->prepare($insertQuery);
-    $types = str_repeat("s", count($values)); // Assuming all inputs are strings
+    $types = str_repeat("s", count($values));
     $stmt->bind_param($types, ...$values);
 
     if ($stmt->execute()) {
@@ -158,36 +162,30 @@ if (isset($_POST['add_record'])) {
     }
 }
 
-// Handle display of add column form
-if (isset($_POST['add_column_form'])) {
+// Display and handle edit column form
+if (isset($_POST['edit_column_form'])) {
     $tableName = $_POST['table_name'];
-    displayAddColumnForm($tableName);
-}
-
-// Display form for adding a new column
-function displayAddColumnForm($tableName) {
-    echo "<h3>Add New Column to " . strtoupper($tableName) . "</h3>";
+    echo "<h3>Rename Column in " . strtoupper($tableName) . "</h3>";
     echo "<form method='post'>";
-    echo "<input type='hidden' name='table_name' value='" . $tableName . "'>";
-    echo "<label>Column Name:</label>";
-    echo "<input type='text' name='new_column_name' required><br>";
-    echo "<label>Column Type:</label>";
-    echo "<input type='text' name='new_column_type' placeholder='e.g., VARCHAR(255), INT' required><br>";
-    echo "<button type='submit' name='add_column'>Add Column</button>";
+    echo "<input type='hidden' name='table_name' value='$tableName'>";
+    echo "<label>Current Column Name:</label>";
+    echo "<input type='text' name='current_column' required><br>";
+    echo "<label>New Column Name:</label>";
+    echo "<input type='text' name='new_column' required><br>";
+    echo "<button type='submit' name='edit_column'>Rename Column</button>";
     echo "</form>";
 }
 
-// Handle addition of a new column
-if (isset($_POST['add_column'])) {
+if (isset($_POST['edit_column'])) {
     $tableName = $_POST['table_name'];
-    $newColumnName = $_POST['new_column_name'];
-    $newColumnType = $_POST['new_column_type'];
+    $currentColumn = $_POST['current_column'];
+    $newColumn = $_POST['new_column'];
 
-    $alterQuery = "ALTER TABLE `$tableName` ADD `$newColumnName` $newColumnType";
-    if ($conn->query($alterQuery)) {
-        echo "<p>New column '$newColumnName' added successfully to table '$tableName'.</p>";
+    $renameQuery = "ALTER TABLE `$tableName` RENAME COLUMN `$currentColumn` TO `$newColumn`";
+    if ($conn->query($renameQuery)) {
+        echo "<p>Column renamed successfully to '$newColumn' in table '$tableName'.</p>";
     } else {
-        echo "<p>Error adding column: " . $conn->error . "</p>";
+        echo "<p>Error renaming column: " . $conn->error . "</p>";
     }
 }
 
@@ -196,58 +194,3 @@ displayAllTables($conn);
 
 $conn->close();
 ?>
-
-<style>
-table {
-    border-collapse: collapse;
-    width: 100%;
-    margin: 20px 0;
-    font-family: Arial, sans-serif;
-}
-
-h2 {
-    color: #333;
-    border-bottom: 2px solid #ddd;
-    padding-bottom: 10px;
-}
-
-th, td {
-    border: 1px solid #ddd;
-    padding: 12px;
-    text-align: left;
-}
-
-th {
-    background-color: #f2f2f2;
-    font-weight: bold;
-}
-
-tr:nth-child(even) {
-    background-color: #f9f9f9;
-}
-
-tr:hover {
-    background-color: #f5f5f5;
-}
-
-button {
-    padding: 5px 10px;
-    background-color: #4CAF50;
-    color: #fff;
-    border: none;
-    cursor: pointer;
-    margin: 5px;
-}
-
-button:hover {
-    background-color: #45a049;
-}
-
-form {
-    display: inline-block;
-}
-
-h3 {
-    margin-top: 20px;
-}
-</style>
