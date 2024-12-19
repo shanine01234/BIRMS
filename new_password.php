@@ -40,17 +40,42 @@ if (isset($_GET['token'])) {
                 } else {
                     $new_password = password_hash($new_password_raw, PASSWORD_DEFAULT); // Hash the password securely
 
-                    // Update the user's password and reset the token
-                    $update_stmt = $conn->prepare("UPDATE users SET password = ?, reset_token = NULL, reset_token_at = NULL WHERE email = ?");
+                    // Generate a new verification code
+                    $verification_code = rand(100000, 999999);
+
+                    // Update the user's password and reset token
+                    $update_stmt = $conn->prepare("UPDATE users SET password = ?, reset_code = ?, reset_token = NULL, reset_token_at = NULL WHERE email = ?");
                     if ($update_stmt) {
-                        $update_stmt->bind_param("ss", $new_password, $email);
+                        $update_stmt->bind_param("sss", $new_password, $verification_code, $email);
                         if ($update_stmt->execute()) {
-                            echo "<script>
-                                    Swal.fire('Success', 'Your password has been reset successfully. You can now log in.', 'success').then(() => {
-                                        window.location.href = 'login.php';
-                                    });
-                                  </script>";
-                            exit;
+                            // Send the verification code to the user's email
+                            try {
+                                $mail = new PHPMailer(true);
+                                $mail->isSMTP();
+                                $mail->Host = 'smtp.example.com'; // Replace with your SMTP server
+                                $mail->SMTPAuth = true;
+                                $mail->Username = 'your_email@example.com'; // SMTP username
+                                $mail->Password = 'your_password'; // SMTP password
+                                $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+                                $mail->Port = 587;
+
+                                // Email details
+                                $mail->setFrom('no-reply@example.com', 'Bantayan Island Restobar');
+                                $mail->addAddress($email);
+                                $mail->isHTML(true);
+                                $mail->Subject = 'Verify Your Password Reset';
+                                $mail->Body = "Your verification code is: <b>{$verification_code}</b>";
+
+                                $mail->send();
+                                echo "<script>
+                                        Swal.fire('Success', 'Your password has been reset. A verification code has been sent to your email.', 'success').then(() => {
+                                            window.location.href = 'verify_reset.php?email={$email}';
+                                        });
+                                      </script>";
+                                exit;
+                            } catch (Exception $e) {
+                                echo "<script>Swal.fire('Error', 'Failed to send verification email: {$mail->ErrorInfo}', 'error');</script>";
+                            }
                         } else {
                             echo "<script>Swal.fire('Error', 'Failed to update the password. Please try again.', 'error');</script>";
                         }
