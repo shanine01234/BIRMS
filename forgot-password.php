@@ -52,22 +52,37 @@ if (isset($_POST['reset-password'])) {
 
             $mail->send();
 
-            // After successful email send, display the success message and redirect to login
+            // After successful email send, display the success message
             echo "<script>
-                    Swal.fire('Success', 'Password reset link sent. Please check your email.', 'success').then(() => {
+                    Swal.fire({
+                        title: 'Success',
+                        text: 'Password reset link sent. Please check your email.',
+                        icon: 'success',
+                        confirmButtonText: 'OK'
+                    }).then(() => {
                         window.location.href = 'login.php'; // Redirect to login page
                     });
                   </script>";
 
         } catch (Exception $e) {
             echo "<script>
-                    Swal.fire('Error', 'There was an error sending the reset email: {$mail->ErrorInfo}', 'error');
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'There was an error sending the reset email: {$mail->ErrorInfo}',
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
                   </script>";
         }
 
     } else {
         echo "<script>
-                Swal.fire('Error', 'Email not found in our records.', 'error');
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Email not found in our records.',
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
               </script>";
     }
 }
