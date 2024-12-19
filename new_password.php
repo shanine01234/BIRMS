@@ -5,7 +5,7 @@ require 'vendor/autoload.php';
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
-// Check if token is set
+// Check if reset_token is set
 if (isset($_GET['token'])) {
     $token = trim($_GET['token']);
 
@@ -15,7 +15,7 @@ if (isset($_GET['token'])) {
     }
 
     // Verify token from database
-    $stmt = $conn->prepare("SELECT * FROM users WHERE token = ?");
+    $stmt = $conn->prepare("SELECT * FROM users WHERE reset_token = ?");
     if (!$stmt) {
         die("<script>Swal.fire('Error', 'Failed to prepare statement.', 'error');</script>");
     }
@@ -41,7 +41,7 @@ if (isset($_GET['token'])) {
                     $new_password = password_hash($new_password_raw, PASSWORD_DEFAULT); // Hash the password securely
 
                     // Update the user's password and reset the token
-                    $update_stmt = $conn->prepare("UPDATE users SET password = ?, token = NULL, reset_token_at = NULL WHERE email = ?");
+                    $update_stmt = $conn->prepare("UPDATE users SET password = ?, reset_token = NULL, reset_token_at = NULL WHERE email = ?");
                     if ($update_stmt) {
                         $update_stmt->bind_param("ss", $new_password, $email);
                         if ($update_stmt->execute()) {
@@ -81,8 +81,6 @@ if (isset($_GET['token'])) {
 
     <title>Bantayan Island Restobar - Reset Password</title>
     <link rel="icon" type="image/png" href="img/d3f06146-7852-4645-afea-783aef210f8a.jpg" alt="" width="30" height="24" style="border-radius: 100px;">
-    <!-- Custom fonts for this template-->
-
     <!-- Include SweetAlert2 library -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
@@ -136,24 +134,12 @@ if (isset($_GET['token'])) {
             display: inline-block;
             margin-bottom: 20px;
         }
-
-        .btn-secondary {
-            background-color: #6c757d;
-            color: white;
-            border: none;
-        }
-
-        .btn-secondary:hover {
-            background-color: #5a6268;
-        }
     </style>
 </head>
 
 <body>
-
     <!-- Reset Password Form -->
     <div class="login-container">
-        
         <h4>Set a New Password</h4>
         <form method="post">
             <div class="form-group">
