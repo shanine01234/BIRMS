@@ -340,7 +340,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             Swal.fire({
                 icon: "warning",
                 title: "Invalid File!",
-                text: "Only JPG, JPEG, and PNG images are allowed.",
+                text: "Unsupported file format. Please upload images in JPG, JPEG, or PNG format only.",
                 confirmButtonText: "OK"
             });
 
