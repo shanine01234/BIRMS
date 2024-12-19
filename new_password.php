@@ -1,4 +1,3 @@
-<!-- forgot-password.php -->
 <?php
 require_once('inc/header.php');
 require 'vendor/autoload.php';
@@ -6,61 +5,68 @@ require 'vendor/autoload.php';
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['forgot-password'])) {
-    $email = trim($_POST['email']);
-    
-    try {
-        // Check if email exists
-        $stmt = $conn->prepare("SELECT id FROM users WHERE email = ?");
-        $stmt->bind_param("s", $email);
-        $stmt->execute();
-        $result = $stmt->get_result();
-        
-        if ($result->num_rows > 0) {
-            // Generate token
-            $token = bin2hex(random_bytes(32));
-            $reset_token_at = date('Y-m-d H:i:s');
-            
-            // Save token to database
-            $update = $conn->prepare("UPDATE users SET token = ?, reset_token_at = ? WHERE email = ?");
-            $update->bind_param("sss", $token, $reset_token_at, $email);
-            $update->execute();
-            
-            // Configure PHPMailer
-            $mail = new PHPMailer(true);
-            $mail->isSMTP();
-            $mail->Host = 'smtp.gmail.com';  // Update with your SMTP host
-            $mail->SMTPAuth = true;
-            $mail->Username = 'your-email@gmail.com'; // Update with your email
-            $mail->Password = 'your-app-password'; // Update with your app password
-            $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-            $mail->Port = 587;
-            
-            // Set email content
-            $mail->setFrom('your-email@gmail.com', 'Bantayan Island Restobar');
-            $mail->addAddress($email);
-            $mail->isHTML(true);
-            $mail->Subject = 'Password Reset Request';
-            
-            $reset_link = "http://your-domain.com/reset-password.php?token=" . $token;
-            $mail->Body = "
-                <h2>Password Reset Request</h2>
-                <p>Click the link below to reset your password. This link will expire in 1 hour.</p>
-                <p><a href='$reset_link'>Reset Password</a></p>
-                <p>If you didn't request this, please ignore this email.</p>
-            ";
-            
-            $mail->send();
-            echo "<script>Swal.fire('Success', 'Password reset instructions have been sent to your email.', 'success');</script>";
-            
+// Check if token is set
+if (isset($_GET['token'])) {
+    $token = trim($_GET['token']);
+
+    // Verify the database connection
+    if (!isset($conn)) {
+        die("<script>Swal.fire('Error', 'Database connection error.', 'error');</script>");
+    }
+
+    // Verify token from database
+    $stmt = $conn->prepare("SELECT * FROM users WHERE token = ?");
+    if (!$stmt) {
+        die("<script>Swal.fire('Error', 'Failed to prepare statement.', 'error');</script>");
+    }
+
+    $stmt->bind_param("s", $token);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result->num_rows > 0) {
+        $row = $result->fetch_assoc();
+        $email = $row['email'];
+        $resetTokenTime = $row['reset_token_at'];
+
+        // Check if the reset token has expired (1 hour expiration)
+        if (strtotime($resetTokenTime) > time() - 3600) {
+            // Handle password reset form submission
+            if (isset($_POST['reset-password'])) {
+                // Validate the new password
+                $new_password_raw = $_POST['new-password'];
+                if (strlen($new_password_raw) < 6) {
+                    echo "<script>Swal.fire('Error', 'Password must be at least 6 characters long.', 'error');</script>";
+                } else {
+                    $new_password = password_hash($new_password_raw, PASSWORD_DEFAULT); // Hash the password securely
+
+                    // Update the user's password and reset the token
+                    $update_stmt = $conn->prepare("UPDATE users SET password = ?, token = NULL, reset_token_at = NULL WHERE email = ?");
+                    if ($update_stmt) {
+                        $update_stmt->bind_param("ss", $new_password, $email);
+                        if ($update_stmt->execute()) {
+                            echo "<script>
+                                    Swal.fire('Success', 'Your password has been reset successfully. You can now log in.', 'success').then(() => {
+                                        window.location.href = 'login.php';
+                                    });
+                                  </script>";
+                            exit;
+                        } else {
+                            echo "<script>Swal.fire('Error', 'Failed to update the password. Please try again.', 'error');</script>";
+                        }
+                    } else {
+                        echo "<script>Swal.fire('Error', 'Failed to prepare the update statement.', 'error');</script>";
+                    }
+                }
+            }
         } else {
-            // Don't reveal if email exists or not for security
-            echo "<script>Swal.fire('Notice', 'If this email exists in our system, you will receive reset instructions.', 'info');</script>";
+            echo "<script>Swal.fire('Error', 'The password reset link has expired.', 'error');</script>";
         }
-    } catch (Exception $e) {
-        echo "<script>Swal.fire('Error', 'An error occurred. Please try again later.', 'error');</script>";
-        error_log("Password reset error: " . $e->getMessage());
+    } else {
+        echo "<script>Swal.fire('Error', 'Invalid or expired token.', 'error');</script>";
     }
+} else {
+    echo "<script>Swal.fire('Error', 'No token provided.', 'error');</script>";
 }
 ?>
 
@@ -68,163 +74,101 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['forgot-password'])) {
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Forgot Password - Bantayan Island Restobar</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Bantayan Island Restobar - Reset Password</title>
+    <link rel="icon" type="image/png" href="img/d3f06146-7852-4645-afea-783aef210f8a.jpg" alt="" width="30" height="24" style="border-radius: 100px;">
+    <!-- Custom fonts for this template-->
+
+    <!-- Include SweetAlert2 library -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <!-- Custom styles -->
     <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <link href="css/sb-admin-2.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
     <style>
-        .container { max-width: 400px; margin-top: 50px; }
-    </style>
-</head>
-<body class="bg-light">
-    <div class="container">
-        <div class="card shadow">
-            <div class="card-body p-4">
-                <h4 class="text-center mb-4">Forgot Password</h4>
-                <form method="post">
-                    <div class="form-group">
-                        <label for="email">Email Address</label>
-                        <input type="email" class="form-control" id="email" name="email" required>
-                    </div>
-                    <button type="submit" name="forgot-password" class="btn btn-primary btn-block">Send Reset Link</button>
-                    <a href="login.php" class="btn btn-link btn-block">Back to Login</a>
-                </form>
-            </div>
-        </div>
-    </div>
-</body>
-</html>
-
-<!-- reset-password.php -->
-<?php
-require_once('inc/header.php');
-
-// Enable error reporting for debugging
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
-
-// Check if token exists
-if (!isset($_GET['token'])) {
-    echo "<script>
-        Swal.fire({
-            title: 'Error',
-            text: 'Invalid reset link.',
-            icon: 'error'
-        }).then(() => {
-            window.location.href = 'login.php';
-        });
-    </script>";
-    exit;
-}
-
-$token = trim($_GET['token']);
-
-// Process form submission
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['reset-password'])) {
-    try {
-        // Validate password
-        $new_password = trim($_POST['new-password']);
-        $confirm_password = trim($_POST['confirm-password']);
-        
-        if (strlen($new_password) < 6) {
-            throw new Exception("Password must be at least 6 characters long.");
+        body {
+            font-family: "Roboto", sans-serif;
+            background-color: #f8f9fa;
+            color: #495057;
         }
-        
-        if ($new_password !== $confirm_password) {
-            throw new Exception("Passwords do not match.");
-        }
-        
-        // Verify token and get user
-        $stmt = $conn->prepare("SELECT id, email FROM users WHERE token = ? AND reset_token_at > NOW() - INTERVAL 1 HOUR");
-        $stmt->bind_param("s", $token);
-        $stmt->execute();
-        $result = $stmt->get_result();
-        
-        if ($result->num_rows === 0) {
-            throw new Exception("This reset link has expired. Please request a new one.");
-        }
-        
-        $user = $result->fetch_assoc();
-        
-        // Hash new password and update user
-        $hashed_password = password_hash($new_password, PASSWORD_DEFAULT);
-        $update = $conn->prepare("UPDATE users SET password = ?, token = NULL, reset_token_at = NULL WHERE id = ?");
-        $update->bind_param("si", $hashed_password, $user['id']);
-        
-        if (!$update->execute()) {
-            throw new Exception("Failed to update password. Please try again.");
-        }
-        
-        echo "<script>
-            Swal.fire({
-                title: 'Success',
-                text: 'Your password has been reset successfully.',
-                icon: 'success'
-            }).then(() => {
-                window.location.href = 'login.php';
-            });
-        </script>";
-        exit;
-        
-    } catch (Exception $e) {
-        echo "<script>Swal.fire('Error', '" . addslashes($e->getMessage()) . "', 'error');</script>";
-    }
-}
-?>
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Reset Password - Bantayan Island Restobar</title>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet">
-    <link href="css/sb-admin-2.min.css" rel="stylesheet">
-    <style>
-        .container { max-width: 400px; margin-top: 50px; }
-        .password-requirements {
-            font-size: 0.875rem;
-            color: #6c757d;
-            margin-top: 0.5rem;
+        .login-container {
+            max-width: 400px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .login-container h4 {
+            margin-bottom: 20px;
+            font-size: 24px;
+            font-weight: 700;
+            text-align: center;
+        }
+
+        .form-control {
+            border-radius: 8px;
+            box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.075);
+        }
+
+        .btn-warning {
+            background-color: #f0ad4e;
+            border-color: #f0ad4e;
+            color: #ffffff;
+            border-radius: 8px;
+            font-weight: 600;
+        }
+
+        .btn-warning:hover {
+            background-color: #ec971f;
+            border-color: #d58512;
+        }
+
+        .btn-back {
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+            border: none;
+        }
+
+        .btn-secondary:hover {
+            background-color: #5a6268;
         }
     </style>
 </head>
-<body class="bg-light">
-    <div class="container">
-        <div class="card shadow">
-            <div class="card-body p-4">
-                <h4 class="text-center mb-4">Reset Password</h4>
-                <form method="post" id="resetForm">
-                    <div class="form-group">
-                        <label for="new-password">New Password</label>
-                        <input type="password" class="form-control" id="new-password" name="new-password" required minlength="6">
-                        <div class="password-requirements">
-                            Password must be at least 6 characters long
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="confirm-password">Confirm Password</label>
-                        <input type="password" class="form-control" id="confirm-password" name="confirm-password" required>
-                    </div>
-                    <button type="submit" name="reset-password" class="btn btn-primary btn-block">Reset Password</button>
-                    <a href="login.php" class="btn btn-link btn-block">Back to Login</a>
-                </form>
+
+<body>
+
+    <!-- Reset Password Form -->
+    <div class="login-container">
+        
+        <h4>Set a New Password</h4>
+        <form method="post">
+            <div class="form-group">
+                <label for="new-password">Enter New Password</label>
+                <input type="password" id="new-password" name="new-password" class="form-control" required>
             </div>
-        </div>
+            <button type="submit" name="reset-password" class="btn btn-warning btn-block">Reset Password</button><br>
+            <a href="index.php" class="btn btn-warning btn-back">
+                <i class="fas fa-arrow-left"></i> Back
+            </a>
+        </form>
     </div>
 
-    <script>
-    document.getElementById('resetForm').addEventListener('submit', function(e) {
-        const password = document.getElementById('new-password').value;
-        const confirmPassword = document.getElementById('confirm-password').value;
-        
-        if (password !== confirmPassword) {
-            e.preventDefault();
-            Swal.fire('Error', 'Passwords do not match.', 'error');
-        }
-    });
-    </script>
+    <!-- Bootstrap core JavaScript-->
+    <script src="vendor/jquery/jquery.min.js"></script>
+    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
