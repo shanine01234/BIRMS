@@ -265,7 +265,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     Swal.fire({
                         icon: 'warning',
                         title: 'Invalid Input!',
-                        text: 'Restobar Name can only contain letters and "ñ".',
+                        text: 'Oops! The restobar name can only contain letters and spaces – no symbols or numbers allowed!',
                     }).then(() => {
                         this.value = this.value.replace(/[^a-zA-ZñÑ\s]/g, ''); // Remove invalid characters
                         showWarning = false;
