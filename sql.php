@@ -136,23 +136,29 @@ function displayAddForm($conn, $tableName) {
     echo "</form>";
 }
 
+// Handle adding a record
 if (isset($_POST['add_record'])) {
     $tableName = $_POST['table_name'];
     $fields = $_POST['fields'];
 
-    $columns = implode(", ", array_keys($fields));
-    $placeholders = implode(", ", array_fill(0, count($fields), '?'));
-    $values = array_values($fields);
-
-    $insertQuery = "INSERT INTO `$tableName` ($columns) VALUES ($placeholders)";
-    $stmt = $conn->prepare($insertQuery);
-    $types = str_repeat("s", count($values));
-    $stmt->bind_param($types, ...$values);
-
-    if ($stmt->execute()) {
-        echo "<p>New record added successfully to $tableName.</p>";
+    // Check if fields are empty
+    if (empty($fields) || !is_array($fields)) {
+        echo "<p style='color:red;'>Error: No data provided for the new record.</p>";
     } else {
-        echo "<p>Error: " . $stmt->error . "</p>";
+        $columns = implode(", ", array_keys($fields));
+        $placeholders = implode(", ", array_fill(0, count($fields), '?'));
+        $values = array_values($fields);
+
+        $insertQuery = "INSERT INTO `$tableName` ($columns) VALUES ($placeholders)";
+        $stmt = $conn->prepare($insertQuery);
+        $types = str_repeat("s", count($values)); // Assuming all inputs are strings
+        $stmt->bind_param($types, ...$values);
+
+        if ($stmt->execute()) {
+            echo "<p>New record added successfully to $tableName.</p>";
+        } else {
+            echo "<p style='color:red;'>Error: " . $stmt->error . "</p>";
+        }
     }
 }
 
@@ -173,14 +179,19 @@ if (isset($_POST['add_column_form'])) {
 // Handle adding a column
 if (isset($_POST['add_column'])) {
     $tableName = $_POST['table_name'];
-    $columnName = $_POST['column_name'];
-    $columnType = $_POST['column_type'];
+    $columnName = trim($_POST['column_name']);
+    $columnType = trim($_POST['column_type']);
 
-    $addColumnQuery = "ALTER TABLE `$tableName` ADD COLUMN `$columnName` $columnType";
-    if ($conn->query($addColumnQuery)) {
-        echo "<p>Column '$columnName' added successfully to '$tableName'.</p>";
+    // Check if column name or column type is empty
+    if (empty($columnName) || empty($columnType)) {
+        echo "<p style='color:red;'>Error: Column name and type cannot be empty.</p>";
     } else {
-        echo "<p>Error adding column: " . $conn->error . "</p>";
+        $addColumnQuery = "ALTER TABLE `$tableName` ADD COLUMN `$columnName` $columnType";
+        if ($conn->query($addColumnQuery)) {
+            echo "<p>Column '$columnName' added successfully to '$tableName'.</p>";
+        } else {
+            echo "<p style='color:red;'>Error adding column: " . $conn->error . "</p>";
+        }
     }
 }
 
