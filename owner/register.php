@@ -516,7 +516,7 @@ document.getElementById('gcashQr').addEventListener('change', function (e) {
         const regex = /^[a-zA-Z0-9]+$/; // Only letters and numbers
 
         if (!regex.test(password)) {
-            showWarningAndClearFields('Password must contain only letters and numbers.');
+            showWarningAndClearFields('Your password must be 8 characters long and can only contain letters and numbers (no symbols allowed).');
             return;
         }
 
@@ -529,7 +529,7 @@ document.getElementById('gcashQr').addEventListener('change', function (e) {
         const repeatPassword = repeatPasswordInput.value;
 
         if (!/^[a-zA-Z0-9]+$/.test(repeatPassword)) {
-            showWarningAndClearFields('Password must contain only letters and numbers.');
+            showWarningAndClearFields('Your password must be 8 characters long and can only contain letters and numbers (no symbols allowed).');
             return;
         }
 
