@@ -301,7 +301,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     Swal.fire({
                         icon: 'warning',
                         title: 'Invalid Format!',
-                        text: 'Location must contain exactly three commas.',
+                        text: 'Please enter a valid location with up to three commas (e.g., City, District, Street).',
                     }).then(() => {
                         const parts = this.value.split(',').slice(0, 4).join(','); // Keep valid format
                         this.value = parts;
