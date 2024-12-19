@@ -369,7 +369,7 @@ footer .social-icons a {
                 <input type="password" id="password" name="password" class="form-control" required>
             </div>
             <button type="submit" name="login" class="btn btn-warning btn-block">Login</button>
-            <a href="forgot-password.php">Forgot Password?</a>
+            <a href="request_reset.php">Forgot Password?</a>
             <p class="text-center mt-3">Don't have an account? <a href="signup.php">Sign Up</a></p>
             <a href="index.php" class="btn-back">
   <img src="https://img.icons8.com/?size=100&id=EX0c5vXvAejm&format=png&color=000000" alt="Back" width="30" height="30">
