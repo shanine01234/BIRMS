@@ -6,6 +6,8 @@ require 'vendor/autoload.php';
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
+$emailSent = false;  // Variable to track if the email was sent
+
 if (isset($_POST['reset-password'])) {
     $email = $conn->real_escape_string($_POST['email']); // Secure input handling
 
@@ -52,18 +54,7 @@ if (isset($_POST['reset-password'])) {
 
             $mail->send();
 
-            // After successful email send, display the success message
-            echo "<script>
-                    Swal.fire({
-                        title: 'Success',
-                        text: 'Password reset link sent. Please check your email.',
-                        icon: 'success',
-                        confirmButtonText: 'OK'
-                    }).then(() => {
-                        window.location.href = 'login.php'; // Redirect to login page
-                    });
-                  </script>";
-
+            $emailSent = true;  // Email was sent successfully
         } catch (Exception $e) {
             echo "<script>
                     Swal.fire({
@@ -74,25 +65,9 @@ if (isset($_POST['reset-password'])) {
                     });
                   </script>";
         }
-
     } else {
-        echo "<script>
-                Swal.fire({
-                    title: 'Error',
-                    text: 'Email not found in our records.',
-                    icon: 'error',
-                    confirmButtonText: 'OK'
-                });
-              </script>";
+        $emailSent = false;  // Email not found in database
     }
-}
-
-$request = $_SERVER['REQUEST_URI'];
-
-if (substr($request, -4) == '.php') {
-    $new_url = substr($request, 0, -4);
-    header("Location: $new_url", true, 301);
-    exit();
 }
 
 ?>
@@ -195,6 +170,29 @@ if (substr($request, -4) == '.php') {
 
         </form>
     </div>
+
+    <!-- SweetAlert on form submission -->
+    <?php if ($_SERVER['REQUEST_METHOD'] === 'POST'): ?>
+        <script>
+            <?php if ($emailSent): ?>
+                Swal.fire({
+                    title: 'Success',
+                    text: 'Password reset link sent. Please check your email.',
+                    icon: 'success',
+                    confirmButtonText: 'OK'
+                }).then(() => {
+                    window.location.href = 'login.php'; // Redirect to login page
+                });
+            <?php else: ?>
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Email not found in our records or there was an error.',
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
+            <?php endif; ?>
+        </script>
+    <?php endif; ?>
 
     <!-- Bootstrap core JavaScript-->
     <script src="vendor/jquery/jquery.min.js"></script>
