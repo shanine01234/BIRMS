@@ -46,7 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $to = $email;
     $subject = "Password Reset Request";
     $message = "Click the link below to reset your password:\n\n$reset_link\n\nThis link is valid for 1 hour.";
-    $headers = "From: Bantayan Restobars";
+    $headers = "From: shaninezaspa@#gmail.com";
 
     if (mail($to, $subject, $message, $headers)) {
         echo "Password reset link sent to your email.";
