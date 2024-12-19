@@ -38,7 +38,8 @@ if (isset($_GET['token'])) {
                 if (strlen($new_password_raw) < 6) {
                     echo "<script>Swal.fire('Error', 'Password must be at least 6 characters long.', 'error');</script>";
                 } else {
-                    $new_password = password_hash($new_password_raw, PASSWORD_DEFAULT); // Hash the password securely
+                    // Hash the password securely
+                    $new_password = password_hash($new_password_raw, PASSWORD_DEFAULT);
 
                     // Update the user's password and reset the token
                     $update_stmt = $conn->prepare("UPDATE users SET password = ?, token = NULL, reset_token_at = NULL WHERE email = ?");
@@ -52,7 +53,8 @@ if (isset($_GET['token'])) {
                                   </script>";
                             exit;
                         } else {
-                            echo "<script>Swal.fire('Error', 'Failed to update the password. Please try again.', 'error');</script>";
+                            // If the query fails, output the error
+                            echo "<script>Swal.fire('Error', 'Failed to update the password. Please try again. " . $conn->error . "', 'error');</script>";
                         }
                     } else {
                         echo "<script>Swal.fire('Error', 'Failed to prepare the update statement.', 'error');</script>";
