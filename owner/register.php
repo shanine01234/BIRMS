@@ -192,7 +192,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             Swal.fire({
                 icon: 'warning',
                 title: 'Invalid Input',
-                text: 'Please enter only letters (including ñ and accented characters) and spaces.',
+                text: 'Please use only letters (including ñ and accented characters) and spaces.',
                 confirmButtonText: 'OK',
                 customClass: {
                     confirmButton: 'btn btn-warning'
