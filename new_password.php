@@ -7,7 +7,7 @@ use PHPMailer\PHPMailer\Exception;
 
 // Check if token is set
 if (isset($_GET['token'])) {
-    $token = trim($_GET['token']);
+    $token = htmlspecialchars(trim($_GET['token'])); // Sanitize input
 
     // Verify the database connection
     if (!isset($conn)) {
@@ -33,12 +33,13 @@ if (isset($_GET['token'])) {
         if (strtotime($resetTokenTime) > time() - 3600) {
             // Handle password reset form submission
             if (isset($_POST['reset-password'])) {
-                // Validate the new password
-                $new_password_raw = $_POST['new-password'];
+                // Sanitize and validate the new password
+                $new_password_raw = trim($_POST['new-password']);
                 if (strlen($new_password_raw) < 6) {
                     echo "<script>Swal.fire('Error', 'Password must be at least 6 characters long.', 'error');</script>";
                 } else {
-                    $new_password = password_hash($new_password_raw, PASSWORD_DEFAULT); // Hash the password securely
+                    // Hash the new password using Argon2i
+                    $new_password = password_hash($new_password_raw, PASSWORD_ARGON2I);
 
                     // Update the user's password and reset the token
                     $update_stmt = $conn->prepare("UPDATE users SET password = ?, token = NULL, reset_token_at = NULL WHERE email = ?");
@@ -81,7 +82,6 @@ if (isset($_GET['token'])) {
 
     <title>Bantayan Island Restobar - Reset Password</title>
     <link rel="icon" type="image/png" href="img/d3f06146-7852-4645-afea-783aef210f8a.jpg" alt="" width="30" height="24" style="border-radius: 100px;">
-    <!-- Custom fonts for this template-->
 
     <!-- Include SweetAlert2 library -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -153,7 +153,6 @@ if (isset($_GET['token'])) {
 
     <!-- Reset Password Form -->
     <div class="login-container">
-        
         <h4>Set a New Password</h4>
         <form method="post">
             <div class="form-group">
