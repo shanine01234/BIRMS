@@ -283,7 +283,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     Swal.fire({
                         icon: 'warning',
                         title: 'Invalid Contact!',
-                        text: 'Contact must start with +63 and have 10 digits after it.',
+                        text: 'Please enter a valid restobar number starting with +63 and followed by 10 digits.',
                     }).then(() => {
                         this.value = this.value.replace(/[^\d\+]/g, '').substring(0, 13); // Enforce valid format
                         showWarning = false;
