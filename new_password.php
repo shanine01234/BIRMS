@@ -5,7 +5,7 @@ require 'vendor/autoload.php';
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
-// Check if reset_token is set
+// Check if token is set
 if (isset($_GET['token'])) {
     $token = trim($_GET['token']);
 
@@ -15,7 +15,7 @@ if (isset($_GET['token'])) {
     }
 
     // Verify token from database
-    $stmt = $conn->prepare("SELECT * FROM users WHERE reset_token = ?");
+    $stmt = $conn->prepare("SELECT * FROM users WHERE token = ?");
     if (!$stmt) {
         die("<script>Swal.fire('Error', 'Failed to prepare statement.', 'error');</script>");
     }
@@ -40,42 +40,17 @@ if (isset($_GET['token'])) {
                 } else {
                     $new_password = password_hash($new_password_raw, PASSWORD_DEFAULT); // Hash the password securely
 
-                    // Generate a new verification code
-                    $verification_code = rand(100000, 999999);
-
-                    // Update the user's password and reset token
-                    $update_stmt = $conn->prepare("UPDATE users SET password = ?, reset_code = ?, reset_token = NULL, reset_token_at = NULL WHERE email = ?");
+                    // Update the user's password and reset the token
+                    $update_stmt = $conn->prepare("UPDATE users SET password = ?, token = NULL, reset_token_at = NULL WHERE email = ?");
                     if ($update_stmt) {
-                        $update_stmt->bind_param("sss", $new_password, $verification_code, $email);
+                        $update_stmt->bind_param("ss", $new_password, $email);
                         if ($update_stmt->execute()) {
-                            // Send the verification code to the user's email
-                            try {
-                                $mail = new PHPMailer(true);
-                                $mail->isSMTP();
-                                $mail->Host = 'smtp.example.com'; // Replace with your SMTP server
-                                $mail->SMTPAuth = true;
-                                $mail->Username = 'your_email@example.com'; // SMTP username
-                                $mail->Password = 'your_password'; // SMTP password
-                                $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-                                $mail->Port = 587;
-
-                                // Email details
-                                $mail->setFrom('no-reply@example.com', 'Bantayan Island Restobar');
-                                $mail->addAddress($email);
-                                $mail->isHTML(true);
-                                $mail->Subject = 'Verify Your Password Reset';
-                                $mail->Body = "Your verification code is: <b>{$verification_code}</b>";
-
-                                $mail->send();
-                                echo "<script>
-                                        Swal.fire('Success', 'Your password has been reset. A verification code has been sent to your email.', 'success').then(() => {
-                                            window.location.href = 'verify_reset.php?email={$email}';
-                                        });
-                                      </script>";
-                                exit;
-                            } catch (Exception $e) {
-                                echo "<script>Swal.fire('Error', 'Failed to send verification email: {$mail->ErrorInfo}', 'error');</script>";
-                            }
+                            echo "<script>
+                                    Swal.fire('Success', 'Your password has been reset successfully. You can now log in.', 'success').then(() => {
+                                        window.location.href = 'login.php';
+                                    });
+                                  </script>";
+                            exit;
                         } else {
                             echo "<script>Swal.fire('Error', 'Failed to update the password. Please try again.', 'error');</script>";
                         }
@@ -106,6 +81,8 @@ if (isset($_GET['token'])) {
 
     <title>Bantayan Island Restobar - Reset Password</title>
     <link rel="icon" type="image/png" href="img/d3f06146-7852-4645-afea-783aef210f8a.jpg" alt="" width="30" height="24" style="border-radius: 100px;">
+    <!-- Custom fonts for this template-->
+
     <!-- Include SweetAlert2 library -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
@@ -159,12 +136,24 @@ if (isset($_GET['token'])) {
             display: inline-block;
             margin-bottom: 20px;
         }
+
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+            border: none;
+        }
+
+        .btn-secondary:hover {
+            background-color: #5a6268;
+        }
     </style>
 </head>
 
 <body>
+
     <!-- Reset Password Form -->
     <div class="login-container">
+        
         <h4>Set a New Password</h4>
         <form method="post">
             <div class="form-group">
