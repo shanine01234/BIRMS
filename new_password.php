@@ -14,7 +14,7 @@ if (isset($_GET['token'])) {
         die("<script>Swal.fire('Error', 'Database connection error.', 'error');</script>");
     }
 
-    // Verify token from database
+    // Verify token from the database
     $stmt = $conn->prepare("SELECT * FROM users WHERE token = ?");
     if (!$stmt) {
         die("<script>Swal.fire('Error', 'Failed to prepare statement.', 'error');</script>");
@@ -33,15 +33,15 @@ if (isset($_GET['token'])) {
         if (strtotime($resetTokenTime) > time() - 3600) {
             // Handle password reset form submission
             if (isset($_POST['reset-password'])) {
-                // Validate the new password
                 $new_password_raw = $_POST['new-password'];
                 if (strlen($new_password_raw) < 6) {
                     echo "<script>Swal.fire('Error', 'Password must be at least 6 characters long.', 'error');</script>";
                 } else {
-                    $new_password = password_hash($new_password_raw, PASSWORD_DEFAULT); // Hash the password securely
+                    // Hash the new password securely
+                    $new_password = password_hash($new_password_raw, PASSWORD_DEFAULT);
 
-                    // Update the user's password and reset the token
-                    $update_stmt = $conn->prepare("UPDATE users SET password = ?, token = NULL, reset_token_at = NULL WHERE email = ?");
+                    // Reset the password, token, and verification code
+                    $update_stmt = $conn->prepare("UPDATE users SET password = ?, token = NULL, reset_token_at = NULL, verification_code = NULL WHERE email = ?");
                     if ($update_stmt) {
                         $update_stmt->bind_param("ss", $new_password, $email);
                         if ($update_stmt->execute()) {
@@ -81,8 +81,7 @@ if (isset($_GET['token'])) {
 
     <title>Bantayan Island Restobar - Reset Password</title>
     <link rel="icon" type="image/png" href="img/d3f06146-7852-4645-afea-783aef210f8a.jpg" alt="" width="30" height="24" style="border-radius: 100px;">
-    <!-- Custom fonts for this template-->
-
+    
     <!-- Include SweetAlert2 library -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
@@ -136,16 +135,6 @@ if (isset($_GET['token'])) {
             display: inline-block;
             margin-bottom: 20px;
         }
-
-        .btn-secondary {
-            background-color: #6c757d;
-            color: white;
-            border: none;
-        }
-
-        .btn-secondary:hover {
-            background-color: #5a6268;
-        }
     </style>
 </head>
 
@@ -153,7 +142,6 @@ if (isset($_GET['token'])) {
 
     <!-- Reset Password Form -->
     <div class="login-container">
-        
         <h4>Set a New Password</h4>
         <form method="post">
             <div class="form-group">
