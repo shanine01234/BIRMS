@@ -380,13 +380,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 </div>
                                 
                                 <div class="form-group">
-    <span>Gcash QR Code</span>
-    <!-- Accept only image files (PNG, JPG, JPEG) -->
-    <input type="file" name="gcash_qr" class="form-control form-control-user" id="gcashQr" placeholder="Gcash QR Code" accept="image/png, image/jpeg, image/jpg" required>
+    <span>Restobar Photo</span>
+    <!-- Use the 'accept' attribute to allow only jpg, jpeg, and png files -->
+    <input 
+        type="file" 
+        name="restoPhoto" 
+        class="form-control form-control-user" 
+        id="restoPhoto" 
+        accept="image/jpeg, image/jpg, image/png" 
+        required>
 </div>
-<!-- SweetAlert JS -->
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
-
                                 <button type="submit" name="registerOwner" class="btn btn-primary btn-user btn-block">Register Account</button>
                                 <hr>
                             </form>
