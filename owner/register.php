@@ -380,12 +380,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 </div>
                                 
                                 <div class="form-group">
-                                    <span>Gcash QR Code</span>
-                                    <!-- Accept only image files (PNG, JPG, JPEG) -->
-                                    <input type="file" name="gcash_qr" class="form-control form-control-user" id="gcashQr" placeholder="Gcash QR Code" accept="image/png, image/jpeg, image/jpg" required>
-                                </div>
-                                <!-- SweetAlert JS -->
-                                <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+    <span>Gcash QR Code</span>
+    <!-- Accept only image files (PNG, JPG, JPEG) -->
+    <input type="file" name="gcash_qr" class="form-control form-control-user" id="gcashQr" placeholder="Gcash QR Code" accept="image/png, image/jpeg, image/jpg" required>
+</div>
+<!-- SweetAlert JS -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
 
                                 <button type="submit" name="registerOwner" class="btn btn-primary btn-user btn-block">Register Account</button>
                                 <hr>
@@ -442,25 +442,39 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <script>
 document.getElementById('gcashQr').addEventListener('change', function (e) {
     const file = e.target.files[0];
-    const validFileName = /gcash_qr/i;  // Regex pattern to match "gcash_qr" in the filename
+    const validFileName = /gcash_qr/i; // Regex pattern to match "gcash_qr" in the filename
+    const validFileTypes = ['image/jpeg', 'image/jpg', 'image/png']; // Allowed MIME types
 
-    if (!file) return;  // No file selected
+    if (!file) return; // No file selected
 
     // Check if the file name contains "gcash_qr"
     if (!validFileName.test(file.name)) {
-        // Clear the input field if invalid file
-        e.target.value = '';
-
-        // Trigger a SweetAlert warning to the user
+        e.target.value = ''; // Clear the input field
         Swal.fire({
             icon: 'error',
             title: 'Invalid file!',
-            text: 'Only GCash QR code images with the name "gcash_qr" are allowed. Please upload a valid QR code image.',
+            text: 'Only files with "gcash_qr" in the name are allowed. Please upload a valid QR code image.',
         });
-
-        // Optionally clear all other input fields if needed
-        // document.querySelector('form').reset();
+        return;
     }
+
+    // Check if the file type is valid
+    if (!validFileTypes.includes(file.type)) {
+        e.target.value = ''; // Clear the input field
+        Swal.fire({
+            icon: 'error',
+            title: 'Invalid file type!',
+            text: 'Only image files (JPG, JPEG, PNG) are allowed. Please upload a valid QR code image.',
+        });
+        return;
+    }
+
+    // Success logic if needed
+    Swal.fire({
+        icon: 'success',
+        title: 'File accepted!',
+        text: 'Your GCash QR code image has been successfully uploaded.',
+    });
 });
 </script>
 
