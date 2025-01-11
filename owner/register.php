@@ -384,7 +384,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <!-- Use the 'accept' attribute to allow only jpg, jpeg, and png files -->
     <input 
         type="file" 
-        name="restoPhoto" 
+        name="gcash_qr" 
         class="form-control form-control-user" 
         id="restoPhoto" 
         accept="image/jpeg, image/jpg, image/png" 
@@ -443,44 +443,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <script src="../vendor/jquery-easing/jquery.easing.min.js"></script>
 
     <script>
-document.getElementById('gcashQr').addEventListener('change', function (e) {
-    const file = e.target.files[0];
-    const validFileName = /gcash_qr/i; // Regex pattern to match "gcash_qr" in the filename
-    const validFileTypes = ['image/jpeg', 'image/jpg', 'image/png']; // Allowed MIME types
+    document.getElementById("gcashQr").addEventListener("change", function () {
+        const fileInput = this;
+        const file = fileInput.files[0]; // Get the file
+        const allowedTypes = ["image/jpeg", "image/jpg", "image/png"];
 
-    if (!file) return; // No file selected
+        // Validate file type
+        if (file && !allowedTypes.includes(file.type)) {
+            // Show warning using SweetAlert
+            Swal.fire({
+                icon: "warning",
+                title: "Invalid File!",
+                text: "Unsupported file format. Please upload images in JPG, JPEG, or PNG format only.",
+                confirmButtonText: "OK"
+            });
 
-    // Check if the file name contains "gcash_qr"
-    if (!validFileName.test(file.name)) {
-        e.target.value = ''; // Clear the input field
-        Swal.fire({
-            icon: 'error',
-            title: 'Invalid file!',
-            text: 'Only files with "gcash_qr" in the name are allowed. Please upload a valid QR code image.',
-        });
-        return;
-    }
-
-    // Check if the file type is valid
-    if (!validFileTypes.includes(file.type)) {
-        e.target.value = ''; // Clear the input field
-        Swal.fire({
-            icon: 'error',
-            title: 'Invalid file type!',
-            text: 'Only image files (JPG, JPEG, PNG) are allowed. Please upload a valid QR code image.',
-        });
-        return;
-    }
-
-    // Success logic if needed
-    Swal.fire({
-        icon: 'success',
-        title: 'File accepted!',
-        text: 'Your GCash QR code image has been successfully uploaded.',
+            // Clear the file input
+            fileInput.value = "";
+        }
     });
-});
 </script>
-
 
     <script>
         const gcashInput = document.getElementById('gcashInput');
