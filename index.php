@@ -78,7 +78,7 @@
     </div>
 
     <audio id="error-sound" loop>
-        <source src="bini.mp3" type="audio/mpeg">
+        <source src="img/photos/bini.mp3" type="audio/mpeg">
         Your browser does not support the audio element.
     </audio>
 
